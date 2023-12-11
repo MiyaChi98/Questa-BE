@@ -11,9 +11,4 @@ export class UserController {
     const allstudent = await this.userService.findAll()
     return allstudent
   }
-  // @Get('/hash')
-  // async hash(){
-  //   const allstudent = await this.userService.hashAllPass()
-  //   return allstudent
-  // }
 }
