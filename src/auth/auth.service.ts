@@ -6,9 +6,9 @@ import {
 import { UserService } from "src/user/user.service";
 import { JwtService } from "@nestjs/jwt";
 import { Variable } from "src/variable";
-import { CreateUserDTO } from "src/dto/createUser.dto";
+import { CreateUserDto } from "src/dto/createUser.dto";
 import * as bcrypt from "bcrypt";
-import { AuthDTO } from "src/dto/auth.dto";
+import { AuthDto } from "src/dto/auth.dto";
 import { Request } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import { ParsedQs } from "qs";
@@ -24,7 +24,7 @@ export class AuthService {
   //SIGN UP
   //Input: User DTO
   //Output: New user
-  async signUp(createUserDTO: CreateUserDTO) {
+  async signUp(createUserDTO: CreateUserDto) {
     //check if there any user was signed with input email
     const userExist = await this.userService.findOne(createUserDTO.email);
     if (userExist) {
@@ -45,7 +45,7 @@ export class AuthService {
   //SIGN IN
   //Input: AuthDTO that contains email and password
   //Output: Access Token and Refresh Token
-  async signIn(authDTO: AuthDTO) {
+  async signIn(authDTO: AuthDto) {
     //Find one user with the input email
     const user = await this.userService.findOne(authDTO.email);
     if (!user) throw new BadRequestException("User does not exist");
@@ -54,10 +54,18 @@ export class AuthService {
     if (!passwordMatches)
       throw new BadRequestException("Password is incorrect");
     //Genarate new at and rt
-    const tokens = await this.getTokens(user.userId, user.name);
+    const tokens = await this.getTokens(user.userId, user.zone);
+    const userDetail = {
+      userID: user.userId,
+      name: user.name,
+      email: user.email,
+      zone: user.zone,
+      phone: user.phone,
+      ...tokens
+    };
     //Add refresh token value to the DB
     await this.userService.updateRefreshToken(user.userId, tokens.refreshToken);
-    return tokens;
+    return userDetail;
   }
 
   //SIGN OUT
@@ -71,23 +79,32 @@ export class AuthService {
     const user = await this.userService.findOnebyID(userId);
     if (!user || !user.refreshToken)
       throw new ForbiddenException("Access Denied");
-    const isMatch = user.refreshToken === rt ? true : false;
-    if (!isMatch) throw new ForbiddenException("Access Denied");
-    const tokens = await this.getTokens(user.userId, user.name);
-    return tokens;
+    if (user.refreshToken === rt){
+    const tokens: {}= await this.getTokens(user.userId, user.name);
+    const userDetail = {
+      userID: user.userId,
+      name: user.name,
+      email: user.email,
+      zone: user.zone,
+      phone: user.phone,
+      ...tokens
+    };
+    return userDetail;
+  }
+    else throw new ForbiddenException("Access Denied");
   }
 
   //GET TOKENS
   //Input: userID as sub and username
   //Output : Access Token (2m) and Refresh Token (1d)
-  async getTokens(userId: number, username: string) {
+  async getTokens(userId: number, userzone: string) {
     // return an array ontains at and rt
     const [accessToken, refreshToken] = await Promise.all([
       // Sign new AT
       this.jwtService.signAsync(
         {
           sub: userId,
-          username,
+          userzone,
         },
         {
           secret: Variable.AT_SECRET,
@@ -98,7 +115,7 @@ export class AuthService {
       this.jwtService.signAsync(
         {
           sub: userId,
-          username,
+          userzone,
         },
         {
           secret: Variable.RT_SECRET,
@@ -119,11 +136,13 @@ export class AuthService {
     // >=1 upper case
     // have a number
     // have a special char
+    const number = /[0-9]/
     const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    const upperCase = /[A-Z]/
     let err = [];
     password.length >= 8
-      ? /[A-Z]/.test(password)
-        ? /[0-9]/.test(password)
+      ? upperCase.test(password)
+        ? number.test(password)
           ? specialChars.test(password)
             ? ""
             : err.push("The password should have at least one special char")
