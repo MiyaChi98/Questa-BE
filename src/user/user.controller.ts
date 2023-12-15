@@ -4,8 +4,7 @@ import { Request } from 'express';
 import { CreateUserDto } from 'src/dto/createUser.dto';
 import { UpdateUserDto } from 'src/dto/updateUser.dto';
 
-
-@Controller('user')
+@Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService){}
   @Get('/all')

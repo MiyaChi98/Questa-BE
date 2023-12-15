@@ -18,7 +18,7 @@ export class AuthService {
   //Take in jwt and UserService that imported from User module
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   //SIGN UP
@@ -109,7 +109,7 @@ export class AuthService {
         {
           secret: Variable.AT_SECRET,
           expiresIn: "2m",
-        }
+        },
       ),
       //Sign new RT
       this.jwtService.signAsync(
@@ -120,7 +120,7 @@ export class AuthService {
         {
           secret: Variable.RT_SECRET,
           expiresIn: "1d",
-        }
+        },
       ),
     ]);
 

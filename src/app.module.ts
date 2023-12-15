@@ -11,7 +11,7 @@ import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017', { dbName: 'Custom' }),
+    MongooseModule.forRoot("mongodb://localhost:27017", { dbName: "Custom" }),
     UserModule,
     AuthModule,
     EmailModule,
