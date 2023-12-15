@@ -1,8 +1,7 @@
 /node_modules
 /dist
 .env
-/DockerDesktop
 /.vscode
+package.json
 package-lock.json
 yarn.lock
-extension.json

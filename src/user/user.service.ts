@@ -26,7 +26,7 @@ export class UserService {
   async findAllTeacher(): Promise<UserDocument[]> {
     return this.UserModel.find({zone: "teacher"})
   }
-  async changeStudentDetails(userID: number , updateuserDTO: UpdateUserDto) {
+  async changeStudentDetails(userID: number , updateuserDTO: UpdateUserDto){
     return this.UserModel.findOne({ userId: userID }).updateOne({
       ...updateuserDTO
     })

@@ -140,16 +140,21 @@ export class AuthService {
     const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
     const upperCase = /[A-Z]/
     let err = [];
-    password.length >= 8
-      ? upperCase.test(password)
-        ? number.test(password)
-          ? specialChars.test(password)
-            ? ""
-            : err.push("The password should have at least one special char")
-          : err.push("The password should have at least a number")
-        : err.push("The password should have at least one Upper Case letter")
-      : err.push("The password should greater than 8 char");
-
+      if (password.length < 8) {
+        err.push("The password should have at least 8 characters");
+        } else {
+        if (!upperCase.test(password)) {
+        err.push("The password should have at least one uppercase letter");
+        }
+        
+        if (!number.test(password)) {
+          err.push("The password should have at least one number");
+        }
+        
+        if (!specialChars.test(password)) {
+          err.push("The password should have at least one special character");
+        }
+        }
     if (err.length != 0) {
       throw new BadRequestException(err);
     }

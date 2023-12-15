@@ -10,8 +10,6 @@ export class UserController {
   constructor(private readonly userService: UserService){}
   @Get('/all')
   async getAllUser(@Req() req: Request){
-      const page = parseInt(req.query.page as any) || 0;
-      const limit = parseInt(req.query.limit as any) || 5;
       const user = await this.userService.findAll()
       return user;
    }
