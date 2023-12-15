@@ -6,9 +6,9 @@ import {
 import { UserService } from "src/user/user.service";
 import { JwtService } from "@nestjs/jwt";
 import { Variable } from "src/variable";
-import { CreateUserDTO } from "src/dto/createUser.dto";
+import { CreateUserDto } from "src/dto/createUser.dto";
 import * as bcrypt from "bcrypt";
-import { AuthDTO } from "src/dto/auth.dto";
+import { AuthDto } from "src/dto/auth.dto";
 
 @Injectable()
 export class AuthService {
@@ -21,7 +21,7 @@ export class AuthService {
   //SIGN UP
   //Input: User DTO
   //Output: New user
-  async signUp(createUserDTO: CreateUserDTO) {
+  async signUp(createUserDTO: CreateUserDto) {
     //check if there any user was signed with input email
     const userExist = await this.userService.findOne(createUserDTO.email);
     if (userExist) {
@@ -42,7 +42,7 @@ export class AuthService {
   //SIGN IN
   //Input: AuthDTO that contains email and password
   //Output: Access Token and Refresh Token
-  async signIn(authDTO: AuthDTO) {
+  async signIn(authDTO: AuthDto) {
     //Find one user with the input email
     const user = await this.userService.findOne(authDTO.email);
     if (!user) throw new BadRequestException("User does not exist");
@@ -135,7 +135,8 @@ export class AuthService {
     const number = /[0-9]/;
     const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
     const upperCase = /[A-Z]/;
-    const err = [];
+    // eslint-disable-next-line prefer-const
+    let err = [];
     if (password.length < 8) {
       err.push("The password should have at least 8 characters");
     } else {

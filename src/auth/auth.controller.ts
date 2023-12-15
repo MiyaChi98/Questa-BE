@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Req, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { CreateUserDTO } from "src/dto/createUser.dto";
-import { AuthDTO } from "src/dto/auth.dto";
+import { CreateUserDto } from "src/dto/createUser.dto";
+import { AuthDto } from "src/dto/auth.dto";
 import { Request } from "express";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { RTGuard } from "src/guard/refreshToken.guards";
@@ -12,14 +12,14 @@ export class AuthController {
   //Input: A DTO that resembles User collection in DB
   //Output: A new user
   @Post("register")
-  async register(@Body() createUserDTO: CreateUserDTO) {
+  async register(@Body() createUserDTO: CreateUserDto) {
     return await this.authService.signUp(createUserDTO);
   }
   //LOGIN
   //Input: AuthDTO contains email and password
   //Output: tokens
   @Post("login")
-  async login(@Body() authDTO: AuthDTO) {
+  async login(@Body() authDTO: AuthDto) {
     return await this.authService.signIn(authDTO);
   }
   //LOGOUT
