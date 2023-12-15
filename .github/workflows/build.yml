@@ -29,6 +29,5 @@ jobs:
     - run: yarn install
     - run: yarn run format
     - run: yarn run lint
-    - run: yarn ci
     - run: yarn run build --if-present
     - run: yarn run test

@@ -18,7 +18,7 @@ export class AuthService {
   //Take in jwt and UserService that imported from User module
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   //SIGN UP
@@ -92,7 +92,7 @@ export class AuthService {
         {
           secret: Variable.AT_SECRET,
           expiresIn: "2m",
-        }
+        },
       ),
       //Sign new RT
       this.jwtService.signAsync(
@@ -103,7 +103,7 @@ export class AuthService {
         {
           secret: Variable.RT_SECRET,
           expiresIn: "1d",
-        }
+        },
       ),
     ]);
 
@@ -120,7 +120,7 @@ export class AuthService {
     // have a number
     // have a special char
     const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-    let err = [];
+    const err = [];
     password.length >= 8
       ? /[A-Z]/.test(password)
         ? /[0-9]/.test(password)

@@ -9,7 +9,7 @@ import { Variable } from "../variable";
 import { Request } from "express";
 @Injectable()
 
-// Guard check if AT qualify or not 
+// Guard check if AT qualify or not
 export class ATGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
@@ -32,7 +32,7 @@ export class ATGuard implements CanActivate {
     }
     return true;
   }
-  // Extract Token from Authorization in req 
+  // Extract Token from Authorization in req
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(" ") ?? [];
     return type === "Bearer" ? token : undefined;
