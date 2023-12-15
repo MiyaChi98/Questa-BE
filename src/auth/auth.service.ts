@@ -9,9 +9,6 @@ import { Variable } from "src/variable";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import * as bcrypt from "bcrypt";
 import { AuthDto } from "src/dto/auth.dto";
-import { Request } from "express";
-import { ParamsDictionary } from "express-serve-static-core";
-import { ParsedQs } from "qs";
 
 @Injectable()
 export class AuthService {
@@ -61,7 +58,7 @@ export class AuthService {
       email: user.email,
       zone: user.zone,
       phone: user.phone,
-      ...tokens
+      ...tokens,
     };
     //Add refresh token value to the DB
     await this.userService.updateRefreshToken(user.userId, tokens.refreshToken);
@@ -79,19 +76,18 @@ export class AuthService {
     const user = await this.userService.findOnebyID(userId);
     if (!user || !user.refreshToken)
       throw new ForbiddenException("Access Denied");
-    if (user.refreshToken === rt){
-    const tokens: {}= await this.getTokens(user.userId, user.name);
-    const userDetail = {
-      userID: user.userId,
-      name: user.name,
-      email: user.email,
-      zone: user.zone,
-      phone: user.phone,
-      ...tokens
-    };
-    return userDetail;
-  }
-    else throw new ForbiddenException("Access Denied");
+    if (user.refreshToken === rt) {
+      const tokens: any = await this.getTokens(user.userId, user.name);
+      const userDetail = {
+        userID: user.userId,
+        name: user.name,
+        email: user.email,
+        zone: user.zone,
+        phone: user.phone,
+        ...tokens,
+      };
+      return userDetail;
+    } else throw new ForbiddenException("Access Denied");
   }
 
   //GET TOKENS
@@ -136,25 +132,26 @@ export class AuthService {
     // >=1 upper case
     // have a number
     // have a special char
-    const number = /[0-9]/
+    const number = /[0-9]/;
     const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-    const upperCase = /[A-Z]/
+    const upperCase = /[A-Z]/;
+    // eslint-disable-next-line prefer-const
     let err = [];
-      if (password.length < 8) {
-        err.push("The password should have at least 8 characters");
-        } else {
-        if (!upperCase.test(password)) {
+    if (password.length < 8) {
+      err.push("The password should have at least 8 characters");
+    } else {
+      if (!upperCase.test(password)) {
         err.push("The password should have at least one uppercase letter");
-        }
-        
-        if (!number.test(password)) {
-          err.push("The password should have at least one number");
-        }
-        
-        if (!specialChars.test(password)) {
-          err.push("The password should have at least one special character");
-        }
-        }
+      }
+
+      if (!number.test(password)) {
+        err.push("The password should have at least one number");
+      }
+
+      if (!specialChars.test(password)) {
+        err.push("The password should have at least one special character");
+      }
+    }
     if (err.length != 0) {
       throw new BadRequestException(err);
     }

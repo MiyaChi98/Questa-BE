@@ -6,7 +6,7 @@ import { UserService } from "src/user/user.service";
 export class EmailService {
   constructor(
     private readonly mailerService: MailerService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {}
 
   async OTPEmail(userEmail: string) {
@@ -22,33 +22,33 @@ export class EmailService {
       });
       return {
         otp: otp,
-       
-        userEmail: user.email
-      }
+
+        userEmail: user.email,
+      };
     } else
       throw new BadRequestException("There no user was signed by this email");
   }
 
-  async TemporaryPassword(email: string){
-    const temporaryPassword = this.generateRandomString(10)
-    await this.userService.updatePassword(email,temporaryPassword)
+  async TemporaryPassword(email: string) {
+    const temporaryPassword = this.generateRandomString(10);
+    await this.userService.updatePassword(email, temporaryPassword);
     await this.mailerService.sendMail({
       to: email,
       from: "chintt.hrt@gmail.com",
       subject: temporaryPassword,
-      html: 'sign in again with this temporary pass , pls change the pass afterward'
+      html: "sign in again with this temporary pass , pls change the pass afterward",
     });
-    return temporaryPassword
+    return temporaryPassword;
   }
 
-   generateRandomString(length: number){
-    let result = '';
+  generateRandomString(length: number) {
+    let result = "";
     const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
     const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
-  };
+  }
 }

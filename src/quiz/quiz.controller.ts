@@ -1,9 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { QuizService } from './quiz.service';
-import { CreateQuizDto } from 'src/dto/createQuiz.dto';
-import { UpdateQuizDto } from 'src/dto/updateQuiz.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from "@nestjs/common";
+import { QuizService } from "./quiz.service";
+import { CreateQuizDto } from "src/dto/createQuiz.dto";
+import { UpdateQuizDto } from "src/dto/updateQuiz.dto";
 
-@Controller('quiz')
+@Controller("quiz")
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
 
@@ -17,18 +25,18 @@ export class QuizController {
     return this.quizService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.quizService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateQuizDto: UpdateQuizDto) {
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateQuizDto: UpdateQuizDto) {
     return this.quizService.update(+id, updateQuizDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.quizService.remove(+id);
   }
 }

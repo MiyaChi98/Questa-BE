@@ -1,9 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { CourseService } from './course.service';
-import { CreateCourseDto } from '../dto/createCourse.dto';
-import { UpdateCourseDto } from '../dto/updateCourse.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from "@nestjs/common";
+import { CourseService } from "./course.service";
+import { CreateCourseDto } from "../dto/createCourse.dto";
+import { UpdateCourseDto } from "../dto/updateCourse.dto";
 
-@Controller('course')
+@Controller("course")
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
@@ -17,20 +25,21 @@ export class CourseController {
     return await this.courseService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @Get(":id")
+  async findOne(@Param("id") id: string) {
     return await this.courseService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   async update(
-   @Param('id') id: string,
-   @Body() updateCourseDto: UpdateCourseDto) {
+    @Param("id") id: string,
+    @Body() updateCourseDto: UpdateCourseDto,
+  ) {
     return await this.courseService.update(+id, updateCourseDto);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
+  @Delete(":id")
+  async remove(@Param("id") id: string) {
     return await this.courseService.delete(+id);
   }
 }

@@ -1,11 +1,10 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 
 export type QuizDocument = HydratedDocument<Quiz>;
 
-
 @Schema()
-export class Quiz{
+export class Quiz {
   @Prop()
   quizId: number;
   @Prop()

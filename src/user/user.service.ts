@@ -3,13 +3,11 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User, UserDocument } from "src/schema/user.schema";
 import { CreateUserDto } from "src/dto/createUser.dto";
-import {UpdateUserDto} from "src/dto/updateUser.dto"
+import { UpdateUserDto } from "src/dto/updateUser.dto";
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(User.name) private UserModel: Model<User>
-    ) {}
+  constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
   // find all user
   async findAll(): Promise<UserDocument[]> {
     return this.UserModel.find();
@@ -24,12 +22,12 @@ export class UserService {
   }
   //find all teacher
   async findAllTeacher(): Promise<UserDocument[]> {
-    return this.UserModel.find({zone: "teacher"})
+    return this.UserModel.find({ zone: "teacher" });
   }
-  async changeStudentDetails(userID: number , updateuserDTO: UpdateUserDto){
+  async changeStudentDetails(userID: number, updateuserDTO: UpdateUserDto) {
     return this.UserModel.findOne({ userId: userID }).updateOne({
-      ...updateuserDTO
-    })
+      ...updateuserDTO,
+    });
   }
   // create user
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
@@ -48,12 +46,12 @@ export class UserService {
       refreshToken: "",
     });
   }
-  async updatePassword(email: string,temporaryPassword: string) {
-    return this.UserModel.findOne({ email: email}).updateOne({
+  async updatePassword(email: string, temporaryPassword: string) {
+    return this.UserModel.findOne({ email: email }).updateOne({
       password: temporaryPassword,
     });
   }
   async delete(id: number) {
-    return this.UserModel.deleteOne({ userId: id })
+    return this.UserModel.deleteOne({ userId: id });
   }
 }
