@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Req,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller, Get, Post, Body, Req, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateUserDTO } from "src/dto/createUser.dto";
 import { AuthDTO } from "src/dto/auth.dto";
@@ -37,15 +27,17 @@ export class AuthController {
   @UseGuards(ATGuard)
   @Get("logout")
   async logout(@Req() req: Request) {
-    return await this.authService.signOut(req["user"].sub);
+    return await this.authService.signOut(req["user"]?.sub);
   }
   //Take new access token
   @UseGuards(RTGuard)
   @Get("acstoken")
   async getnewAccessToken(@Req() req: Request) {
-    return await this.authService.getnewAccessToken(
-      req["user"].sub,
-      req["user"].rt,
-    );
+    if (req["user"]) {
+      return await this.authService.getnewAccessToken(
+        req["user"]?.sub,
+        req["user"]?.rt,
+      );
+    }
   }
 }
