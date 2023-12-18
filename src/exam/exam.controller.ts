@@ -20,23 +20,23 @@ export class ExamController {
     return this.examService.create(createExamDto);
   }
 
-  @Get()
+  @Get("/all")
   findAll() {
-    return this.examService.findAll();
+    return this.examService.findAllExamInCourse(5, 1);
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.examService.findOne(+id);
-  }
+  // @Get(":id")
+  // findOne(@Param("id") id: string) {
+  //   return this.examService.findOne(+id);
+  // }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateExamDto: UpdateExamDTO) {
-    return this.examService.update(+id, updateExamDto);
-  }
+  // @Patch(":id")
+  // update(@Param("id") id: string, @Body() updateExamDto: UpdateExamDTO) {
+  //   return this.examService.update(+id, updateExamDto);
+  // }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.examService.remove(+id);
-  }
+  // @Delete(":id")
+  // remove(@Param("id") id: string) {
+  //   return this.examService.remove(+id);
+  // }
 }

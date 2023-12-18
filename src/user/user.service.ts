@@ -30,9 +30,8 @@ export class UserService {
     });
   }
   // create user
-  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
-    const createdUser = new this.UserModel(createUserDto);
-    return createdUser.save();
+  async create(createUserDto: CreateUserDto) {
+    return this.UserModel.create(createUserDto);
   }
   //add refresh token to the document in th DB
   async updateRefreshToken(id: number, refreshToken: string) {

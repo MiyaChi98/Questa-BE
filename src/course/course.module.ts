@@ -17,5 +17,6 @@ import { UserModule } from "src/user/user.module";
   ],
   controllers: [CourseController],
   providers: [CourseService],
+  exports: [CourseService],
 })
 export class CourseModule {}

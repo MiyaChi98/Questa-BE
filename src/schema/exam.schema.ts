@@ -14,7 +14,7 @@ export class Exam {
   @Prop()
   total_time: number;
   @Prop()
-  createTime: string;
+  createAt: string;
   @Prop()
   courseId: number;
   @Prop()

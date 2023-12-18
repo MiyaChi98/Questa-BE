@@ -4,18 +4,27 @@ import { HydratedDocument } from "mongoose";
 export type QuizDocument = HydratedDocument<Quiz>;
 
 @Schema()
+export class Content {
+  @Prop()
+  question: string;
+  @Prop()
+  A: string;
+  @Prop()
+  B: string;
+  @Prop()
+  C: string;
+  @Prop()
+  D: string;
+  @Prop()
+  answer: string;
+}
+
+@Schema()
 export class Quiz {
   @Prop()
   quizId: number;
-  @Prop()
-  content: {
-    question: string;
-    A: string;
-    B: string;
-    C: string;
-    D: string;
-    answer: string;
-  };
+  @Prop({ type: Content })
+  content: Content;
   @Prop()
   createDate: number;
   @Prop()

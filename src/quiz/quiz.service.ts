@@ -1,12 +1,41 @@
 import { Injectable } from "@nestjs/common";
 import { CreateQuizDto } from "src/dto/createQuiz.dto";
 import { UpdateQuizDto } from "src/dto/updateQuiz.dto";
+import fs = require("fs");
+import mammoth = require("mammoth");
+import { InjectModel } from "@nestjs/mongoose";
+import { Quiz } from "src/schema/quiz.schema";
+import { Model } from "mongoose";
 
 @Injectable()
 export class QuizService {
+  constructor(@InjectModel(Quiz.name) private QuizModel: Model<Quiz>) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   create(createQuizDto: CreateQuizDto) {
-    return "This action adds a new quiz";
+    return this.QuizModel.create(createQuizDto);
+  }
+  createMany(createQuizDto: CreateQuizDto[]) {
+    return this.QuizModel.insertMany({
+      createQuizDto,
+    });
+  }
+
+  async uploadFile(file: Express.Multer.File) {
+    const data = fs.readFileSync(file.path, "utf8");
+    try {
+      const json = JSON.parse(data);
+      return json;
+    } catch (error) {
+      const data = mammoth
+        .extractRawText({ path: file.path })
+        .then(function (result) {
+          var text = result.value; // The raw text
+          var messages = result.messages;
+          console.log(messages);
+          return text;
+        });
+      return data;
+    }
   }
 
   findAll() {
