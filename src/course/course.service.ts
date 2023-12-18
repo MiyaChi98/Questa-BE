@@ -10,12 +10,12 @@ import { UserService } from "src/user/user.service";
 export class CourseService {
   constructor(
     @InjectModel(Course.name) private CourseModel: Model<Course>,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {}
   // Create course
   async create(createCourseDto: CreateCourseDto): Promise<CourseDocument> {
     const courseTeacher = await this.userService.findOnebyID(
-      createCourseDto.teacherId
+      createCourseDto.teacherId,
     );
     if (!courseTeacher)
       throw new BadRequestException("There is no teacher like that!");
@@ -32,7 +32,7 @@ export class CourseService {
     const result = [];
     for (const course of allCourse) {
       const courseTeacher = await this.userService.findOnebyID(
-        course.teacherId
+        course.teacherId,
       );
       result.push({
         courseId: course.courseId,

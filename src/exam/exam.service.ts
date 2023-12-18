@@ -1,10 +1,8 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { info } from "console";
 import { Model } from "mongoose";
 import { CourseService } from "src/course/course.service";
 import { CreateExamDTO } from "src/dto/createExam.dto";
-import { UpdateExamDTO } from "src/dto/updateExam.dto";
 import { Exam } from "src/schema/exam.schema";
 import { UserService } from "src/user/user.service";
 
@@ -13,7 +11,7 @@ export class ExamService {
   constructor(
     private readonly userService: UserService,
     private readonly courseService: CourseService,
-    @InjectModel(Exam.name) private ExamModel: Model<Exam>
+    @InjectModel(Exam.name) private ExamModel: Model<Exam>,
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: number, courseId: number) {

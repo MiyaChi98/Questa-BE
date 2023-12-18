@@ -20,6 +20,12 @@ export class QuizService {
     });
   }
 
+  // createUsingUploadFile(teacherId: number, examId: number){
+  //   return this.QuizModel.insertMany({
+
+  //   });
+  // }
+
   async uploadFile(file: Express.Multer.File) {
     const data = fs.readFileSync(file.path, "utf8");
     try {
@@ -29,8 +35,8 @@ export class QuizService {
       const data = mammoth
         .extractRawText({ path: file.path })
         .then(function (result) {
-          var text = result.value; // The raw text
-          var messages = result.messages;
+          const text = result.value; // The raw text
+          const messages = result.messages;
           console.log(messages);
           return text;
         });
