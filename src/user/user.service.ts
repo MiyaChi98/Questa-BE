@@ -9,21 +9,24 @@ import { UpdateUserDto } from "src/dto/updateUser.dto";
 export class UserService {
   constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
   // find all user
-  async findAll(): Promise<UserDocument[]> {
+  async findAll() {
     return this.UserModel.find();
   }
-  // find one user with tha email
-  async findOne(userEmail: string): Promise<UserDocument> {
+  // find one user with that email
+  async findOne(userEmail: string) {
     return this.UserModel.findOne({ email: userEmail });
   }
   // find one by id
-  async findOnebyID(userID: number): Promise<UserDocument> {
+  async findOnebyID(userID: number) {
     return this.UserModel.findOne({ userId: userID });
   }
   //find all teacher
-  async findAllTeacher(): Promise<UserDocument[]> {
+  async findAllTeacher() {
     return this.UserModel.find({ zone: "teacher" });
   }
+  // async findAllStudent(courseId: number){
+  //   return this.UserModel.find({})
+  // }
   async changeStudentDetails(userID: number, updateuserDTO: UpdateUserDto) {
     return this.UserModel.findOne({ userId: userID }).updateOne({
       ...updateuserDTO,

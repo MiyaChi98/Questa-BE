@@ -5,6 +5,7 @@ import { AuthDto } from "src/dto/auth.dto";
 import { Request } from "express";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { RTGuard } from "src/guard/refreshToken.guards";
+import { ApiBearerAuth } from "@nestjs/swagger";
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -25,6 +26,7 @@ export class AuthController {
   //LOGOUT
   //Guard to check Access Token
   @UseGuards(ATGuard)
+  @ApiBearerAuth()
   @Get("logout")
   async logout(@Req() req: Request) {
     return await this.authService.signOut(req["user"]?.sub);
@@ -36,7 +38,7 @@ export class AuthController {
     if (req["user"]) {
       return await this.authService.getnewAccessToken(
         req["user"]?.sub,
-        req["user"]?.rt,
+        req["user"]?.rt
       );
     }
   }
