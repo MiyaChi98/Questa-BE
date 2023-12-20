@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { CreateQuizDto } from "src/dto/createQuiz.dto";
 import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
 import fs = require("fs");
-import mammoth = require("mammoth");
+// import mammoth = require("mammoth");
 import { InjectModel } from "@nestjs/mongoose";
 import { Quiz } from "src/schema/quiz.schema";
 import { Model } from "mongoose";
@@ -23,7 +23,7 @@ export class QuizService {
   async createUsingUploadFile(
     teacherId: number,
     examId: number,
-    file: Express.Multer.File
+    file: Express.Multer.File,
   ) {
     const datas = await this.uploadFile(file);
     for (const i in datas)

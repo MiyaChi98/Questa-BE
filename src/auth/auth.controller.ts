@@ -38,7 +38,7 @@ export class AuthController {
     if (req["user"]) {
       return await this.authService.getnewAccessToken(
         req["user"]?.sub,
-        req["user"]?.rt
+        req["user"]?.rt,
       );
     }
   }

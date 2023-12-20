@@ -17,7 +17,7 @@ export class ExamController {
   }
 
   @Get("/all")
-  findAll() {
+  findAllinCourse() {
     return this.examService.findAllExamInCourse(5, 1);
   }
 

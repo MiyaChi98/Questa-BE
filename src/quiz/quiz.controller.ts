@@ -10,7 +10,6 @@ import {
   UseInterceptors,
   Res,
   StreamableFile,
-  Req,
 } from "@nestjs/common";
 import { QuizService } from "./quiz.service";
 import { CreateQuizDto } from "src/dto/createQuiz.dto";
@@ -19,9 +18,9 @@ import { diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { v4 as uuidv4 } from "uuid";
 import path = require("path");
-import fs = require("fs");
+// import fs = require("fs");
 import { join } from "path";
-import { Request, Response, request } from "express";
+import { Response } from "express";
 import { createReadStream } from "fs";
 
 @Controller("quiz")
@@ -39,7 +38,7 @@ export class QuizController {
       storage: diskStorage({
         destination: "./uploads",
       }),
-    })
+    }),
   )
   async uploadQuizContent(@UploadedFile() file: Express.Multer.File) {
     return await this.quizService.createUsingUploadFile(1, 1, file);
@@ -57,7 +56,7 @@ export class QuizController {
           cb(null, `${filename}${extension}`);
         },
       }),
-    })
+    }),
   )
   async uploadQuizImage(@UploadedFile() image: Express.Multer.File) {
     return `http://localhost:8000/image/${image.filename}`;
@@ -72,7 +71,7 @@ export class QuizController {
   @Get(":id/image")
   async displayQuizImg(
     @Param("id") id: number,
-    @Res({ passthrough: true }) res: Response
+    @Res({ passthrough: true }) res: Response,
   ) {
     const quiz = await this.quizService.findOne(id);
     const stream = createReadStream(join(process.cwd(), quiz.content.img));
@@ -87,7 +86,7 @@ export class QuizController {
   @Patch(":id")
   updateQuizContent(
     @Param("id") id: number,
-    @Body() updateQuizDto: UpdateQuizContentDto
+    @Body() updateQuizDto: UpdateQuizContentDto,
   ) {
     return this.quizService.updateQuizContent(+id, updateQuizDto);
   }
