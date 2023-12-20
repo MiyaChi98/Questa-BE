@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param } from "@nestjs/common";
 import { ExamService } from "./exam.service";
 import { CreateExamDTO } from "src/dto/createExam.dto";
 
@@ -9,6 +9,11 @@ export class ExamController {
   @Post()
   create(@Body() createExamDto: CreateExamDTO) {
     return this.examService.create(createExamDto);
+  }
+
+  @Get("/:id")
+  findOne(@Param("id") id: number) {
+    return this.examService.findOne(id);
   }
 
   @Get("/all")

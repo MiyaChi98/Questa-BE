@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { Date, HydratedDocument } from "mongoose";
 
 export type QuizDocument = HydratedDocument<Quiz>;
 
@@ -21,16 +21,12 @@ export class Content {
   answer: string;
 }
 
-@Schema()
+@Schema({ timestamps: true })
 export class Quiz {
   @Prop()
   quizId: number;
-  @Prop()
-  img: string;
   @Prop({ type: Content })
   content: Content;
-  @Prop()
-  createDate: number;
   @Prop()
   teacherId: number;
   @Prop()

@@ -10,8 +10,6 @@ export class CreateExamDTO {
   @ApiProperty()
   total_time: number;
   @ApiProperty()
-  createTime: string;
-  @ApiProperty()
   courseId: number;
   @ApiProperty()
   teacherId: number;

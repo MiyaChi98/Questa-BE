@@ -5,13 +5,15 @@ import { CourseService } from "src/course/course.service";
 import { CreateExamDTO } from "src/dto/createExam.dto";
 import { Exam } from "src/schema/exam.schema";
 import { UserService } from "src/user/user.service";
+import { QuizService } from "src/quiz/quiz.service";
 
 @Injectable()
 export class ExamService {
   constructor(
     private readonly userService: UserService,
     private readonly courseService: CourseService,
-    @InjectModel(Exam.name) private ExamModel: Model<Exam>,
+    private readonly quizService: QuizService,
+    @InjectModel(Exam.name) private ExamModel: Model<Exam>
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: number, courseId: number) {
@@ -48,31 +50,24 @@ export class ExamService {
         tilte: exam.tilte,
         total_mark: exam.total_mark,
         total_time: exam.total_time,
-        createAt: exam.createAt,
         ...info,
       });
     }
     return result;
   }
-  // // Find one Course with Teacher info
-  // async findOne(id: number) {
-  //   const course = await this.ExamModel.findOne({ courseId: id });
-  //   const courseTeacher = await this.userService.findOnebyID(course.teacherId);
-  //   if (!courseTeacher)
-  //     throw new BadRequestException("There is no teacher like that!");
-  //   const result = {
-  //     courseId: course.courseId,
-  //     courseName: course.courseName,
-  //     courseDescription: course.courseDescription,
-  //     teacher: {
-  //       teacherID: courseTeacher.userId,
-  //       teacherName: courseTeacher.name,
-  //       teacherEmail: courseTeacher.email,
-  //       teacherPhone: courseTeacher.phone,
-  //     },
-  //   };
-  //   return result;
-  // }
+  // Find one Exam with all exam's quizzes
+  async findOne(id: number) {
+    const exam = await this.ExamModel.findOne({ examId: id });
+    const info = await this.examIdentify(exam.teacherId, exam.courseId);
+    const allQuiz = await this.quizService.findbyExam(id);
+    const result = {
+      ...info,
+      tilte: exam.tilte,
+      time: exam.total_time,
+      quiz: allQuiz,
+    };
+    return result;
+  }
   // // Find Course with name
   // findName(name: string): Promise<CourseDocument> {
   //   return this.ExamModel.findOne({ courseName: name });

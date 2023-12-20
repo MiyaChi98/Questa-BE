@@ -5,6 +5,7 @@ export class CreateQuizDto {
   quizId: number;
   @ApiProperty()
   content: {
+    img: string;
     question: string;
     A: string;
     B: string;

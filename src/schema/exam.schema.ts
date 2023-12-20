@@ -3,7 +3,7 @@ import { HydratedDocument } from "mongoose";
 
 export type ExamDocument = HydratedDocument<Exam>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Exam {
   @Prop()
   examId: number;
@@ -13,8 +13,6 @@ export class Exam {
   total_mark: number;
   @Prop()
   total_time: number;
-  @Prop()
-  createAt: string;
   @Prop()
   courseId: number;
   @Prop()

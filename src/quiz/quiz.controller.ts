@@ -10,25 +10,26 @@ import {
   UseInterceptors,
   Res,
   StreamableFile,
+  Req,
 } from "@nestjs/common";
 import { QuizService } from "./quiz.service";
 import { CreateQuizDto } from "src/dto/createQuiz.dto";
-import { UpdateQuizDto } from "src/dto/updateQuiz.dto";
+import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
 import { diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { v4 as uuidv4 } from "uuid";
 import path = require("path");
 import fs = require("fs");
-
 import { join } from "path";
-import { Response } from "express";
+import { Request, Response, request } from "express";
+import { createReadStream } from "fs";
 
 @Controller("quiz")
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
-
+  // Create one or many document
   @Post("")
-  create(@Body() createQuizDto: CreateQuizDto) {
+  create(@Body() createQuizDto: CreateQuizDto[]) {
     return this.quizService.create(createQuizDto);
   }
 
@@ -59,31 +60,36 @@ export class QuizController {
     })
   )
   async uploadQuizImage(@UploadedFile() image: Express.Multer.File) {
-    return image.path;
+    return `http://localhost:8000/image/${image.filename}`;
   }
 
-  @Get()
-  findAll() {
-    return this.quizService.findAll();
+  @Get("/:id")
+  async findOneQuizContent(@Param("id") id: number) {
+    const quiz = await this.quizService.findOne(id);
+    return quiz.content;
   }
 
-  @Get(":id")
-  async findOne(
+  @Get(":id/image")
+  async displayQuizImg(
     @Param("id") id: number,
     @Res({ passthrough: true }) res: Response
   ) {
     const quiz = await this.quizService.findOne(id);
-    const stream = fs.createReadStream(join(process.cwd(), quiz.img));
-    // res.set({
-    //   "Content-Disposition": `inline; filename="${quiz.img}"`,
-    //   "Content-Type": "image/jpeg ",
-    // });
+    const stream = createReadStream(join(process.cwd(), quiz.content.img));
+    res.set({
+      "Content-Disposition": `inline; filename="${quiz.content.img}"`,
+      "Content-Type": "image/jpeg ",
+    });
+    // stream.pipe(res);
     return new StreamableFile(stream);
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateQuizDto: UpdateQuizDto) {
-    return this.quizService.update(+id, updateQuizDto);
+  updateQuizContent(
+    @Param("id") id: number,
+    @Body() updateQuizDto: UpdateQuizContentDto
+  ) {
+    return this.quizService.updateQuizContent(+id, updateQuizDto);
   }
 
   @Delete(":id")

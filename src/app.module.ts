@@ -8,9 +8,14 @@ import { EmailModule } from "./email/email.module";
 import { CourseModule } from "./course/course.module";
 import { ExamModule } from "./exam/exam.module";
 import { QuizModule } from "./quiz/quiz.module";
+import { ServeStaticModule } from "@nestjs/serve-static/dist/serve-static.module";
+import { join } from "path";
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "uploads"),
+    }),
     MongooseModule.forRoot("mongodb://localhost:27017", { dbName: "Custom" }),
     UserModule,
     AuthModule,

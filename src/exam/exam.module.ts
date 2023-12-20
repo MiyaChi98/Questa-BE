@@ -5,6 +5,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Exam, ExamSchema } from "src/schema/exam.schema";
 import { UserModule } from "src/user/user.module";
 import { CourseModule } from "src/course/course.module";
+import { QuizModule } from "src/quiz/quiz.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CourseModule } from "src/course/course.module";
     ]),
     CourseModule,
     UserModule,
+    QuizModule,
   ],
   controllers: [ExamController],
   providers: [ExamService],

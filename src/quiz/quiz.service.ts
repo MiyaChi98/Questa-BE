@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CreateQuizDto } from "src/dto/createQuiz.dto";
-import { UpdateQuizDto } from "src/dto/updateQuiz.dto";
+import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
 import fs = require("fs");
 import mammoth = require("mammoth");
 import { InjectModel } from "@nestjs/mongoose";
@@ -11,7 +11,7 @@ import { Model } from "mongoose";
 export class QuizService {
   constructor(@InjectModel(Quiz.name) private QuizModel: Model<Quiz>) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(createQuizDto: CreateQuizDto) {
+  create(createQuizDto: CreateQuizDto[]) {
     return this.QuizModel.create(createQuizDto);
   }
   // createMany(createQuizDto: CreateQuizDto[]) {
@@ -30,10 +30,8 @@ export class QuizService {
       this.QuizModel.create({
         quizId: `${teacherId}${examId}${i}`,
         teacherId: teacherId,
-        img: "uploads/image/catc45b0563-34d9-4913-80a3-5762a8fde88a.jpeg",
         examId: examId,
         content: datas[i],
-        createAt: new Date(),
       });
   }
 
@@ -55,8 +53,8 @@ export class QuizService {
     }
   }
 
-  findAll() {
-    return `This action returns all quiz`;
+  findbyExam(id: number) {
+    return this.QuizModel.find({ examId: id }).select("content");
   }
 
   findOne(id: number) {
@@ -64,8 +62,10 @@ export class QuizService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(id: number, updateQuizDto: UpdateQuizDto) {
-    return `This action updates a #${id} quiz`;
+  async updateQuizContent(id: number, updateQuizDto: UpdateQuizContentDto) {
+    return await this.QuizModel.updateOne({ quizId: id }, [
+      { $addFields: { content: updateQuizDto } },
+    ]);
   }
 
   remove(id: number) {
