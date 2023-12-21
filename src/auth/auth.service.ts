@@ -9,6 +9,7 @@ import { Variable } from "src/variable";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import * as bcrypt from "bcrypt";
 import { AuthDto } from "src/dto/auth.dto";
+import { Role } from "src/constant/roleEnum";
 
 @Injectable()
 export class AuthService {
@@ -77,7 +78,7 @@ export class AuthService {
     if (!user || !user.refreshToken)
       throw new ForbiddenException("Access Denied");
     if (user.refreshToken === rt) {
-      const tokens: any = await this.getTokens(user.userId, user.name);
+      const tokens: any = await this.getTokens(user.userId, user.zone);
       const userDetail = {
         userID: user.userId,
         name: user.name,
@@ -93,14 +94,14 @@ export class AuthService {
   //GET TOKENS
   //Input: userID as sub and username
   //Output : Access Token (2m) and Refresh Token (1d)
-  async getTokens(userId: number, userzone: string) {
+  async getTokens(userId: number, userzone: Role[]) {
     // return an array ontains at and rt
     const [accessToken, refreshToken] = await Promise.all([
       // Sign new AT
       this.jwtService.signAsync(
         {
           sub: userId,
-          userzone,
+          zone: userzone,
         },
         {
           secret: Variable.AT_SECRET,
@@ -111,7 +112,7 @@ export class AuthService {
       this.jwtService.signAsync(
         {
           sub: userId,
-          userzone,
+          zone: userzone,
         },
         {
           secret: Variable.RT_SECRET,

@@ -6,6 +6,7 @@ import { CreateExamDTO } from "src/dto/createExam.dto";
 import { Exam } from "src/schema/exam.schema";
 import { UserService } from "src/user/user.service";
 import { QuizService } from "src/quiz/quiz.service";
+import { UpdateExamDTO } from "src/dto/updateExam.dto";
 
 @Injectable()
 export class ExamService {
@@ -68,21 +69,17 @@ export class ExamService {
     };
     return result;
   }
-  // // Find Course with name
-  // findName(name: string): Promise<CourseDocument> {
-  //   return this.ExamModel.findOne({ courseName: name });
-  // }
 
-  // async update(id: number, updateCourseDto: UpdateCourseDto) {
-  //   const updateCourse = await this.ExamModel.findOne({ courseId: id });
-  //   if (!updateCourse)
-  //     throw new BadRequestException("There is no course like that!");
-  //   await updateCourse.updateOne({
-  //     ...updateCourseDto,
-  //   });
-  //   return updateCourse;
-  // }
-  // async delete(id: number) {
-  //   return this.ExamModel.deleteOne({ courseId: id });
-  // }
+  async update(id: number, updateExamDto: UpdateExamDTO) {
+    const updateExam = await this.ExamModel.findOne({ examId: id });
+    if (!updateExam)
+      throw new BadRequestException("There is no exam like that!");
+    await updateExam.updateOne({
+      ...updateExamDto,
+    });
+    return updateExam;
+  }
+  async delete(id: number) {
+    return this.ExamModel.deleteOne({ examId: id });
+  }
 }

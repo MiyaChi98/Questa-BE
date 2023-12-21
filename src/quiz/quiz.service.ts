@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { CreateQuizDto } from "src/dto/createQuiz.dto";
+import { Params } from "src/dto/createQuiz.dto";
 import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
 import fs = require("fs");
 // import mammoth = require("mammoth");
@@ -12,11 +12,11 @@ import { ConfigService } from "@nestjs/config";
 export class QuizService {
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(createQuizDto: CreateQuizDto[]) {
-    return this.QuizModel.create(createQuizDto);
+  create(createQuizDto: Params) {
+    return this.QuizModel.create(createQuizDto.arrayOfObjectsDto);
   }
   // createMany(createQuizDto: CreateQuizDto[]) {
   //   return this.QuizModel.insertMany({
@@ -27,7 +27,7 @@ export class QuizService {
   async createUsingUploadFile(
     teacherId: number,
     examId: number,
-    file: Express.Multer.File
+    file: Express.Multer.File,
   ) {
     const datas = await this.uploadFile(file);
     for (const i in datas)
@@ -62,7 +62,10 @@ export class QuizService {
   }
 
   findbyExam(id: number) {
-    return this.QuizModel.find({ examId: id }).select("content");
+    return this.QuizModel.find({ examId: id })
+      .select("quizId")
+      .select("content")
+      .sort("quizId");
   }
 
   findOne(id: number) {
@@ -76,7 +79,7 @@ export class QuizService {
     ]);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} quiz`;
+  async remove(id: number) {
+    return await this.QuizModel.deleteOne({ quizId: id });
   }
 }

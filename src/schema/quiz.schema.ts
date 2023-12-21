@@ -3,7 +3,7 @@ import { HydratedDocument } from "mongoose";
 
 export type QuizDocument = HydratedDocument<Quiz>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Content {
   @Prop()
   question: string;

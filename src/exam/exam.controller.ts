@@ -6,12 +6,22 @@ import {
   Param,
   UseGuards,
   Req,
+  Patch,
+  Delete,
 } from "@nestjs/common";
 import { ExamService } from "./exam.service";
 import { CreateExamDTO } from "src/dto/createExam.dto";
-import { ATGuard } from "src/guard/accessToken.guards";
+import { UpdateExamDTO } from "src/dto/updateExam.dto";
 import { Request } from "express";
-
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Role } from "src/constant/roleEnum";
+import { HasRoles } from "src/decorators/has_role.decorator";
+import { RolesGuard } from "src/guard/role.guard";
+import { ATGuard } from "src/guard/accessToken.guards";
+@ApiTags("Exam")
+@HasRoles(Role.TEACHER)
+@UseGuards(ATGuard, RolesGuard)
+@ApiBearerAuth()
 @Controller("exam")
 export class ExamController {
   constructor(private readonly examService: ExamService) {}
@@ -25,24 +35,20 @@ export class ExamController {
   findOne(@Param("id") id: number) {
     return this.examService.findOne(id);
   }
-  @UseGuards(ATGuard)
-  @Get("/all")
+  @Get("/all/:id")
   findAllinCourse(@Req() req: Request, @Param("id") id: number) {
-    return this.examService.findAllExamInCourse(req["user"]?.sub, id);
+    return this.examService.findAllExamInCourse(+req["user"]?.sub, +id);
+  }
+  @Patch(":id")
+  async update(
+    @Param("id") id: string,
+    @Body() updateCourseDto: UpdateExamDTO,
+  ) {
+    return await this.examService.update(+id, updateCourseDto);
   }
 
-  // @Get(":id")
-  // findOne(@Param("id") id: string) {
-  //   return this.examService.findOne(+id);
-  // }
-
-  // @Patch(":id")
-  // update(@Param("id") id: string, @Body() updateExamDto: UpdateExamDTO) {
-  //   return this.examService.update(+id, updateExamDto);
-  // }
-
-  // @Delete(":id")
-  // remove(@Param("id") id: string) {
-  //   return this.examService.remove(+id);
-  // }
+  @Delete(":id")
+  async remove(@Param("id") id: string) {
+    return await this.examService.delete(+id);
+  }
 }

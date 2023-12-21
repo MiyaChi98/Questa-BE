@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
+import { Role } from "src/constant/roleEnum";
 
 export type UserDocument = HydratedDocument<User>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   @Prop()
   userId: number;
@@ -16,7 +17,7 @@ export class User {
   @Prop()
   phone: string;
   @Prop()
-  zone: string;
+  zone: Role[];
   @Prop()
   refreshToken: string;
 }

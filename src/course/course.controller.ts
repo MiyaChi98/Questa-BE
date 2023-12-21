@@ -6,11 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { CourseService } from "./course.service";
 import { CreateCourseDto } from "../dto/createCourse.dto";
 import { UpdateCourseDto } from "../dto/updateCourse.dto";
-
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Role } from "src/constant/roleEnum";
+import { HasRoles } from "src/decorators/has_role.decorator";
+import { RolesGuard } from "src/guard/role.guard";
+import { ATGuard } from "src/guard/accessToken.guards";
+@ApiTags("Course")
+@HasRoles(Role.TEACHER, Role.ADMIN)
+@UseGuards(ATGuard, RolesGuard)
+@ApiBearerAuth()
+@Controller("exam")
 @Controller("course")
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}

@@ -2,4 +2,4 @@
 /dist
 .env
 /.vscode
-/src/uploads
+/uploads

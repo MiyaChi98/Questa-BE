@@ -11,12 +11,21 @@ import {
   UsePipes,
   ParseIntPipe,
   Req,
+  UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { Request } from "express";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import { UpdateUserDto } from "src/dto/updateUser.dto";
-
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Role } from "src/constant/roleEnum";
+import { HasRoles } from "src/decorators/has_role.decorator";
+import { RolesGuard } from "src/guard/role.guard";
+import { ATGuard } from "src/guard/accessToken.guards";
+@ApiTags("User")
+@HasRoles(Role.ADMIN)
+@UseGuards(ATGuard, RolesGuard)
+@ApiBearerAuth()
 @Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -35,7 +44,7 @@ export class UserController {
     }
     return user;
   }
-  //Get all teacher
+
   @Get("/teacher/all")
   async getAllTeacher() {
     const teacher = await this.userService.findAllTeacher();

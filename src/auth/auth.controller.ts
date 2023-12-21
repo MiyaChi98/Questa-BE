@@ -5,7 +5,8 @@ import { AuthDto } from "src/dto/auth.dto";
 import { Request } from "express";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { RTGuard } from "src/guard/refreshToken.guards";
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+@ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

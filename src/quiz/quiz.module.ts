@@ -3,6 +3,7 @@ import { QuizService } from "./quiz.service";
 import { QuizController } from "./quiz.controller";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Quiz, QuizSchema } from "src/schema/quiz.schema";
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { Quiz, QuizSchema } from "src/schema/quiz.schema";
         schema: QuizSchema,
       },
     ]),
+    JwtModule,
   ],
   controllers: [QuizController],
   providers: [QuizService],
