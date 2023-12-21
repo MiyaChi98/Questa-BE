@@ -5,7 +5,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 async function bootstrap() {
   const app = await NestFactory.create(
     // <NestExpressApplication>
-    AppModule,
+    AppModule
   );
 
   const config = new DocumentBuilder()
@@ -20,6 +20,7 @@ async function bootstrap() {
   // app.useStaticAssets(join(__dirname, "..", "uploads"), {
   //   prefix: "/uploads/",
   // });
+  app.useGlobalGuards();
   await app.listen(8000);
 }
 bootstrap();

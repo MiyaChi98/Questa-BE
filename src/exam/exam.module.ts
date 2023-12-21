@@ -6,6 +6,7 @@ import { Exam, ExamSchema } from "src/schema/exam.schema";
 import { UserModule } from "src/user/user.module";
 import { CourseModule } from "src/course/course.module";
 import { QuizModule } from "src/quiz/quiz.module";
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { QuizModule } from "src/quiz/quiz.module";
     CourseModule,
     UserModule,
     QuizModule,
+    JwtModule,
   ],
   controllers: [ExamController],
   providers: [ExamService],

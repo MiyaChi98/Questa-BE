@@ -38,7 +38,7 @@ export class QuizController {
       storage: diskStorage({
         destination: "./uploads",
       }),
-    }),
+    })
   )
   async uploadQuizContent(@UploadedFile() file: Express.Multer.File) {
     return await this.quizService.createUsingUploadFile(1, 1, file);
@@ -56,10 +56,10 @@ export class QuizController {
           cb(null, `${filename}${extension}`);
         },
       }),
-    }),
+    })
   )
   async uploadQuizImage(@UploadedFile() image: Express.Multer.File) {
-    return `http://localhost:8000/image/${image.filename}`;
+    return this.quizService.uploadImage(image.filename);
   }
 
   @Get("/:id")
@@ -71,7 +71,7 @@ export class QuizController {
   @Get(":id/image")
   async displayQuizImg(
     @Param("id") id: number,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: Response
   ) {
     const quiz = await this.quizService.findOne(id);
     const stream = createReadStream(join(process.cwd(), quiz.content.img));
@@ -86,7 +86,7 @@ export class QuizController {
   @Patch(":id")
   updateQuizContent(
     @Param("id") id: number,
-    @Body() updateQuizDto: UpdateQuizContentDto,
+    @Body() updateQuizDto: UpdateQuizContentDto
   ) {
     return this.quizService.updateQuizContent(+id, updateQuizDto);
   }

@@ -6,10 +6,14 @@ import fs = require("fs");
 import { InjectModel } from "@nestjs/mongoose";
 import { Quiz } from "src/schema/quiz.schema";
 import { Model } from "mongoose";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class QuizService {
-  constructor(@InjectModel(Quiz.name) private QuizModel: Model<Quiz>) {}
+  constructor(
+    @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
+    private configService: ConfigService
+  ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   create(createQuizDto: CreateQuizDto[]) {
     return this.QuizModel.create(createQuizDto);
@@ -23,7 +27,7 @@ export class QuizService {
   async createUsingUploadFile(
     teacherId: number,
     examId: number,
-    file: Express.Multer.File,
+    file: Express.Multer.File
   ) {
     const datas = await this.uploadFile(file);
     for (const i in datas)
@@ -51,6 +55,10 @@ export class QuizService {
       //   });
       // return data;
     }
+  }
+
+  uploadImage(fieldname: string) {
+    return `${this.configService.get<string>("LINK")}${fieldname}`;
   }
 
   findbyExam(id: number) {
