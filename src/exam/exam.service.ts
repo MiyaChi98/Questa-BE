@@ -7,6 +7,7 @@ import { Exam } from "src/schema/exam.schema";
 import { UserService } from "src/user/user.service";
 import { QuizService } from "src/quiz/quiz.service";
 import { UpdateExamDTO } from "src/dto/updateExam.dto";
+import { Role } from "src/constant/roleEnum";
 
 @Injectable()
 export class ExamService {
@@ -14,12 +15,13 @@ export class ExamService {
     private readonly userService: UserService,
     private readonly courseService: CourseService,
     private readonly quizService: QuizService,
-    @InjectModel(Exam.name) private ExamModel: Model<Exam>,
+    @InjectModel(Exam.name) private ExamModel: Model<Exam>
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: number, courseId: number) {
     const teacher = await this.userService.findOnebyID(userID);
     const course = await this.courseService.findOnebyID(courseId);
+
     if (!teacher || !course || course.teacherId != teacher.userId)
       throw new BadRequestException("Indentify failed");
     const info = {
@@ -38,12 +40,12 @@ export class ExamService {
   }
   async create(createExamDto: CreateExamDTO) {
     await this.examIdentify(createExamDto.teacherId, createExamDto.courseId);
-    const createdExam = new this.ExamModel(createExamDto).save();
+    const createdExam = await this.ExamModel.create(createExamDto);
     return createdExam;
   }
 
-  async findAllExamInCourse(userID: number, courseId: number) {
-    const info = await this.examIdentify(userID, courseId);
+  async findAllExamInCourse(courseId: number) {
+    // const info = await this.examIdentify(userID, courseId);
     const allExam = await this.ExamModel.find({ courseId: courseId });
     const result = [];
     for (const exam of allExam) {
@@ -51,7 +53,7 @@ export class ExamService {
         tilte: exam.tilte,
         total_mark: exam.total_mark,
         total_time: exam.total_time,
-        ...info,
+        // ...info,
       });
     }
     return result;
@@ -61,13 +63,14 @@ export class ExamService {
     const exam = await this.ExamModel.findOne({ examId: id });
     const info = await this.examIdentify(exam.teacherId, exam.courseId);
     const allQuiz = await this.quizService.findbyExam(id);
-    const result = {
+    const examInfo = {
+      examId: exam.examId,
       ...info,
       tilte: exam.tilte,
       time: exam.total_time,
       quiz: allQuiz,
     };
-    return result;
+    return examInfo;
   }
 
   async update(id: number, updateExamDto: UpdateExamDTO) {

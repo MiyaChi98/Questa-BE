@@ -9,9 +9,10 @@ import {
   UploadedFile,
   UseInterceptors,
   UseGuards,
+  Req,
 } from "@nestjs/common";
 import { QuizService } from "./quiz.service";
-import { Params } from "src/dto/createQuiz.dto";
+import { CreateQuizDtoArray } from "src/dto/createQuiz.dto";
 import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
 import { diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -25,7 +26,7 @@ import { HasRoles } from "src/decorators/has_role.decorator";
 import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 @ApiTags("Quiz")
-@HasRoles(Role.TEACHER)
+@HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller("quiz")
@@ -33,7 +34,7 @@ export class QuizController {
   constructor(private readonly quizService: QuizService) {}
   // Create one or many document
   @Post("")
-  create(@Body() createQuizDto: Params) {
+  create(@Body() createQuizDto: CreateQuizDtoArray) {
     return this.quizService.create(createQuizDto);
   }
   @ApiConsumes("multipart/form-data")
@@ -44,10 +45,17 @@ export class QuizController {
       storage: diskStorage({
         destination: "./uploads",
       }),
-    }),
+    })
   )
-  async uploadQuizContent(@UploadedFile() file: Express.Multer.File) {
-    return await this.quizService.createUsingUploadFile(1, 1, file);
+  async uploadQuizContent(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request
+  ) {
+    return await this.quizService.createUsingUploadFile(
+      req["user"]?.sub,
+      1,
+      file
+    );
   }
 
   @Post("upload/image")
@@ -64,7 +72,7 @@ export class QuizController {
           cb(null, `${filename}${extension}`);
         },
       }),
-    }),
+    })
   )
   async uploadQuizImage(@UploadedFile() file: Express.Multer.File) {
     return this.quizService.uploadImage(file.filename);
@@ -78,7 +86,7 @@ export class QuizController {
 
   @Get(":id/image")
   async displayQuizImg(
-    @Param("id") id: number,
+    @Param("id") id: number
     // @Res({ passthrough: true }) res: Response
   ) {
     const quiz = await this.quizService.findOne(id);
@@ -95,7 +103,7 @@ export class QuizController {
   @Patch(":id")
   updateQuizContent(
     @Param("id") id: number,
-    @Body() updateQuizDto: UpdateQuizContentDto,
+    @Body() updateQuizDto: UpdateQuizContentDto
   ) {
     return this.quizService.updateQuizContent(+id, updateQuizDto);
   }

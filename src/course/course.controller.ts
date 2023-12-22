@@ -20,7 +20,6 @@ import { ATGuard } from "src/guard/accessToken.guards";
 @HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
 @ApiBearerAuth()
-@Controller("exam")
 @Controller("course")
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
@@ -43,7 +42,7 @@ export class CourseController {
   @Patch(":id")
   async update(
     @Param("id") id: string,
-    @Body() updateCourseDto: UpdateCourseDto,
+    @Body() updateCourseDto: UpdateCourseDto
   ) {
     return await this.courseService.update(+id, updateCourseDto);
   }

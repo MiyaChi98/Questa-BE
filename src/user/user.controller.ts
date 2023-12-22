@@ -17,7 +17,12 @@ import { UserService } from "./user.service";
 import { Request } from "express";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import { UpdateUserDto } from "src/dto/updateUser.dto";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiHeader,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger";
 import { Role } from "src/constant/roleEnum";
 import { HasRoles } from "src/decorators/has_role.decorator";
 import { RolesGuard } from "src/guard/role.guard";
@@ -36,6 +41,10 @@ export class UserController {
     return user;
   }
   //Find by id
+  @ApiOperation({
+    summary: "Get user",
+    description: "Get user by id",
+  })
   @Get(":id")
   async getUserbyId(@Param("id") id: number) {
     const user = await this.userService.findOnebyID(id);
@@ -64,11 +73,11 @@ export class UserController {
   @UsePipes(new ValidationPipe())
   async updateStudentbyId(
     @Param("id", ParseIntPipe) id: number,
-    @Body() userNewDetails: UpdateUserDto,
+    @Body() userNewDetails: UpdateUserDto
   ) {
     const updateUser = await this.userService.changeStudentDetails(
       id,
-      userNewDetails,
+      userNewDetails
     );
     return updateUser;
   }

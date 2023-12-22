@@ -29,7 +29,7 @@ export class RTGuard implements CanActivate {
       request["user"] = payload;
       request["user"].rt = rtToken;
     } catch {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("The user by this name just logout");
     }
     return true;
   }

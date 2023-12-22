@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Params } from "src/dto/createQuiz.dto";
+import { CreateQuizDtoArray } from "src/dto/createQuiz.dto";
 import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
 import fs = require("fs");
 // import mammoth = require("mammoth");
@@ -12,10 +12,10 @@ import { ConfigService } from "@nestjs/config";
 export class QuizService {
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(createQuizDto: Params) {
+  create(createQuizDto: CreateQuizDtoArray) {
     return this.QuizModel.create(createQuizDto.arrayOfObjectsDto);
   }
   // createMany(createQuizDto: CreateQuizDto[]) {
@@ -27,7 +27,7 @@ export class QuizService {
   async createUsingUploadFile(
     teacherId: number,
     examId: number,
-    file: Express.Multer.File,
+    file: Express.Multer.File
   ) {
     const datas = await this.uploadFile(file);
     for (const i in datas)
@@ -61,11 +61,22 @@ export class QuizService {
     return `${this.configService.get<string>("LINK")}${fieldname}`;
   }
 
-  findbyExam(id: number) {
-    return this.QuizModel.find({ examId: id })
+  async findbyExam(id: number) {
+    const allQuiz = await this.QuizModel.find({ examId: id })
       .select("quizId")
       .select("content")
       .sort("quizId");
+    const result = [];
+    allQuiz.forEach(function (obj) {
+      result.push({
+        question: obj.content.question,
+        A: obj.content.A,
+        B: obj.content.B,
+        C: obj.content.C,
+        D: obj.content.D,
+      });
+    });
+    return result;
   }
 
   findOne(id: number) {

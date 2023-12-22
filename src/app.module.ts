@@ -11,6 +11,7 @@ import { QuizModule } from "./quiz/quiz.module";
 import { ServeStaticModule } from "@nestjs/serve-static/dist/serve-static.module";
 import { join } from "path";
 import { ConfigModule } from "@nestjs/config";
+import { SubmitModule } from './submit/submit.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ConfigModule } from "@nestjs/config";
     CourseModule,
     ExamModule,
     QuizModule,
+    SubmitModule,
   ],
   controllers: [AppController],
   providers: [AppService],

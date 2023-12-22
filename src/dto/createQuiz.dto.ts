@@ -1,9 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNumber, IsString } from "class-validator";
 
 export class Content {
   @ApiProperty()
+  @IsString()
   img: string;
   @ApiProperty()
+  @IsString()
   question: string;
   @ApiProperty()
   A: string;
@@ -19,16 +22,19 @@ export class Content {
 
 export class CreateQuizDto {
   @ApiProperty()
+  @IsNumber()
   quizId: number;
   @ApiProperty()
   content: Content;
   @ApiProperty()
+  @IsNumber()
   teacherId: number;
   @ApiProperty()
+  @IsNumber()
   examId: number;
 }
 
-export class Params {
+export class CreateQuizDtoArray {
   @ApiProperty({
     isArray: true,
     type: CreateQuizDto,

@@ -19,7 +19,7 @@ import { HasRoles } from "src/decorators/has_role.decorator";
 import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 @ApiTags("Exam")
-@HasRoles(Role.TEACHER)
+@HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller("exam")
@@ -31,18 +31,18 @@ export class ExamController {
     return this.examService.create(createExamDto);
   }
 
-  @Get("/:id")
+  @Get(":id")
   findOne(@Param("id") id: number) {
     return this.examService.findOne(id);
   }
   @Get("/all/:id")
-  findAllinCourse(@Req() req: Request, @Param("id") id: number) {
-    return this.examService.findAllExamInCourse(+req["user"]?.sub, +id);
+  findAllinCourse(@Param("id") id: number) {
+    return this.examService.findAllExamInCourse(+id);
   }
   @Patch(":id")
   async update(
     @Param("id") id: string,
-    @Body() updateCourseDto: UpdateExamDTO,
+    @Body() updateCourseDto: UpdateExamDTO
   ) {
     return await this.examService.update(+id, updateCourseDto);
   }
