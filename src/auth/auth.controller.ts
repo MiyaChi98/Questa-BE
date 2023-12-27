@@ -5,6 +5,15 @@ import { AuthDto } from "src/dto/auth.dto";
 import { Request } from "express";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { RTGuard } from "src/guard/refreshToken.guards";
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiTags,
+} from "@nestjs/swagger";
+import { AuthXXX } from "./constant/AuthXXX";
+@ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -12,12 +21,15 @@ export class AuthController {
   //Input: A DTO that resembles User collection in DB
   //Output: A new user
   @Post("register")
+  @ApiCreatedResponse(AuthXXX.successCreateUser)
   async register(@Body() createUserDTO: CreateUserDto) {
     return await this.authService.signUp(createUserDTO);
   }
   //LOGIN
   //Input: AuthDTO contains email and password
   //Output: tokens
+  @ApiExtraModels(AuthDto)
+  @ApiOkResponse(AuthXXX.successAuth)
   @Post("login")
   async login(@Body() authDTO: AuthDto) {
     return await this.authService.signIn(authDTO);
@@ -25,6 +37,8 @@ export class AuthController {
   //LOGOUT
   //Guard to check Access Token
   @UseGuards(ATGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse(AuthXXX.successLogout)
   @Get("logout")
   async logout(@Req() req: Request) {
     return await this.authService.signOut(req["user"]?.sub);

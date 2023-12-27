@@ -6,37 +6,120 @@ import {
   Patch,
   Param,
   Delete,
+  UploadedFile,
+  UseInterceptors,
+  UseGuards,
+  Req,
 } from "@nestjs/common";
 import { QuizService } from "./quiz.service";
-import { CreateQuizDto } from "src/dto/createQuiz.dto";
-import { UpdateQuizDto } from "src/dto/updateQuiz.dto";
-
+import { CreateQuizDtoArray } from "src/dto/createQuiz.dto";
+import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
+import { diskStorage } from "multer";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { v4 as uuidv4 } from "uuid";
+import path = require("path");
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiOkResponse,
+} from "@nestjs/swagger";
+import { UploadFileDto } from "src/dto/uploadImage.dto";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Role } from "src/constant/roleEnum";
+import { HasRoles } from "src/decorators/has_role.decorator";
+import { RolesGuard } from "src/guard/role.guard";
+import { ATGuard } from "src/guard/accessToken.guards";
+import { QuizXXX } from "./constant/QuizXXX";
+@ApiTags("Quiz")
+@HasRoles(Role.TEACHER, Role.ADMIN)
+@UseGuards(ATGuard, RolesGuard)
+@ApiBearerAuth()
 @Controller("quiz")
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
-
-  @Post()
-  create(@Body() createQuizDto: CreateQuizDto) {
+  // Create one or many document
+  @Post("")
+  @ApiCreatedResponse(QuizXXX.successCreatedQuiz)
+  create(@Body() createQuizDto: CreateQuizDtoArray) {
     return this.quizService.create(createQuizDto);
   }
-
-  @Get()
-  findAll() {
-    return this.quizService.findAll();
+  @ApiCreatedResponse(QuizXXX.successUploadFile)
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({ type: UploadFileDto })
+  @Post("upload/many/:id")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads",
+      }),
+    }),
+  )
+  async uploadQuizContent(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+    @Param("id") id: string,
+  ) {
+    return await this.quizService.createUsingUploadFile(
+      req["user"]?.sub,
+      id,
+      file,
+    );
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.quizService.findOne(+id);
+  @Post("upload/image")
+  @ApiOkResponse(QuizXXX.successUploadImage)
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({ type: UploadFileDto })
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads/image",
+        filename: (req, file, cb) => {
+          const filename: string =
+            path.parse(file.originalname).name.replace(/\s/g, "") + uuidv4();
+          const extension: string = path.parse(file.originalname).ext;
+          cb(null, `${filename}${extension}`);
+        },
+      }),
+    }),
+  )
+  async uploadQuizImage(@UploadedFile() file: Express.Multer.File) {
+    return this.quizService.uploadImage(file.filename);
+  }
+  @ApiOkResponse(QuizXXX.successFindOne)
+  @Get("/:id")
+  async findOneQuizContent(@Param("id") id: string) {
+    const quiz = await this.quizService.findOne(id);
+    return quiz;
   }
 
+  @Get(":id/image")
+  async displayQuizImg(
+    @Param("id") id: string,
+    // @Res({ passthrough: true }) res: Response
+  ) {
+    const quiz = await this.quizService.findOne(id);
+    // const stream = createReadStream(join(process.cwd(), quiz.content.img));
+    // res.set({
+    // "Content-Disposition": `inline; filename="${quiz.content.img}"`,
+    // "Content-Type": "image/jpeg ",
+    // });
+    // stream.pipe(res);
+    // return new StreamableFile(stream);
+    return quiz.content.img;
+  }
+  @ApiCreatedResponse(QuizXXX.successUpdateContent)
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateQuizDto: UpdateQuizDto) {
-    return this.quizService.update(+id, updateQuizDto);
+  updateQuizContent(
+    @Param("id") id: string,
+    @Body() updateQuizDto: UpdateQuizContentDto,
+  ) {
+    return this.quizService.updateQuizContent(id, updateQuizDto);
   }
-
+  @ApiOkResponse(QuizXXX.successDelete)
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.quizService.remove(+id);
+    return this.quizService.remove(id);
   }
 }

@@ -1,18 +1,20 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNumber, IsString } from "class-validator";
 
 export class CreateExamDTO {
   @ApiProperty()
-  examId: number;
-  @ApiProperty()
+  @IsString()
   tilte: string;
   @ApiProperty()
+  @IsNumber()
   total_mark: number;
   @ApiProperty()
+  @IsNumber()
   total_time: number;
   @ApiProperty()
-  createTime: string;
+  @IsNumber()
+  courseId: string;
   @ApiProperty()
-  courseId: number;
-  @ApiProperty()
-  teacherId: number;
+  @IsNumber()
+  teacherId: string;
 }

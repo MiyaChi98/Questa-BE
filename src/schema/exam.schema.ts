@@ -1,12 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
 
-export type ExamDocument = HydratedDocument<Exam>;
-
-@Schema()
+@Schema({ timestamps: true })
 export class Exam {
-  @Prop()
-  examId: number;
   @Prop()
   tilte: string;
   @Prop()
@@ -14,11 +9,9 @@ export class Exam {
   @Prop()
   total_time: number;
   @Prop()
-  createTime: string;
+  courseId: string;
   @Prop()
-  courseId: number;
-  @Prop()
-  teacherId: number;
+  teacherId: string;
 }
 
 export const ExamSchema = SchemaFactory.createForClass(Exam);

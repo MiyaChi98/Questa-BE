@@ -8,9 +8,20 @@ import { EmailModule } from "./email/email.module";
 import { CourseModule } from "./course/course.module";
 import { ExamModule } from "./exam/exam.module";
 import { QuizModule } from "./quiz/quiz.module";
+import { ServeStaticModule } from "@nestjs/serve-static/dist/serve-static.module";
+import { join } from "path";
+import { ConfigModule } from "@nestjs/config";
+import { SubmitModule } from "./submit/submit.module";
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: ".env",
+      isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "uploads"),
+    }),
     MongooseModule.forRoot("mongodb://localhost:27017", { dbName: "Custom" }),
     UserModule,
     AuthModule,
@@ -18,6 +29,7 @@ import { QuizModule } from "./quiz/quiz.module";
     CourseModule,
     ExamModule,
     QuizModule,
+    SubmitModule,
   ],
   controllers: [AppController],
   providers: [AppService],

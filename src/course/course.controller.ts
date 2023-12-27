@@ -6,40 +6,60 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { CourseService } from "./course.service";
 import { CreateCourseDto } from "../dto/createCourse.dto";
 import { UpdateCourseDto } from "../dto/updateCourse.dto";
-
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from "@nestjs/swagger";
+import { Role } from "src/constant/roleEnum";
+import { HasRoles } from "src/decorators/has_role.decorator";
+import { RolesGuard } from "src/guard/role.guard";
+import { ATGuard } from "src/guard/accessToken.guards";
+import { CourseXXX } from "./constant/CourseXXX";
+@ApiTags("Course")
+@HasRoles(Role.TEACHER, Role.ADMIN)
+@UseGuards(ATGuard, RolesGuard)
+@ApiBearerAuth()
 @Controller("course")
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
 
   @Post()
+  @ApiCreatedResponse(CourseXXX.successCreatedCourse)
   async create(@Body() createCourseDto: CreateCourseDto) {
     return await this.courseService.create(createCourseDto);
   }
 
   @Get()
+  @ApiOkResponse(CourseXXX.successFindAllCourse)
   async findAll() {
     return await this.courseService.findAll();
   }
 
   @Get(":id")
+  @ApiOkResponse(CourseXXX.successFindbyId)
   async findOne(@Param("id") id: string) {
-    return await this.courseService.findOne(+id);
+    return await this.courseService.findOne(id);
   }
 
   @Patch(":id")
+  @ApiOkResponse(CourseXXX.successUpdate)
   async update(
     @Param("id") id: string,
     @Body() updateCourseDto: UpdateCourseDto,
   ) {
-    return await this.courseService.update(+id, updateCourseDto);
+    return await this.courseService.update(id, updateCourseDto);
   }
 
   @Delete(":id")
+  @ApiOkResponse(CourseXXX.successDelete)
   async remove(@Param("id") id: string) {
-    return await this.courseService.delete(+id);
+    return await this.courseService.delete(id);
   }
 }
