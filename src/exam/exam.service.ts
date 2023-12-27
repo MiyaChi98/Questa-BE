@@ -7,26 +7,28 @@ import { Exam } from "src/schema/exam.schema";
 import { UserService } from "src/user/user.service";
 import { QuizService } from "src/quiz/quiz.service";
 import { UpdateExamDTO } from "src/dto/updateExam.dto";
-import { Role } from "src/constant/roleEnum";
-
 @Injectable()
 export class ExamService {
   constructor(
     private readonly userService: UserService,
     private readonly courseService: CourseService,
     private readonly quizService: QuizService,
-    @InjectModel(Exam.name) private ExamModel: Model<Exam>
+    @InjectModel(Exam.name) private ExamModel: Model<Exam>,
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async examIdentify(userID: number, courseId: number) {
+  async examIdentify(userID: string, courseId: string) {
+    console.log("userID", userID);
+    console.log("courseId", courseId);
     const teacher = await this.userService.findOnebyID(userID);
     const course = await this.courseService.findOnebyID(courseId);
-
-    if (!teacher || !course || course.teacherId != teacher.userId)
+    console.log("Compare", {
+      first: course.teacherId,
+      second: teacher._id,
+    });
+    if (!teacher || !course || course.teacherId != teacher._id?.toString())
       throw new BadRequestException("Indentify failed");
     const info = {
       teacher: {
-        teacherID: teacher.userId,
         teacherName: teacher.name,
         teacherEmail: teacher.email,
         teacherPhone: teacher.phone,
@@ -59,12 +61,12 @@ export class ExamService {
     return result;
   }
   // Find one Exam with all exam's quizzes
-  async findOne(id: number) {
-    const exam = await this.ExamModel.findOne({ examId: id });
+  async findOne(id: string) {
+    const exam = await this.ExamModel.findOne({ _id: id });
     const info = await this.examIdentify(exam.teacherId, exam.courseId);
     const allQuiz = await this.quizService.findbyExam(id);
     const examInfo = {
-      examId: exam.examId,
+      examId: exam._id,
       ...info,
       tilte: exam.tilte,
       time: exam.total_time,
