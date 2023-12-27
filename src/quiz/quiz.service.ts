@@ -12,31 +12,30 @@ import { ConfigService } from "@nestjs/config";
 export class QuizService {
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   create(createQuizDto: CreateQuizDtoArray) {
     return this.QuizModel.create(createQuizDto.arrayOfObjectsDto);
   }
-  // createMany(createQuizDto: CreateQuizDto[]) {
-  //   return this.QuizModel.insertMany({
-  //     createQuizDto,
-  //   });
-  // }
 
   async createUsingUploadFile(
     teacherId: number,
-    examId: number,
-    file: Express.Multer.File
+    examId: string,
+    file: Express.Multer.File,
   ) {
     const datas = await this.uploadFile(file);
+    const quizzes = [];
     for (const i in datas)
-      this.QuizModel.create({
-        quizId: `${teacherId}${examId}${i}`,
-        teacherId: teacherId,
-        examId: examId,
-        content: datas[i],
-      });
+      quizzes.push(
+        await this.QuizModel.create({
+          // quizId: `${teacherId}${examId}${i}`,
+          teacherId: teacherId,
+          examId: examId,
+          content: datas[i],
+        }),
+      );
+    return quizzes;
   }
 
   async uploadFile(file: Express.Multer.File) {
@@ -61,7 +60,7 @@ export class QuizService {
     return `${this.configService.get<string>("LINK")}${fieldname}`;
   }
 
-  async findbyExam(id: number) {
+  async findbyExam(id: string) {
     const allQuiz = await this.QuizModel.find({ examId: id })
       .select("quizId")
       .select("content")
@@ -69,6 +68,7 @@ export class QuizService {
     const result = [];
     allQuiz.forEach(function (obj) {
       result.push({
+        quizId: obj._id.toString(),
         question: obj.content.question,
         A: obj.content.A,
         B: obj.content.B,
@@ -79,18 +79,18 @@ export class QuizService {
     return result;
   }
 
-  findOne(id: number) {
-    return this.QuizModel.findOne({ quizId: id });
+  findOne(id: string) {
+    return this.QuizModel.findOne({ _id: id });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async updateQuizContent(id: number, updateQuizDto: UpdateQuizContentDto) {
-    return await this.QuizModel.updateOne({ quizId: id }, [
+  async updateQuizContent(id: string, updateQuizDto: UpdateQuizContentDto) {
+    return await this.QuizModel.updateOne({ _id: id }, [
       { $addFields: { content: updateQuizDto } },
     ]);
   }
 
-  async remove(id: number) {
-    return await this.QuizModel.deleteOne({ quizId: id });
+  async remove(id: string) {
+    return await this.QuizModel.deleteOne({ _id: id });
   }
 }

@@ -8,7 +8,7 @@ enum multiChoise {
 @Schema({ timestamps: true })
 export class Answer {
   @Prop()
-  quizId: number;
+  quizId: string;
   @Prop()
   answer: multiChoise;
 }
@@ -22,9 +22,9 @@ export class AnswerArray {
 @Schema({ timestamps: true })
 export class Submit {
   @Prop()
-  examId: number;
+  examId: string;
   @Prop()
-  studentId: number;
+  studentId: string;
   @Prop({ type: AnswerArray })
   submitAnswer: AnswerArray;
   @Prop()

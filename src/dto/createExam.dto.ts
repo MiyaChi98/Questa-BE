@@ -3,9 +3,6 @@ import { IsNumber, IsString } from "class-validator";
 
 export class CreateExamDTO {
   @ApiProperty()
-  @IsNumber()
-  examId: number;
-  @ApiProperty()
   @IsString()
   tilte: string;
   @ApiProperty()
@@ -16,8 +13,8 @@ export class CreateExamDTO {
   total_time: number;
   @ApiProperty()
   @IsNumber()
-  courseId: number;
+  courseId: string;
   @ApiProperty()
   @IsNumber()
-  teacherId: number;
+  teacherId: string;
 }

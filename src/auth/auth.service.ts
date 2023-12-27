@@ -16,7 +16,7 @@ export class AuthService {
   //Take in jwt and UserService that imported from User module
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   //SIGN UP
@@ -52,9 +52,9 @@ export class AuthService {
     if (!passwordMatches)
       throw new BadRequestException("Password is incorrect");
     //Genarate new at and rt
-    const tokens = await this.getTokens(user.userId, user.zone);
+    const tokens = await this.getTokens(user._id.toString(), user.zone);
     const userDetail = {
-      userID: user.userId,
+      userID: user._id,
       name: user.name,
       email: user.email,
       zone: user.zone,
@@ -62,25 +62,28 @@ export class AuthService {
       ...tokens,
     };
     //Add refresh token value to the DB
-    await this.userService.updateRefreshToken(user.userId, tokens.refreshToken);
+    await this.userService.updateRefreshToken(
+      user._id.toString(),
+      tokens.refreshToken,
+    );
     return userDetail;
   }
 
   //SIGN OUT
   //Input: userID
   //Output: Delete the refresh token
-  async signOut(userId: number) {
+  async signOut(userId: string) {
     return this.userService.signOut(userId);
   }
   //Get new access token
-  async getnewAccessToken(userId: number, rt: string) {
+  async getnewAccessToken(userId: string, rt: string) {
     const user = await this.userService.findOnebyID(userId);
     if (!user || !user.refreshToken)
       throw new ForbiddenException("Access Denied");
     if (user.refreshToken === rt) {
-      const tokens: any = await this.getTokens(user.userId, user.zone);
+      const tokens: any = await this.getTokens(user._id.toString(), user.zone);
       const userDetail = {
-        userID: user.userId,
+        userID: user._id,
         name: user.name,
         email: user.email,
         zone: user.zone,
@@ -94,7 +97,7 @@ export class AuthService {
   //GET TOKENS
   //Input: userID as sub and username
   //Output : Access Token (2m) and Refresh Token (1d)
-  async getTokens(userId: number, userzone: Role[]) {
+  async getTokens(userId: string, userzone: Role[]) {
     // return an array ontains at and rt
     const [accessToken, refreshToken] = await Promise.all([
       // Sign new AT
@@ -105,8 +108,8 @@ export class AuthService {
         },
         {
           secret: Variable.AT_SECRET,
-          expiresIn: "10m",
-        }
+          expiresIn: "20m",
+        },
       ),
       //Sign new RT
       this.jwtService.signAsync(
@@ -117,7 +120,7 @@ export class AuthService {
         {
           secret: Variable.RT_SECRET,
           expiresIn: "1d",
-        }
+        },
       ),
     ]);
 

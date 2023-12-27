@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
-@Schema({ timestamps: true })
+@Schema()
 export class Content {
   @Prop()
   question: string;
@@ -20,14 +20,12 @@ export class Content {
 
 @Schema({ timestamps: true })
 export class Quiz {
-  @Prop()
-  quizId: number;
   @Prop({ type: Content })
   content: Content;
   @Prop()
-  teacherId: number;
+  teacherId: string;
   @Prop()
-  examId: number;
+  examId: string;
 }
 
 export const QuizSchema = SchemaFactory.createForClass(Quiz);

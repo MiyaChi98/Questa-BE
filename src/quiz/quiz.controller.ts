@@ -18,13 +18,19 @@ import { diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { v4 as uuidv4 } from "uuid";
 import path = require("path");
-import { ApiBody, ApiConsumes } from "@nestjs/swagger";
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiOkResponse,
+} from "@nestjs/swagger";
 import { UploadFileDto } from "src/dto/uploadImage.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Role } from "src/constant/roleEnum";
 import { HasRoles } from "src/decorators/has_role.decorator";
 import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
+import { QuizXXX } from "./constant/QuizXXX";
 @ApiTags("Quiz")
 @HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -34,31 +40,35 @@ export class QuizController {
   constructor(private readonly quizService: QuizService) {}
   // Create one or many document
   @Post("")
+  @ApiCreatedResponse(QuizXXX.successCreatedQuiz)
   create(@Body() createQuizDto: CreateQuizDtoArray) {
     return this.quizService.create(createQuizDto);
   }
+  @ApiCreatedResponse(QuizXXX.successUploadFile)
   @ApiConsumes("multipart/form-data")
   @ApiBody({ type: UploadFileDto })
-  @Post("upload/many")
+  @Post("upload/many/:id")
   @UseInterceptors(
     FileInterceptor("file", {
       storage: diskStorage({
         destination: "./uploads",
       }),
-    })
+    }),
   )
   async uploadQuizContent(
     @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request
+    @Req() req: Request,
+    @Param("id") id: string,
   ) {
     return await this.quizService.createUsingUploadFile(
       req["user"]?.sub,
-      1,
-      file
+      id,
+      file,
     );
   }
 
   @Post("upload/image")
+  @ApiOkResponse(QuizXXX.successUploadImage)
   @ApiConsumes("multipart/form-data")
   @ApiBody({ type: UploadFileDto })
   @UseInterceptors(
@@ -72,21 +82,21 @@ export class QuizController {
           cb(null, `${filename}${extension}`);
         },
       }),
-    })
+    }),
   )
   async uploadQuizImage(@UploadedFile() file: Express.Multer.File) {
     return this.quizService.uploadImage(file.filename);
   }
-
+  @ApiOkResponse(QuizXXX.successFindOne)
   @Get("/:id")
-  async findOneQuizContent(@Param("id") id: number) {
+  async findOneQuizContent(@Param("id") id: string) {
     const quiz = await this.quizService.findOne(id);
-    return quiz.content;
+    return quiz;
   }
 
   @Get(":id/image")
   async displayQuizImg(
-    @Param("id") id: number
+    @Param("id") id: string,
     // @Res({ passthrough: true }) res: Response
   ) {
     const quiz = await this.quizService.findOne(id);
@@ -99,17 +109,17 @@ export class QuizController {
     // return new StreamableFile(stream);
     return quiz.content.img;
   }
-
+  @ApiCreatedResponse(QuizXXX.successUpdateContent)
   @Patch(":id")
   updateQuizContent(
-    @Param("id") id: number,
-    @Body() updateQuizDto: UpdateQuizContentDto
+    @Param("id") id: string,
+    @Body() updateQuizDto: UpdateQuizContentDto,
   ) {
-    return this.quizService.updateQuizContent(+id, updateQuizDto);
+    return this.quizService.updateQuizContent(id, updateQuizDto);
   }
-
+  @ApiOkResponse(QuizXXX.successDelete)
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.quizService.remove(+id);
+    return this.quizService.remove(id);
   }
 }

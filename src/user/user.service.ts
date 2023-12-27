@@ -17,8 +17,15 @@ export class UserService {
     return this.UserModel.findOne({ email: userEmail });
   }
   // find one by id
-  async findOnebyID(userID: number) {
-    return this.UserModel.findOne({ userId: userID });
+  async findOnebyID(userID: string) {
+    return this.UserModel.findOne(
+      { _id: userID },
+      {
+        name: 1,
+        email: 1,
+        phone: 1,
+      },
+    );
   }
   //find all teacher
   async findAllTeacher() {
@@ -27,24 +34,30 @@ export class UserService {
   // async findAllStudent(courseId: number){
   //   return this.UserModel.find({})
   // }
-  async changeStudentDetails(userID: number, updateuserDTO: UpdateUserDto) {
-    return this.UserModel.findOne({ userId: userID }).updateOne({
+  async changeStudentDetails(userID: string, updateuserDTO: UpdateUserDto) {
+    await this.UserModel.findOne({ _id: userID }).updateOne({
       ...updateuserDTO,
     });
+    return await this.UserModel.findOne(
+      { _id: userID },
+      {
+        password: 0,
+      },
+    );
   }
   // create user
   async create(createUserDto: CreateUserDto) {
     return this.UserModel.create(createUserDto);
   }
   //add refresh token to the document in th DB
-  async updateRefreshToken(id: number, refreshToken: string) {
-    return this.UserModel.findOne({ userId: id }).updateOne({
+  async updateRefreshToken(id: string, refreshToken: string) {
+    return this.UserModel.findOne({ _id: id }).updateOne({
       refreshToken: refreshToken,
     });
   }
   // delete the refresh token
-  async signOut(id: number) {
-    return this.UserModel.findOne({ userId: id }).updateOne({
+  async signOut(id: string) {
+    return this.UserModel.findOne({ _id: id }).updateOne({
       refreshToken: "",
     });
   }
@@ -53,7 +66,7 @@ export class UserService {
       password: temporaryPassword,
     });
   }
-  async delete(id: number) {
-    return this.UserModel.deleteOne({ userId: id });
+  async delete(id: string) {
+    return this.UserModel.deleteOne({ _id: id });
   }
 }

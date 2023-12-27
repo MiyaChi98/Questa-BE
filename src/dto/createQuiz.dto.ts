@@ -22,16 +22,13 @@ export class Content {
 
 export class CreateQuizDto {
   @ApiProperty()
-  @IsNumber()
-  quizId: number;
-  @ApiProperty()
   content: Content;
   @ApiProperty()
   @IsNumber()
-  teacherId: number;
+  teacherId: string;
   @ApiProperty()
   @IsNumber()
-  examId: number;
+  examId: string;
 }
 
 export class CreateQuizDtoArray {

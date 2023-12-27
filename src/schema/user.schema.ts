@@ -4,8 +4,6 @@ import { Role } from "src/constant/roleEnum";
 @Schema({ timestamps: true })
 export class User {
   @Prop()
-  userId: number;
-  @Prop()
   name: string;
   @Prop()
   email: string;

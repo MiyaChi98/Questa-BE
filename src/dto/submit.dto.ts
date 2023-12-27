@@ -3,7 +3,7 @@ import { IsBoolean, IsNumber, IsString } from "class-validator";
 export class Answer {
   @ApiProperty()
   @IsNumber()
-  quizId: number;
+  quizId: string;
   @ApiProperty()
   @IsString()
   answer: string;
@@ -22,10 +22,7 @@ export class AnswerArray {
 export class SubmitDto {
   @ApiProperty()
   @IsNumber()
-  examId: number;
-  @ApiProperty()
-  @IsNumber()
-  studentId: number;
+  examId: string;
   @ApiProperty()
   submitAnswer: AnswerArray;
 }

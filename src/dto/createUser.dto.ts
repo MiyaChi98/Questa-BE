@@ -3,10 +3,6 @@ import { IsEmail, IsNumber } from "class-validator";
 
 export class CreateUserDto {
   @ApiProperty()
-  @IsNumber()
-  userId: number;
-  @ApiProperty()
-  @IsNumber()
   name: string;
   @ApiProperty()
   @IsEmail()

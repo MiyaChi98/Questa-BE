@@ -10,13 +10,9 @@ import {
   ApiCreatedResponse,
   ApiExtraModels,
   ApiOkResponse,
-  ApiResponse,
   ApiTags,
-  getSchemaPath,
 } from "@nestjs/swagger";
-import { User } from "src/schema/user.schema";
-import { ResponseDto } from "src/dto/response.dto";
-import { ResponseXXX } from "src/constant/responseXXX";
+import { AuthXXX } from "./constant/AuthXXX";
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
@@ -25,6 +21,7 @@ export class AuthController {
   //Input: A DTO that resembles User collection in DB
   //Output: A new user
   @Post("register")
+  @ApiCreatedResponse(AuthXXX.successCreateUser)
   async register(@Body() createUserDTO: CreateUserDto) {
     return await this.authService.signUp(createUserDTO);
   }
@@ -32,7 +29,7 @@ export class AuthController {
   //Input: AuthDTO contains email and password
   //Output: tokens
   @ApiExtraModels(AuthDto)
-  @ApiResponse(ResponseXXX.successAuth)
+  @ApiOkResponse(AuthXXX.successAuth)
   @Post("login")
   async login(@Body() authDTO: AuthDto) {
     return await this.authService.signIn(authDTO);
@@ -41,6 +38,7 @@ export class AuthController {
   //Guard to check Access Token
   @UseGuards(ATGuard)
   @ApiBearerAuth()
+  @ApiOkResponse(AuthXXX.successLogout)
   @Get("logout")
   async logout(@Req() req: Request) {
     return await this.authService.signOut(req["user"]?.sub);
@@ -52,7 +50,7 @@ export class AuthController {
     if (req["user"]) {
       return await this.authService.getnewAccessToken(
         req["user"]?.sub,
-        req["user"]?.rt
+        req["user"]?.rt,
       );
     }
   }

@@ -3,9 +3,6 @@ import { IsNumber, IsString } from "class-validator";
 
 export class CreateCourseDto {
   @ApiProperty()
-  @IsNumber()
-  courseId: number;
-  @ApiProperty()
   @IsString()
   courseName: string;
   @ApiProperty()
@@ -13,5 +10,5 @@ export class CreateCourseDto {
   courseDescription: string;
   @ApiProperty()
   @IsNumber()
-  teacherId: number;
+  teacherId: string;
 }

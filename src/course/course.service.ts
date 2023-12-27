@@ -10,20 +10,20 @@ import { UserService } from "src/user/user.service";
 export class CourseService {
   constructor(
     @InjectModel(Course.name) private CourseModel: Model<Course>,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {}
   // Create course
   async create(createCourseDto: CreateCourseDto) {
     const courseTeacher = await this.userService.findOnebyID(
-      createCourseDto.teacherId
+      createCourseDto.teacherId,
     );
     if (!courseTeacher)
       throw new BadRequestException("There is no teacher like that!");
     const createdUser = await this.CourseModel.create(createCourseDto);
     return createdUser;
   }
-  async findOnebyID(courseId: number) {
-    return this.CourseModel.findOne({ courseId: courseId });
+  async findOnebyID(courseId: string) {
+    return this.CourseModel.findOne({ _id: courseId });
   }
 
   // Find All Course with Teacher info
@@ -32,38 +32,26 @@ export class CourseService {
     const result = [];
     for (const course of allCourse) {
       const courseTeacher = await this.userService.findOnebyID(
-        course.teacherId
+        course.teacherId,
       );
       result.push({
-        courseId: course.courseId,
         courseName: course.courseName,
         courseDescription: course.courseDescription,
-        teacher: {
-          teacherID: courseTeacher.userId,
-          teacherName: courseTeacher.name,
-          teacherEmail: courseTeacher.email,
-          teacherPhone: courseTeacher.phone,
-        },
+        teacher: courseTeacher,
       });
     }
     return result;
   }
   // Find one Course with Teacher info
-  async findOne(id: number) {
-    const course = await this.CourseModel.findOne({ courseId: id });
+  async findOne(id: string) {
+    const course = await this.CourseModel.findOne({ _id: id });
     const courseTeacher = await this.userService.findOnebyID(course.teacherId);
     if (!courseTeacher)
       throw new BadRequestException("There is no teacher like that!");
     const result = {
-      courseId: course.courseId,
       courseName: course.courseName,
       courseDescription: course.courseDescription,
-      teacher: {
-        teacherID: courseTeacher.userId,
-        teacherName: courseTeacher.name,
-        teacherEmail: courseTeacher.email,
-        teacherPhone: courseTeacher.phone,
-      },
+      teacher: courseTeacher,
     };
     return result;
   }
@@ -72,8 +60,8 @@ export class CourseService {
     return this.CourseModel.findOne({ courseName: name });
   }
 
-  async update(id: number, updateCourseDto: UpdateCourseDto) {
-    const updateCourse = await this.CourseModel.findOne({ courseId: id });
+  async update(id: string, updateCourseDto: UpdateCourseDto) {
+    const updateCourse = await this.CourseModel.findOne({ _id: id });
     if (!updateCourse)
       throw new BadRequestException("There is no course like that!");
     await updateCourse.updateOne({
@@ -81,7 +69,7 @@ export class CourseService {
     });
     return updateCourse;
   }
-  async delete(id: number) {
-    return this.CourseModel.deleteOne({ courseId: id });
+  async delete(id: string) {
+    return this.CourseModel.deleteOne({ _id: id });
   }
 }
