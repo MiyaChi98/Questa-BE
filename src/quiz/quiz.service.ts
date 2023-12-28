@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateQuizDtoArray } from "src/dto/createQuiz.dto";
 import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
 import fs = require("fs");
@@ -44,15 +44,7 @@ export class QuizService {
       const json = JSON.parse(data);
       return json;
     } catch (error) {
-      // const data = mammoth
-      //   .extractRawText({ path: file.path })
-      //   .then(function (result) {
-      //     const text = result.value; // The raw text
-      //     const messages = result.messages;
-      //     console.log(messages);
-      //     return text;
-      //   });
-      // return data;
+      throw new BadRequestException("The input should be JSON");
     }
   }
 
@@ -83,6 +75,9 @@ export class QuizService {
     const obj = await this.QuizModel.findOne({ _id: id })
       .select("quizId")
       .select("content");
+    if (!obj) {
+      throw new BadRequestException("There no quiz with that ID");
+    }
     const result = {
       quizId: obj._id.toString(),
       question: obj.content.question,

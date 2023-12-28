@@ -43,6 +43,9 @@ export class ExamService {
   async findAllExamInCourse(courseId: string) {
     // const info = await this.examIdentify(userID, courseId);
     const allExam = await this.ExamModel.find({ courseId: courseId });
+    if (allExam.length == 0) {
+      return "Course doesn't has any exam !";
+    }
     const result = [];
     for (const exam of allExam) {
       result.push({

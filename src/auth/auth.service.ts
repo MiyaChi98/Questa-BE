@@ -73,7 +73,7 @@ export class AuthService {
   //Input: userID
   //Output: Delete the refresh token
   async signOut(userId: string) {
-    return this.userService.signOut(userId);
+    if (userId) return this.userService.signOut(userId);
   }
   //Get new access token
   async getnewAccessToken(userId: string, rt: string) {

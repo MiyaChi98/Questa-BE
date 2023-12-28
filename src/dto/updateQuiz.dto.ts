@@ -3,7 +3,6 @@ import { IsNotEmpty } from "class-validator";
 
 export class UpdateQuizContentDto {
   @ApiProperty()
-  @IsNotEmpty()
   question: string;
   @ApiProperty()
   img: string;

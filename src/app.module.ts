@@ -14,9 +14,11 @@ import { ConfigModule } from "@nestjs/config";
 import { SubmitModule } from "./submit/submit.module";
 import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
 import { APP_INTERCEPTOR } from "@nestjs/core";
+import { LoggerModule } from "nestjs-pino";
 
 @Module({
   imports: [
+    LoggerModule.forRoot(),
     CacheModule.register({
       isGlobal: true,
     }),
