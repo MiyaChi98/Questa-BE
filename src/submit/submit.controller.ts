@@ -37,7 +37,7 @@ export class SubmitController {
   @Get(":id")
   getSubmit(
     @Param("id", new IdValidationPipe()) id: string,
-    @Req() req: Request
+    @Req() req: Request,
   ) {
     return this.submitService.getOne(id, req["user"]?.sub, req["user"]?.zone);
   }

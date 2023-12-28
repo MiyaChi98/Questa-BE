@@ -57,7 +57,7 @@ export class CourseController {
   @UsePipes(new ValidationPipe())
   async update(
     @Param("id", new IdValidationPipe()) id: string,
-    @Body() updateCourseDto: UpdateCourseDto
+    @Body() updateCourseDto: UpdateCourseDto,
   ) {
     return await this.courseService.update(id, updateCourseDto);
   }

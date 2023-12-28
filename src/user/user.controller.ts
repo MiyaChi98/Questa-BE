@@ -76,11 +76,11 @@ export class UserController {
   @UsePipes(new ValidationPipe())
   async updateStudentbyId(
     @Param("id", new IdValidationPipe()) id: string,
-    @Body() userNewDetails: UpdateUserDto
+    @Body() userNewDetails: UpdateUserDto,
   ) {
     const updateUser = await this.userService.changeStudentDetails(
       id,
-      userNewDetails
+      userNewDetails,
     );
     return updateUser;
   }

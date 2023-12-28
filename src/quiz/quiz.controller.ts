@@ -58,17 +58,17 @@ export class QuizController {
       storage: diskStorage({
         destination: "./uploads",
       }),
-    })
+    }),
   )
   async uploadQuizContent(
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
-    @Param("id", new IdValidationPipe()) id: string
+    @Param("id", new IdValidationPipe()) id: string,
   ) {
     return await this.quizService.createUsingUploadFile(
       req["user"]?.sub,
       id,
-      file
+      file,
     );
   }
 
@@ -87,7 +87,7 @@ export class QuizController {
           cb(null, `${filename}${extension}`);
         },
       }),
-    })
+    }),
   )
   async uploadQuizImage(@UploadedFile() file: Express.Multer.File) {
     return this.quizService.uploadImage(file.filename);
@@ -104,7 +104,7 @@ export class QuizController {
   @UsePipes(new ValidationPipe())
   updateQuizContent(
     @Param("id", new IdValidationPipe()) id: string,
-    @Body() updateQuizDto: UpdateQuizContentDto
+    @Body() updateQuizDto: UpdateQuizContentDto,
   ) {
     return this.quizService.updateQuizContent(id, updateQuizDto);
   }

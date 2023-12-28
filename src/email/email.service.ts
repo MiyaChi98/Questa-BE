@@ -9,7 +9,7 @@ export class EmailService {
   constructor(
     private readonly mailerService: MailerService,
     private readonly userService: UserService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async OTPEmail(userEmail: string) {
@@ -54,7 +54,7 @@ export class EmailService {
   }
 
   otpgenarator(): number {
-    let digits = "0123456789";
+    const digits = "0123456789";
     let OTP = "";
     for (let i = 1; i < 7; i++) {
       OTP += digits[Math.floor(Math.random() * 10)];

@@ -1,9 +1,8 @@
-import { Body, Controller, Post, Res } from "@nestjs/common";
+import { Body, Controller, Post } from "@nestjs/common";
 import { EmailService } from "./email.service";
 import { ApiTags } from "@nestjs/swagger";
 import { sendMail } from "src/dto/sendMail.dto";
 import { sendOTP } from "src/dto/sendOTP.dto";
-import { Response } from "express";
 @ApiTags("Email")
 @Controller("mail")
 export class EmailController {
