@@ -10,7 +10,10 @@ import {
   UseInterceptors,
   UseGuards,
   Req,
+  ValidationPipe,
+  UsePipes,
 } from "@nestjs/common";
+import { Request } from "express";
 import { QuizService } from "./quiz.service";
 import { CreateQuizDtoArray } from "src/dto/createQuiz.dto";
 import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
@@ -40,6 +43,7 @@ export class QuizController {
   constructor(private readonly quizService: QuizService) {}
   // Create one or many document
   @Post("")
+  @UsePipes(new ValidationPipe)
   @ApiCreatedResponse(QuizXXX.successCreatedQuiz)
   create(@Body() createQuizDto: CreateQuizDtoArray) {
     return this.quizService.create(createQuizDto);
@@ -94,23 +98,9 @@ export class QuizController {
     return quiz;
   }
 
-  @Get(":id/image")
-  async displayQuizImg(
-    @Param("id") id: string,
-    // @Res({ passthrough: true }) res: Response
-  ) {
-    const quiz = await this.quizService.findOne(id);
-    // const stream = createReadStream(join(process.cwd(), quiz.content.img));
-    // res.set({
-    // "Content-Disposition": `inline; filename="${quiz.content.img}"`,
-    // "Content-Type": "image/jpeg ",
-    // });
-    // stream.pipe(res);
-    // return new StreamableFile(stream);
-    return quiz.content.img;
-  }
   @ApiCreatedResponse(QuizXXX.successUpdateContent)
   @Patch(":id")
+  @UsePipes(new ValidationPipe)
   updateQuizContent(
     @Param("id") id: string,
     @Body() updateQuizDto: UpdateQuizContentDto,

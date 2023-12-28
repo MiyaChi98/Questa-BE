@@ -1,7 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty } from "class-validator";
 
 export class UpdateQuizContentDto {
   @ApiProperty()
+  @IsNotEmpty()
   question: string;
   @ApiProperty()
   img: string;
@@ -14,5 +16,6 @@ export class UpdateQuizContentDto {
   @ApiProperty()
   D: string;
   @ApiProperty()
+  @IsNotEmpty()
   answer: string;
 }

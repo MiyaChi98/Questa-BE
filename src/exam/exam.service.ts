@@ -17,14 +17,8 @@ export class ExamService {
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: string, courseId: string) {
-    console.log("userID", userID);
-    console.log("courseId", courseId);
     const teacher = await this.userService.findOnebyID(userID);
     const course = await this.courseService.findOnebyID(courseId);
-    console.log("Compare", {
-      first: course.teacherId,
-      second: teacher._id,
-    });
     if (!teacher || !course || course.teacherId != teacher._id?.toString())
       throw new BadRequestException("Indentify failed");
     const info = {
@@ -75,16 +69,16 @@ export class ExamService {
     return examInfo;
   }
 
-  async update(id: number, updateExamDto: UpdateExamDTO) {
-    const updateExam = await this.ExamModel.findOne({ examId: id });
+  async update(id: string, updateExamDto: UpdateExamDTO) {
+    const updateExam = await this.ExamModel.findOne({ _id: id });
     if (!updateExam)
       throw new BadRequestException("There is no exam like that!");
     await updateExam.updateOne({
       ...updateExamDto,
     });
-    return updateExam;
+    return await this.findOne(id);
   }
-  async delete(id: number) {
+  async delete(id: string) {
     return this.ExamModel.deleteOne({ examId: id });
   }
 }

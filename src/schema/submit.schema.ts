@@ -1,16 +1,12 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-enum multiChoise {
-  A,
-  B,
-  C,
-  D,
-}
+import { MultiChoise } from "src/constant/multichoise";
+
 @Schema({ timestamps: true })
 export class Answer {
   @Prop()
   quizId: string;
   @Prop()
-  answer: multiChoise;
+  answer: MultiChoise;
 }
 
 @Schema({ timestamps: true })

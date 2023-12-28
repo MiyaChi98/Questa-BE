@@ -5,6 +5,7 @@ import { Submit } from "src/schema/submit.schema";
 import { Model } from "mongoose";
 import { ExamService } from "src/exam/exam.service";
 import { QuizService } from "src/quiz/quiz.service";
+import { Role } from "src/constant/roleEnum";
 
 @Injectable()
 export class SubmitService {
@@ -43,4 +44,27 @@ export class SubmitService {
     });
     return createdSubmit;
   }
+  async getOne(id: string, userId: string, userZone:Role) {
+    const submit = await this.SubmitModel.findOne({_id: id})
+    if(userZone.includes("student")){
+      if(submit.studentId!=userId){
+        throw new BadRequestException(`You can't see this test`)
+      }}
+      const allQuiz = []
+      for(const submitQuiz of submit.submitAnswer.array){
+        const quizDetail = await this.quizService.findOne(submitQuiz.quizId)
+        allQuiz.push({
+          ...quizDetail,
+        studentAnswer: submitQuiz.answer
+        }
+        )}
+      const result = {
+        examId: submit.examId,
+        studentId: submit.studentId,
+        studentAnswer: allQuiz
+      }
+      return result
+
+        
+    }
 }

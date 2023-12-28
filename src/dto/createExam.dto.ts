@@ -12,9 +12,9 @@ export class CreateExamDTO {
   @IsNumber()
   total_time: number;
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   courseId: string;
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   teacherId: string;
 }

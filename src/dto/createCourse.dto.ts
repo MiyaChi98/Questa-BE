@@ -9,6 +9,6 @@ export class CreateCourseDto {
   @IsString()
   courseDescription: string;
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   teacherId: string;
 }

@@ -36,7 +36,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get("/all")
   @ApiOkResponse(UserXXX.successFindAll)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getAllUser(@Req() req: Request) {
     const user = await this.userService.findAll();
     return user;

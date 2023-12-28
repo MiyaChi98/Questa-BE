@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { MultiChoise } from "src/constant/multichoise";
 
 @Schema()
 export class Content {
@@ -15,7 +16,7 @@ export class Content {
   @Prop()
   D: string;
   @Prop()
-  answer: string;
+  answer: MultiChoise;
 }
 
 @Schema({ timestamps: true })

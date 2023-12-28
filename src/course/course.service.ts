@@ -66,10 +66,12 @@ export class CourseService {
       throw new BadRequestException("There is no course like that!");
     await updateCourse.updateOne({
       ...updateCourseDto,
-    });
-    return updateCourse;
+    })
+    return await this.findOne(id)
   }
   async delete(id: string) {
-    return this.CourseModel.deleteOne({ _id: id });
+    await this.CourseModel.deleteOne({ _id: id }).then(
+       
+    ).catch();
   }
 }

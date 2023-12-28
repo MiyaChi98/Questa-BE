@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from "@nestjs/common";
 import { CourseService } from "./course.service";
 import { CreateCourseDto } from "../dto/createCourse.dto";
@@ -32,6 +34,7 @@ export class CourseController {
 
   @Post()
   @ApiCreatedResponse(CourseXXX.successCreatedCourse)
+  @UsePipes(new ValidationPipe)
   async create(@Body() createCourseDto: CreateCourseDto) {
     return await this.courseService.create(createCourseDto);
   }
@@ -50,6 +53,7 @@ export class CourseController {
 
   @Patch(":id")
   @ApiOkResponse(CourseXXX.successUpdate)
+  @UsePipes(new ValidationPipe)
   async update(
     @Param("id") id: string,
     @Body() updateCourseDto: UpdateCourseDto,

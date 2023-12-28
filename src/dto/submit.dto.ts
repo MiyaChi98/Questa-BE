@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsNumber, IsString } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsBoolean, IsNumber, IsString } from "class-validator";
 export class Answer {
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   quizId: string;
   @ApiProperty()
   @IsString()
@@ -13,15 +13,16 @@ export class Answer {
 }
 export class AnswerArray {
   @ApiProperty({
-    isArray: true,
     type: Answer,
   })
+  @IsArray()
+@ArrayNotEmpty()
   array: Answer[];
 }
 
 export class SubmitDto {
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   examId: string;
   @ApiProperty()
   submitAnswer: AnswerArray;

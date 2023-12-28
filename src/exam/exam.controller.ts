@@ -7,6 +7,8 @@ import {
   UseGuards,
   Patch,
   Delete,
+  ValidationPipe,
+  UsePipes,
 } from "@nestjs/common";
 import { ExamService } from "./exam.service";
 import { CreateExamDTO } from "src/dto/createExam.dto";
@@ -32,6 +34,7 @@ export class ExamController {
 
   @Post()
   @ApiCreatedResponse(ExamXXX.successCreatedExam)
+  @UsePipes(new ValidationPipe)
   create(@Body() createExamDto: CreateExamDTO) {
     return this.examService.create(createExamDto);
   }
@@ -48,16 +51,17 @@ export class ExamController {
   }
   @Patch(":id")
   @ApiOkResponse(ExamXXX.successUpdate)
+  @UsePipes(new ValidationPipe)
   async update(
     @Param("id") id: string,
     @Body() updateCourseDto: UpdateExamDTO,
   ) {
-    return await this.examService.update(+id, updateCourseDto);
+    return await this.examService.update(id, updateCourseDto);
   }
 
   @Delete(":id")
   @ApiOkResponse(ExamXXX.successDelete)
   async remove(@Param("id") id: string) {
-    return await this.examService.delete(+id);
+    return await this.examService.delete(id);
   }
 }

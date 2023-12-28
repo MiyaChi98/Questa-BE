@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Req } from "@nestjs/common";
+import { Controller, Post, Body, UseGuards, Req, Get, UsePipes, ValidationPipe, Param } from "@nestjs/common";
 import { SubmitService } from "./submit.service";
 import { SubmitDto } from "../dto/submit.dto";
 // import { UpdateSubmitDto } from './dto/submit.dto';
@@ -10,7 +10,9 @@ import { ATGuard } from "src/guard/accessToken.guards";
 import { SubmitXXX } from "./constant/SubmitXXX";
 import { Request } from "express";
 @ApiTags("Submit")
-@HasRoles(Role.STUDENT, Role.ADMIN)
+@HasRoles(Role.STUDENT
+  // , Role.ADMIN,Role.TEACHER
+  )
 @UseGuards(ATGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller("submit")
@@ -19,7 +21,12 @@ export class SubmitController {
 
   @Post()
   @ApiCreatedResponse(SubmitXXX.successSubmit)
+  @UsePipes(new ValidationPipe)
   create(@Body() createSubmitDto: SubmitDto, @Req() req: Request) {
     return this.submitService.create(createSubmitDto, req["user"].sub);
+  }
+  @Get(":id")
+  getSubmit(@Param("id") id : string, @Req() req: Request){
+    return this.submitService.getOne(id,req["user"]?.sub,req["user"]?.zone)
   }
 }
