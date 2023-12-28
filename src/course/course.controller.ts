@@ -24,6 +24,7 @@ import { HasRoles } from "src/decorators/has_role.decorator";
 import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { CourseXXX } from "./constant/CourseXXX";
+import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
 @ApiTags("Course")
 @HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -47,7 +48,7 @@ export class CourseController {
 
   @Get(":id")
   @ApiOkResponse(CourseXXX.successFindbyId)
-  async findOne(@Param("id") id: string) {
+  async findOne(@Param("id", new IdValidationPipe()) id: string) {
     return await this.courseService.findOne(id);
   }
 
@@ -55,15 +56,15 @@ export class CourseController {
   @ApiOkResponse(CourseXXX.successUpdate)
   @UsePipes(new ValidationPipe())
   async update(
-    @Param("id") id: string,
-    @Body() updateCourseDto: UpdateCourseDto,
+    @Param("id", new IdValidationPipe()) id: string,
+    @Body() updateCourseDto: UpdateCourseDto
   ) {
     return await this.courseService.update(id, updateCourseDto);
   }
 
   @Delete(":id")
   @ApiOkResponse(CourseXXX.successDelete)
-  async remove(@Param("id") id: string) {
+  async remove(@Param("id", new IdValidationPipe()) id: string) {
     return await this.courseService.delete(id);
   }
 }

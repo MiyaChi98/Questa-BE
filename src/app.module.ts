@@ -12,9 +12,14 @@ import { ServeStaticModule } from "@nestjs/serve-static/dist/serve-static.module
 import { join } from "path";
 import { ConfigModule } from "@nestjs/config";
 import { SubmitModule } from "./submit/submit.module";
+import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
+import { APP_INTERCEPTOR } from "@nestjs/core";
 
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+    }),
     ConfigModule.forRoot({
       envFilePath: ".env",
       isGlobal: true,
@@ -32,6 +37,12 @@ import { SubmitModule } from "./submit/submit.module";
     SubmitModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
 })
 export class AppModule {}

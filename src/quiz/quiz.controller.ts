@@ -34,6 +34,7 @@ import { HasRoles } from "src/decorators/has_role.decorator";
 import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { QuizXXX } from "./constant/QuizXXX";
+import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
 @ApiTags("Quiz")
 @HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -57,17 +58,17 @@ export class QuizController {
       storage: diskStorage({
         destination: "./uploads",
       }),
-    }),
+    })
   )
   async uploadQuizContent(
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
-    @Param("id") id: string,
+    @Param("id", new IdValidationPipe()) id: string
   ) {
     return await this.quizService.createUsingUploadFile(
       req["user"]?.sub,
       id,
-      file,
+      file
     );
   }
 
@@ -86,14 +87,14 @@ export class QuizController {
           cb(null, `${filename}${extension}`);
         },
       }),
-    }),
+    })
   )
   async uploadQuizImage(@UploadedFile() file: Express.Multer.File) {
     return this.quizService.uploadImage(file.filename);
   }
   @ApiOkResponse(QuizXXX.successFindOne)
   @Get("/:id")
-  async findOneQuizContent(@Param("id") id: string) {
+  async findOneQuizContent(@Param("id", new IdValidationPipe()) id: string) {
     const quiz = await this.quizService.findOne(id);
     return quiz;
   }
@@ -102,14 +103,14 @@ export class QuizController {
   @Patch(":id")
   @UsePipes(new ValidationPipe())
   updateQuizContent(
-    @Param("id") id: string,
-    @Body() updateQuizDto: UpdateQuizContentDto,
+    @Param("id", new IdValidationPipe()) id: string,
+    @Body() updateQuizDto: UpdateQuizContentDto
   ) {
     return this.quizService.updateQuizContent(id, updateQuizDto);
   }
   @ApiOkResponse(QuizXXX.successDelete)
   @Delete(":id")
-  remove(@Param("id") id: string) {
+  remove(@Param("id", new IdValidationPipe()) id: string) {
     return this.quizService.remove(id);
   }
 }

@@ -4,6 +4,7 @@ import { Model } from "mongoose";
 import { User } from "src/schema/user.schema";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import { UpdateUserDto } from "src/dto/updateUser.dto";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
@@ -24,7 +25,7 @@ export class UserService {
         name: 1,
         email: 1,
         phone: 1,
-      },
+      }
     );
   }
   //find all teacher
@@ -42,7 +43,7 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
-      },
+      }
     );
   }
   // create user
@@ -63,7 +64,7 @@ export class UserService {
   }
   async updatePassword(email: string, temporaryPassword: string) {
     return this.UserModel.findOne({ email: email }).updateOne({
-      password: temporaryPassword,
+      password: bcrypt.hashSync(temporaryPassword, 10),
     });
   }
   async delete(id: string) {

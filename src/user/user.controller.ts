@@ -25,6 +25,7 @@ import { HasRoles } from "src/decorators/has_role.decorator";
 import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { UserXXX } from "./constant/UserXXX";
+import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
 @ApiTags("User")
 @HasRoles(Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -45,7 +46,7 @@ export class UserController {
   // })
   @Get(":id")
   @ApiOkResponse(UserXXX.successFindbyId)
-  async getUserbyId(@Param("id") id: string) {
+  async getUserbyId(@Param("id", new IdValidationPipe()) id: string) {
     const user = await this.userService.findOnebyID(id);
     if (!user) {
       throw new NotFoundException("Cant find user by the id: " + id);
@@ -74,19 +75,19 @@ export class UserController {
   @ApiCreatedResponse(UserXXX.successUpdate)
   @UsePipes(new ValidationPipe())
   async updateStudentbyId(
-    @Param("id") id: string,
-    @Body() userNewDetails: UpdateUserDto,
+    @Param("id", new IdValidationPipe()) id: string,
+    @Body() userNewDetails: UpdateUserDto
   ) {
     const updateUser = await this.userService.changeStudentDetails(
       id,
-      userNewDetails,
+      userNewDetails
     );
     return updateUser;
   }
   //Delete one by ID
   @Delete(":id")
   @ApiOkResponse(UserXXX.successDelete)
-  async delStudentbyId(@Param("id") id: string) {
+  async delStudentbyId(@Param("id", new IdValidationPipe()) id: string) {
     const student = await this.userService.delete(id);
     return student;
   }

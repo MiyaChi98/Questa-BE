@@ -24,6 +24,7 @@ import { HasRoles } from "src/decorators/has_role.decorator";
 import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { ExamXXX } from "./constant/ExamXXX";
+import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
 @ApiTags("Exam")
 @HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -41,27 +42,27 @@ export class ExamController {
 
   @Get(":id")
   @ApiOkResponse(ExamXXX.successFindbyId)
-  findOne(@Param("id") id: string) {
+  findOne(@Param("id", new IdValidationPipe()) id: string) {
     return this.examService.findOne(id);
   }
   @Get("/all/:id")
   @ApiOkResponse(ExamXXX.successFindAllExamInCourse)
-  findAllinCourse(@Param("id") id: number) {
+  findAllinCourse(@Param("id", new IdValidationPipe()) id: number) {
     return this.examService.findAllExamInCourse(+id);
   }
   @Patch(":id")
   @ApiOkResponse(ExamXXX.successUpdate)
   @UsePipes(new ValidationPipe())
   async update(
-    @Param("id") id: string,
-    @Body() updateCourseDto: UpdateExamDTO,
+    @Param("id", new IdValidationPipe()) id: string,
+    @Body() updateCourseDto: UpdateExamDTO
   ) {
     return await this.examService.update(id, updateCourseDto);
   }
 
   @Delete(":id")
   @ApiOkResponse(ExamXXX.successDelete)
-  async remove(@Param("id") id: string) {
+  async remove(@Param("id", new IdValidationPipe()) id: string) {
     return await this.examService.delete(id);
   }
 }
