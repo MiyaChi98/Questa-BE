@@ -27,7 +27,7 @@ export class UserService {
         name: 1,
         email: 1,
         phone: 1,
-      }
+      },
     );
   }
   //find all teacher
@@ -45,7 +45,7 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
-      }
+      },
     );
   }
   // create user

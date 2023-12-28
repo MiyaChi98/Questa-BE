@@ -9,7 +9,7 @@ export class EmailService {
   constructor(
     private readonly mailerService: MailerService,
     private readonly userService: UserService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async OTPEmail(userEmail: string) {

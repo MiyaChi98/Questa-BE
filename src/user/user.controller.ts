@@ -10,7 +10,6 @@ import {
   ValidationPipe,
   UsePipes,
   UseGuards,
-  Req,
   Query,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
@@ -28,7 +27,6 @@ import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { UserXXX } from "./constant/UserXXX";
 import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
-import { Request } from "express";
 import { PaginationDto } from "src/dto/pagination.dto";
 @ApiTags("User")
 @HasRoles(Role.ADMIN)
