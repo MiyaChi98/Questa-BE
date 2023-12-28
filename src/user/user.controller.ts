@@ -9,11 +9,9 @@ import {
   NotFoundException,
   ValidationPipe,
   UsePipes,
-  Req,
   UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { Request } from "express";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import { UpdateUserDto } from "src/dto/updateUser.dto";
 import {
@@ -36,7 +34,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get("/all")
   @ApiOkResponse(UserXXX.successFindAll)
-  async getAllUser(@Req() req: Request) {
+  async getAllUser() {
     const user = await this.userService.findAll();
     return user;
   }

@@ -43,7 +43,7 @@ export class QuizController {
   constructor(private readonly quizService: QuizService) {}
   // Create one or many document
   @Post("")
-  @UsePipes(new ValidationPipe)
+  @UsePipes(new ValidationPipe())
   @ApiCreatedResponse(QuizXXX.successCreatedQuiz)
   create(@Body() createQuizDto: CreateQuizDtoArray) {
     return this.quizService.create(createQuizDto);
@@ -100,7 +100,7 @@ export class QuizController {
 
   @ApiCreatedResponse(QuizXXX.successUpdateContent)
   @Patch(":id")
-  @UsePipes(new ValidationPipe)
+  @UsePipes(new ValidationPipe())
   updateQuizContent(
     @Param("id") id: string,
     @Body() updateQuizDto: UpdateQuizContentDto,

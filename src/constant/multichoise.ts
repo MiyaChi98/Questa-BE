@@ -1,7 +1,6 @@
-export enum MultiChoise
-{
-    A,
-    B,
-    C,
-    D,
-  }
+export enum MultiChoise {
+  A,
+  B,
+  C,
+  D,
+}

@@ -18,7 +18,7 @@ import { Submit, SubmitSchema } from "src/schema/submit.schema";
     JwtModule,
     ExamModule,
     QuizModule,
-    ],
+  ],
   controllers: [SubmitController],
   providers: [SubmitService],
 })

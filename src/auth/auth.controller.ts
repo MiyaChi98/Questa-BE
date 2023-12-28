@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Req, UseGuards, ValidationPipe, UsePipes } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  ValidationPipe,
+  UsePipes,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import { AuthDto } from "src/dto/auth.dto";
@@ -21,7 +30,7 @@ export class AuthController {
   //Input: A DTO that resembles User collection in DB
   //Output: A new user
   @Post("register")
-  @UsePipes(new ValidationPipe)
+  @UsePipes(new ValidationPipe())
   @ApiCreatedResponse(AuthXXX.successCreateUser)
   async register(@Body() createUserDTO: CreateUserDto) {
     return await this.authService.signUp(createUserDTO);
@@ -31,7 +40,7 @@ export class AuthController {
   //Output: tokens
   @ApiExtraModels(AuthDto)
   @ApiOkResponse(AuthXXX.successAuth)
-  @UsePipes(new ValidationPipe)
+  @UsePipes(new ValidationPipe())
   @Post("login")
   async login(@Body() authDTO: AuthDto) {
     return await this.authService.signIn(authDTO);

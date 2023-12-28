@@ -81,18 +81,17 @@ export class QuizService {
 
   async findOne(id: string) {
     const obj = await this.QuizModel.findOne({ _id: id })
-    .select("quizId")
-    .select("content")
-    const result= {
+      .select("quizId")
+      .select("content");
+    const result = {
       quizId: obj._id.toString(),
       question: obj.content.question,
       A: obj.content.A,
       B: obj.content.B,
       C: obj.content.C,
       D: obj.content.D,
-    }
-    return result
-    
+    };
+    return result;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

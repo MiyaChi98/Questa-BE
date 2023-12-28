@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ArrayNotEmpty, IsArray, IsBoolean, IsNumber, IsString } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsBoolean, IsString } from "class-validator";
 export class Answer {
   @ApiProperty()
   @IsString()
@@ -16,7 +16,7 @@ export class AnswerArray {
     type: Answer,
   })
   @IsArray()
-@ArrayNotEmpty()
+  @ArrayNotEmpty()
   array: Answer[];
 }
 

@@ -34,7 +34,7 @@ export class ExamController {
 
   @Post()
   @ApiCreatedResponse(ExamXXX.successCreatedExam)
-  @UsePipes(new ValidationPipe)
+  @UsePipes(new ValidationPipe())
   create(@Body() createExamDto: CreateExamDTO) {
     return this.examService.create(createExamDto);
   }
@@ -51,7 +51,7 @@ export class ExamController {
   }
   @Patch(":id")
   @ApiOkResponse(ExamXXX.successUpdate)
-  @UsePipes(new ValidationPipe)
+  @UsePipes(new ValidationPipe())
   async update(
     @Param("id") id: string,
     @Body() updateCourseDto: UpdateExamDTO,

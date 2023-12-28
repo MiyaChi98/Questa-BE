@@ -34,7 +34,7 @@ export class CourseController {
 
   @Post()
   @ApiCreatedResponse(CourseXXX.successCreatedCourse)
-  @UsePipes(new ValidationPipe)
+  @UsePipes(new ValidationPipe())
   async create(@Body() createCourseDto: CreateCourseDto) {
     return await this.courseService.create(createCourseDto);
   }
@@ -53,7 +53,7 @@ export class CourseController {
 
   @Patch(":id")
   @ApiOkResponse(CourseXXX.successUpdate)
-  @UsePipes(new ValidationPipe)
+  @UsePipes(new ValidationPipe())
   async update(
     @Param("id") id: string,
     @Body() updateCourseDto: UpdateCourseDto,
