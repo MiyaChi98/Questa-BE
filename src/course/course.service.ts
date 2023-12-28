@@ -3,7 +3,7 @@ import { CreateCourseDto } from "../dto/createCourse.dto";
 import { UpdateCourseDto } from "../dto/updateCourse.dto";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Course, CourseDocument } from "src/schema/course.schema";
+import { Course } from "src/schema/course.schema";
 import { UserService } from "src/user/user.service";
 
 @Injectable()
@@ -13,15 +13,19 @@ export class CourseService {
     private readonly userService: UserService,
   ) {}
   // Create course
-  async create(createCourseDto: CreateCourseDto): Promise<CourseDocument> {
+  async create(createCourseDto: CreateCourseDto) {
     const courseTeacher = await this.userService.findOnebyID(
       createCourseDto.teacherId,
     );
     if (!courseTeacher)
       throw new BadRequestException("There is no teacher like that!");
-    const createdUser = new this.CourseModel(createCourseDto).save();
+    const createdUser = await this.CourseModel.create(createCourseDto);
     return createdUser;
   }
+  async findOnebyID(courseId: string) {
+    return this.CourseModel.findOne({ _id: courseId });
+  }
+
   // Find All Course with Teacher info
   async findAll() {
     const allCourse = await this.CourseModel.find();
@@ -31,53 +35,41 @@ export class CourseService {
         course.teacherId,
       );
       result.push({
-        courseId: course.courseId,
         courseName: course.courseName,
         courseDescription: course.courseDescription,
-        teacher: {
-          teacherID: courseTeacher.userId,
-          teacherName: courseTeacher.name,
-          teacherEmail: courseTeacher.email,
-          teacherPhone: courseTeacher.phone,
-        },
+        teacher: courseTeacher,
       });
     }
     return result;
   }
   // Find one Course with Teacher info
-  async findOne(id: number) {
-    const course = await this.CourseModel.findOne({ courseId: id });
+  async findOne(id: string) {
+    const course = await this.CourseModel.findOne({ _id: id });
     const courseTeacher = await this.userService.findOnebyID(course.teacherId);
     if (!courseTeacher)
       throw new BadRequestException("There is no teacher like that!");
     const result = {
-      courseId: course.courseId,
       courseName: course.courseName,
       courseDescription: course.courseDescription,
-      teacher: {
-        teacherID: courseTeacher.userId,
-        teacherName: courseTeacher.name,
-        teacherEmail: courseTeacher.email,
-        teacherPhone: courseTeacher.phone,
-      },
+      teacher: courseTeacher,
     };
     return result;
   }
   // Find Course with name
-  findName(name: string): Promise<CourseDocument> {
+  findName(name: string) {
     return this.CourseModel.findOne({ courseName: name });
   }
 
-  async update(id: number, updateCourseDto: UpdateCourseDto) {
-    const updateCourse = await this.CourseModel.findOne({ courseId: id });
+  async update(id: string, updateCourseDto: UpdateCourseDto) {
+    const updateCourse = await this.CourseModel.findOne({ _id: id });
     if (!updateCourse)
       throw new BadRequestException("There is no course like that!");
     await updateCourse.updateOne({
       ...updateCourseDto,
     });
-    return updateCourse;
+    return await this.findOne(id);
   }
-  async delete(id: number) {
-    return this.CourseModel.deleteOne({ courseId: id });
+  async delete(id: string) {
+    await this.CourseModel.deleteOne({ _id: id }).then().catch();
   }
 }
