@@ -10,8 +10,10 @@ import * as bcrypt from "bcrypt";
 export class UserService {
   constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
   // find all user
-  async findAll() {
-    return this.UserModel.find();
+  async findAll(page: number, limit: number) {
+    return this.UserModel.find()
+      .skip(page * limit)
+      .limit(limit);
   }
   // find one user with that email
   async findOne(userEmail: string) {
@@ -25,7 +27,7 @@ export class UserService {
         name: 1,
         email: 1,
         phone: 1,
-      },
+      }
     );
   }
   //find all teacher
@@ -43,7 +45,7 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
-      },
+      }
     );
   }
   // create user

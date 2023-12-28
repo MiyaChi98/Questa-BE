@@ -1,13 +1,23 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ArrayNotEmpty, IsArray, IsBoolean, IsString } from "class-validator";
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsString,
+} from "class-validator";
+import { MultiChoise } from "src/constant/multichoise";
 export class Answer {
-  @ApiProperty()
+  @ApiProperty({ example: "20020368@vnu.edu.vn" })
+  @IsNotEmpty()
   @IsString()
   quizId: string;
-  @ApiProperty()
+  @ApiProperty({ example: "20020368@vnu.edu.vn" })
+  @IsNotEmpty()
   @IsString()
-  answer: string;
-  @ApiProperty()
+  answer: MultiChoise;
+  @ApiProperty({ example: "20020368@vnu.edu.vn" })
+  @IsNotEmpty()
   @IsBoolean()
   match: boolean;
 }
@@ -21,9 +31,11 @@ export class AnswerArray {
 }
 
 export class SubmitDto {
-  @ApiProperty()
+  @ApiProperty({ example: "20020368@vnu.edu.vn" })
   @IsString()
+  @IsNotEmpty()
   examId: string;
   @ApiProperty()
+  @IsNotEmpty()
   submitAnswer: AnswerArray;
 }

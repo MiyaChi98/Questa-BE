@@ -13,7 +13,7 @@ export class ExamService {
     private readonly userService: UserService,
     private readonly courseService: CourseService,
     private readonly quizService: QuizService,
-    @InjectModel(Exam.name) private ExamModel: Model<Exam>,
+    @InjectModel(Exam.name) private ExamModel: Model<Exam>
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: string, courseId: string) {
@@ -40,7 +40,7 @@ export class ExamService {
     return createdExam;
   }
 
-  async findAllExamInCourse(courseId: number) {
+  async findAllExamInCourse(courseId: string) {
     // const info = await this.examIdentify(userID, courseId);
     const allExam = await this.ExamModel.find({ courseId: courseId });
     const result = [];

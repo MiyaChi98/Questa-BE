@@ -9,7 +9,7 @@ export class EmailService {
   constructor(
     private readonly mailerService: MailerService,
     private readonly userService: UserService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   async OTPEmail(userEmail: string) {
@@ -43,7 +43,7 @@ export class EmailService {
 
   async TemporaryPassword(email: string) {
     const temporaryPassword = this.generateRandomString(10);
-    await this.userService.updatePassword(email, temporaryPassword);
+    await this.userService.updatePassword(email, "Morminiproject98@");
     await this.mailerService.sendMail({
       to: email,
       from: "chintt.hrt@gmail.com",

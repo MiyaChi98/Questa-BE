@@ -10,6 +10,8 @@ import {
   ValidationPipe,
   UsePipes,
   UseGuards,
+  Req,
+  Query,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "src/dto/createUser.dto";
@@ -26,6 +28,8 @@ import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { UserXXX } from "./constant/UserXXX";
 import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
+import { Request } from "express";
+import { PaginationDto } from "src/dto/pagination.dto";
 @ApiTags("User")
 @HasRoles(Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -35,8 +39,10 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get("/all")
   @ApiOkResponse(UserXXX.successFindAll)
-  async getAllUser() {
-    const user = await this.userService.findAll();
+  async getAllUser(@Query() pagination: PaginationDto) {
+    const page = parseInt(pagination.page as any) || 0;
+    const limit = parseInt(pagination.limit as any) || 5;
+    const user = await this.userService.findAll(page, limit);
     return user;
   }
   //Find by id
@@ -76,11 +82,11 @@ export class UserController {
   @UsePipes(new ValidationPipe())
   async updateStudentbyId(
     @Param("id", new IdValidationPipe()) id: string,
-    @Body() userNewDetails: UpdateUserDto,
+    @Body() userNewDetails: UpdateUserDto
   ) {
     const updateUser = await this.userService.changeStudentDetails(
       id,
-      userNewDetails,
+      userNewDetails
     );
     return updateUser;
   }

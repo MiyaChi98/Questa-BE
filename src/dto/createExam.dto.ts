@@ -1,20 +1,25 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateExamDTO {
-  @ApiProperty()
+  @ApiProperty({ example: "New exam tilte" })
   @IsString()
+  @IsNotEmpty()
   tilte: string;
-  @ApiProperty()
+  @ApiProperty({ example: 10 })
   @IsNumber()
+  @IsNotEmpty()
   total_mark: number;
-  @ApiProperty()
+  @ApiProperty({ example: 10 })
   @IsNumber()
+  @IsNotEmpty()
   total_time: number;
-  @ApiProperty()
+  @ApiProperty({ example: "658bda91f75c63cbc69fbc0f" })
   @IsString()
+  @IsNotEmpty()
   courseId: string;
-  @ApiProperty()
+  @ApiProperty({ example: "6555d99203662be4325a2838" })
   @IsString()
+  @IsNotEmpty()
   teacherId: string;
 }

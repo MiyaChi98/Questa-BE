@@ -47,15 +47,15 @@ export class ExamController {
   }
   @Get("/all/:id")
   @ApiOkResponse(ExamXXX.successFindAllExamInCourse)
-  findAllinCourse(@Param("id", new IdValidationPipe()) id: number) {
-    return this.examService.findAllExamInCourse(+id);
+  findAllinCourse(@Param("id", new IdValidationPipe()) id: string) {
+    return this.examService.findAllExamInCourse(id);
   }
   @Patch(":id")
   @ApiOkResponse(ExamXXX.successUpdate)
   @UsePipes(new ValidationPipe())
   async update(
     @Param("id", new IdValidationPipe()) id: string,
-    @Body() updateCourseDto: UpdateExamDTO,
+    @Body() updateCourseDto: UpdateExamDTO
   ) {
     return await this.examService.update(id, updateCourseDto);
   }

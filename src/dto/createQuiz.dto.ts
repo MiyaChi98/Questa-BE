@@ -1,34 +1,49 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { MultiChoise } from "src/constant/multichoise";
 
 export class Content {
-  @ApiProperty()
+  @ApiProperty({
+    example:
+      "http://localhost:8000/image/standingcat8e7ed211-7133-483c-8f42-a5a406e155c4.jpg",
+  })
   @IsString()
+  @IsOptional()
   img: string;
-  @ApiProperty()
+  @ApiProperty({
+    example: "According to me , what smell is the most confort smell?",
+  })
   @IsString()
   @IsNotEmpty()
   question: string;
-  @ApiProperty()
+  @ApiProperty({ example: "tuna" })
+  @IsNotEmpty()
   A: string;
-  @ApiProperty()
+  @ApiProperty({ example: "clean laundry" })
+  @IsNotEmpty()
   B: string;
-  @ApiProperty()
+  @ApiProperty({ example: "popcorn" })
+  @IsNotEmpty()
   C: string;
-  @ApiProperty()
+  @ApiProperty({ example: "perfume" })
+  @IsNotEmpty()
   D: string;
-  @ApiProperty()
-  answer: string;
+  @ApiProperty({ example: "B" })
+  @IsNotEmpty()
+  answer: MultiChoise;
 }
 
 export class CreateQuizDto {
   @ApiProperty()
+  @IsNotEmpty()
   content: Content;
-  @ApiProperty()
+  @ApiProperty({ example: "6555d99203662be4325a2838" })
   @IsString()
+  @IsNotEmpty()
   teacherId: string;
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   examId: string;
 }
 
