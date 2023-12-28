@@ -11,9 +11,15 @@ export class UserService {
   constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
   // find all user
   async findAll(page: number, limit: number) {
-    return this.UserModel.find()
+    const allUSer = await this.UserModel.find()
       .skip(page * limit)
       .limit(limit);
+    const numberOfUser = await this.UserModel.countDocuments();
+    return {
+      page: page,
+      numberOfUser: numberOfUser,
+      allUSer,
+    };
   }
   // find one user with that email
   async findOne(userEmail: string) {
@@ -27,7 +33,7 @@ export class UserService {
         name: 1,
         email: 1,
         phone: 1,
-      },
+      }
     );
   }
   //find all teacher
@@ -45,7 +51,7 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
-      },
+      }
     );
   }
   // create user
