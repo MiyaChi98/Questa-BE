@@ -37,7 +37,7 @@ export class CourseController {
   @Post()
   @ApiCreatedResponse(CourseXXX.successCreatedCourse)
   @ApiOperation({
-    summary: 'Use to create course'
+    summary: "Use to create course",
   })
   @UsePipes(new ValidationPipe())
   async create(@Body() createCourseDto: CreateCourseDto) {
@@ -46,7 +46,7 @@ export class CourseController {
 
   @Get()
   @ApiOperation({
-    summary: 'Use to find all course'
+    summary: "Use to find all course",
   })
   @ApiOkResponse(CourseXXX.successFindAllCourse)
   async findAll() {
@@ -55,7 +55,7 @@ export class CourseController {
 
   @Get(":id")
   @ApiOperation({
-    summary: 'Use to find one course with teacher info'
+    summary: "Use to find one course with teacher info",
   })
   @ApiOkResponse(CourseXXX.successFindbyId)
   async findOne(@Param("id", new IdValidationPipe()) id: string) {
@@ -64,7 +64,7 @@ export class CourseController {
 
   @Patch(":id")
   @ApiOperation({
-    summary: 'Use to update course'
+    summary: "Use to update course",
   })
   @ApiOkResponse(CourseXXX.successUpdate)
   @UsePipes(new ValidationPipe())
@@ -77,7 +77,7 @@ export class CourseController {
 
   @Delete(":id")
   @ApiOperation({
-    summary: 'Use to delete course'
+    summary: "Use to delete course",
   })
   @ApiOkResponse(CourseXXX.successDelete)
   async remove(@Param("id", new IdValidationPipe()) id: string) {

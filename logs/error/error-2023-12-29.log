@@ -131,3 +131,4 @@
     at ExceptionsHandler.next (C:\Users\ntukp\.vscode\MMP\node_modules\@nestjs\core\exceptions\exceptions-handler.js:14:18)
     at C:\Users\ntukp\.vscode\MMP\node_modules\@nestjs\core\router\router-proxy.js:13:35
     at processTicksAndRejections (node:internal/process/task_queues:96:5)
+[2023-12-29 08:29:49] "GET /v1/user/all?page=1&limit=10" 401 Unauthorized

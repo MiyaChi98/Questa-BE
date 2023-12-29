@@ -1,12 +1,12 @@
-import { ResponseSuccess } from '../types/response-data.type';
-import { SuccessLogsService } from '../logs/services/success-logs.service';
+import { ResponseSuccess } from "../types/response-data.type";
+import { SuccessLogsService } from "../logs/services/success-logs.service";
 import {
   CallHandler,
   ExecutionContext,
   Injectable,
   NestInterceptor,
-} from '@nestjs/common';
-import { map } from 'rxjs';
+} from "@nestjs/common";
+import { map } from "rxjs";
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T> {
@@ -26,7 +26,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T> {
         }
 
         return {
-          type: 'success',
+          type: "success",
           statusCode,
           data,
         };

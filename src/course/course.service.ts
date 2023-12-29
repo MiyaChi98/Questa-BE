@@ -70,7 +70,7 @@ export class CourseService {
     return await this.findOne(id);
   }
   async delete(id: string) {
-    await this.CourseModel.deleteOne({ _id: id })
+    await this.CourseModel.deleteOne({ _id: id });
     return "Delete course success";
   }
 }

@@ -1,6 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsDefined, IsNotEmpty, IsNotEmptyObject, IsOptional, IsString, ValidateNested } from "class-validator";
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from "class-validator";
 import { MultiChoise } from "src/constant/multichoise";
 
 export class Content {
@@ -57,8 +62,8 @@ export class CreateQuizDtoArray {
     isArray: true,
     type: CreateQuizDto,
   })
- @IsNotEmpty()
- @ValidateNested({ each: true })
- @Type(() => CreateQuizDto)
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateQuizDto)
   arrayOfObjectsDto: CreateQuizDto[];
 }

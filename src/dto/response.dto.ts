@@ -1,14 +1,11 @@
-import {
-  ResponseError,
-  ResponseSuccess,
-} from '../types/response-data.type';
-import { ApiProperty } from '@nestjs/swagger';
-import { Equals, IsInt, IsPositive, IsString } from 'class-validator';
+import { ResponseError, ResponseSuccess } from "../types/response-data.type";
+import { ApiProperty } from "@nestjs/swagger";
+import { Equals, IsInt, IsPositive, IsString } from "class-validator";
 
 export class ResponseSuccessDto<T> implements ResponseSuccess<T> {
-  @ApiProperty({ default: 'success' })
-  @Equals('success')
-  type: 'success';
+  @ApiProperty({ default: "success" })
+  @Equals("success")
+  type: "success";
 
   @ApiProperty()
   @IsPositive()
@@ -20,9 +17,9 @@ export class ResponseSuccessDto<T> implements ResponseSuccess<T> {
 }
 
 export class ResponseErrorDto implements ResponseError {
-  @ApiProperty({ default: 'error' })
-  @Equals('error')
-  type: 'error';
+  @ApiProperty({ default: "error" })
+  @Equals("error")
+  type: "error";
 
   @ApiProperty()
   @IsPositive()

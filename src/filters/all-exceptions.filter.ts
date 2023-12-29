@@ -1,4 +1,4 @@
-import { ResponseError } from '../types/response-data.type';
+import { ResponseError } from "../types/response-data.type";
 import { ErrorLogsService } from "../logs/services/error-logs.service";
 import {
   ArgumentsHost,
@@ -7,8 +7,8 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+} from "@nestjs/common";
+import { Request, Response } from "express";
 
 @Catch()
 @Injectable()
@@ -28,10 +28,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const errorDetail =
       exception instanceof HttpException
         ? exception.getResponse()
-        : 'Internal Server Error';
+        : "Internal Server Error";
 
     const errorPayload: ResponseError = {
-      type: 'error',
+      type: "error",
       statusCode,
       detail: errorDetail,
       method: request.method,
@@ -42,11 +42,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (!(exception instanceof HttpException)) {
       errorMessage = new Error(exception.toString()).stack;
-    } else if (typeof errorDetail === 'string') {
+    } else if (typeof errorDetail === "string") {
       errorMessage = errorDetail;
     } else if (
-      'message' in errorDetail &&
-      typeof errorDetail.message === 'string'
+      "message" in errorDetail &&
+      typeof errorDetail.message === "string"
     ) {
       errorMessage = errorDetail?.message;
     }

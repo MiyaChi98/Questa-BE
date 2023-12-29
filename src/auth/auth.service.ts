@@ -6,7 +6,6 @@ import {
 import { UserService } from "src/user/user.service";
 import { JwtService } from "@nestjs/jwt";
 import { Variable } from "src/variable";
-import { CreateUserDto } from "src/dto/createUser.dto";
 import * as bcrypt from "bcrypt";
 import { AuthDto } from "src/dto/auth.dto";
 import { Role } from "src/constant/roleEnum";
@@ -37,7 +36,7 @@ export class AuthService {
     const newUser = await this.userService.create({
       ...createUserDTO,
       password: hash,
-      zone: Role.STUDENT
+      zone: Role.STUDENT,
     });
     return newUser;
   }
@@ -76,12 +75,12 @@ export class AuthService {
   //Output: Delete the refresh token
   async signOut(userId: string) {
     if (userId) await this.userService.signOut(userId);
-    return "Logout success"
+    return "Logout success";
   }
   //Get new access token
   async getnewAccessToken(userId: string, rt: string) {
     const user = await this.userService.findOnebyID(userId);
-    console.log(user,user.refreshToken)
+    console.log(user, user.refreshToken);
     if (!user || !user.refreshToken)
       throw new ForbiddenException("Access Denied");
     if (user.refreshToken === rt) {

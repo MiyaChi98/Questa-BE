@@ -23,7 +23,6 @@ export class Submit {
   studentId: string;
   @Prop({ type: AnswerArray })
   submitAnswer: AnswerArray;
- 
 }
 
 export const SubmitSchema = SchemaFactory.createForClass(Submit);

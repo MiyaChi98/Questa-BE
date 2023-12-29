@@ -38,7 +38,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get("/all")
   @ApiOperation({
-    summary: 'Use to get all user with pagination'
+    summary: "Use to get all user with pagination",
   })
   @ApiOkResponse(UserXXX.successFindAll)
   async getAllUser(@Query() pagination: PaginationDto) {
@@ -54,7 +54,7 @@ export class UserController {
   // })
   @Get(":id")
   @ApiOperation({
-    summary: 'Use to find user by id'
+    summary: "Use to find user by id",
   })
   @ApiOkResponse(UserXXX.successFindbyId)
   async getUserbyId(@Param("id", new IdValidationPipe()) id: string) {
@@ -67,7 +67,7 @@ export class UserController {
 
   @Get("/teacher/all")
   @ApiOperation({
-    summary: 'Use to find all teacher'
+    summary: "Use to find all teacher",
   })
   @ApiOkResponse(UserXXX.successFindAll)
   async getAllTeacher() {
@@ -80,7 +80,7 @@ export class UserController {
   //Crete new one
   @Post()
   @ApiOperation({
-    summary: 'Use to create user'
+    summary: "Use to create user",
   })
   @ApiCreatedResponse(UserXXX.successCreatedUser)
   @UsePipes(new ValidationPipe())
@@ -90,7 +90,7 @@ export class UserController {
   //Update one by ID
   @Patch(":id")
   @ApiOperation({
-    summary: 'Use to update user'
+    summary: "Use to update user",
   })
   @ApiOkResponse(UserXXX.successUpdate)
   @UsePipes(new ValidationPipe())
@@ -107,10 +107,10 @@ export class UserController {
   //Delete one by ID
   @Delete(":id")
   @ApiOperation({
-    summary: 'Use to delete user'
+    summary: "Use to delete user",
   })
   @ApiOkResponse(UserXXX.successDelete)
-  async delStudentbyId(@Param("id", new IdValidationPipe()) id: string) {
+  async delStudent(@Param("id", new IdValidationPipe()) id: string) {
     const student = await this.userService.delete(id);
     return student;
   }

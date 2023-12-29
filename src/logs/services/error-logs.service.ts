@@ -1,24 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { BaseLogsService } from './base-logs.service';
-import { createLogger, format } from 'winston';
-import { join } from 'path';
-import * as DailyRotateFile from 'winston-daily-rotate-file';
-import { format as formatDate } from 'date-fns';
+import { Injectable } from "@nestjs/common";
+import { BaseLogsService } from "./base-logs.service";
+import { createLogger, format } from "winston";
+import { join } from "path";
+import * as DailyRotateFile from "winston-daily-rotate-file";
+import { format as formatDate } from "date-fns";
 
 @Injectable()
 export class ErrorLogsService extends BaseLogsService {
   constructor() {
     super();
-    const logDir = join(process.cwd(), 'logs', 'error');
-    const logFileName = 'error-%DATE%.log';
+    const logDir = join(process.cwd(), "logs", "error");
+    const logFileName = "error-%DATE%.log";
     const { combine, timestamp, printf, errors } = format;
     this.logger = createLogger({
       transports: [
         new DailyRotateFile({
           filename: logFileName,
-          datePattern: 'YYYY-MM-DD',
-          maxSize: '20m',
-          maxFiles: '30d',
+          datePattern: "YYYY-MM-DD",
+          maxSize: "20m",
+          maxFiles: "30d",
           dirname: logDir,
         }),
       ],
@@ -26,7 +26,7 @@ export class ErrorLogsService extends BaseLogsService {
         errors({ stack: true }),
         timestamp(),
         printf((info) => {
-          return `[${formatDate(info.timestamp, 'yyyy-MM-dd HH:mm:ss')}] ${
+          return `[${formatDate(info.timestamp, "yyyy-MM-dd HH:mm:ss")}] ${
             info.message
           }`;
         }),

@@ -21,7 +21,7 @@ export class EmailService {
       await this.mailerService.sendMail({
         to: email,
         from: "chintt.hrt@gmail.com",
-        subject: subject
+        subject: subject,
       });
       await this.cacheManager.del(user.email);
       await this.cacheManager.set(user.email, otp, 60000 * 5);

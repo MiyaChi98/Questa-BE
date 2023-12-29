@@ -36,7 +36,7 @@ export class ExamController {
 
   @Post()
   @ApiOperation({
-    summary: 'Use to create exam'
+    summary: "Use to create exam",
   })
   @ApiCreatedResponse(ExamXXX.successCreatedExam)
   @UsePipes(new ValidationPipe())
@@ -46,7 +46,7 @@ export class ExamController {
 
   @Get(":id")
   @ApiOperation({
-    summary: 'Use to find one exam'
+    summary: "Use to find one exam",
   })
   @ApiOkResponse(ExamXXX.successFindbyId)
   findOne(@Param("id", new IdValidationPipe()) id: string) {
@@ -54,7 +54,7 @@ export class ExamController {
   }
   @Get("/all/:id")
   @ApiOperation({
-    summary: 'Use to find all exam'
+    summary: "Use to find all exam",
   })
   @ApiOkResponse(ExamXXX.successFindAllExamInCourse)
   findAllinCourse(@Param("id", new IdValidationPipe()) id: string) {
@@ -62,7 +62,7 @@ export class ExamController {
   }
   @Patch(":id")
   @ApiOperation({
-    summary: 'Use to update exam'
+    summary: "Use to update exam",
   })
   @ApiOkResponse(ExamXXX.successUpdate)
   @UsePipes(new ValidationPipe())
@@ -75,7 +75,7 @@ export class ExamController {
 
   @Delete(":id")
   @ApiOperation({
-    summary: 'Use to delete exam'
+    summary: "Use to delete exam",
   })
   @ApiOkResponse(ExamXXX.successDelete)
   async remove(@Param("id", new IdValidationPipe()) id: string) {

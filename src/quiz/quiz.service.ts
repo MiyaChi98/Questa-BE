@@ -91,14 +91,14 @@ export class QuizService {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async updateQuizContent(id: string, updateQuizDto: UpdateQuizContentDto) {
-     await this.QuizModel.updateOne({ _id: id }, [
+    await this.QuizModel.updateOne({ _id: id }, [
       { $addFields: { content: updateQuizDto } },
     ]);
-    return this.QuizModel.findOne({_id: id})
+    return this.QuizModel.findOne({ _id: id });
   }
 
   async remove(id: string) {
-     await this.QuizModel.deleteOne({ _id: id });
-     return "Delete quiz success"
+    await this.QuizModel.deleteOne({ _id: id });
+    return "Delete quiz success";
   }
 }

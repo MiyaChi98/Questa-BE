@@ -1,11 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import {
-  ArrayNotEmpty,
-  IsArray,
-  IsBoolean,
-  IsNotEmpty,
-  IsString,
-} from "class-validator";
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString } from "class-validator";
 import { MultiChoise } from "src/constant/multichoise";
 export class Answer {
   @ApiProperty({ example: "" })
@@ -16,11 +10,10 @@ export class Answer {
   @IsNotEmpty()
   @IsString()
   answer: MultiChoise;
- 
 }
 export class AnswerArray {
   @ApiProperty({
-    isArray:true,
+    isArray: true,
     type: Answer,
   })
   @IsArray()

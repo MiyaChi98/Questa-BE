@@ -26,6 +26,7 @@ import {
   ApiConsumes,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiOperation,
 } from "@nestjs/swagger";
 import { UploadFileDto } from "src/dto/uploadImage.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -45,6 +46,9 @@ export class QuizController {
   // Create one or many document
   @Post("")
   @UsePipes(new ValidationPipe())
+  @ApiOperation({
+    summary: "create quiz manualy",
+  })
   @ApiCreatedResponse(QuizXXX.successCreatedQuiz)
   create(@Body() createQuizDto: CreateQuizDtoArray) {
     return this.quizService.create(createQuizDto);

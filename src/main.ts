@@ -3,8 +3,8 @@ import { AppModule } from "./app.module";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { ResponseInterceptor } from "./interceptors/response.interceptor";
 import { AllExceptionsFilter } from "./filters/all-exceptions.filter";
-import { SuccessLogsService } from './logs/services/success-logs.service';
-import { ErrorLogsService } from './logs/services/error-logs.service';
+import { SuccessLogsService } from "./logs/services/success-logs.service";
+import { ErrorLogsService } from "./logs/services/error-logs.service";
 import { VersioningType } from "@nestjs/common";
 
 async function bootstrap() {
@@ -18,7 +18,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(errorLogsService));
   app.enableVersioning({
     type: VersioningType.URI,
-    defaultVersion: '1'
+    defaultVersion: "1",
   });
   const config = new DocumentBuilder()
     .setTitle("API")

@@ -3,7 +3,6 @@ import { EmailService } from "./email.service";
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { sendMail } from "src/dto/sendMail.dto";
 import { sendOTP } from "src/dto/sendOTP.dto";
-import { ExamXXX } from "src/exam/constant/ExamXXX";
 import { EmailXXX } from "./constant/EmailXXX";
 @ApiTags("Email")
 @Controller("mail")
@@ -12,7 +11,7 @@ export class EmailController {
 
   @Post("sendOTP")
   @ApiOperation({
-    summary: 'Use to send OTP to user email (Forget Password)'
+    summary: "Use to send OTP to user email (Forget Password)",
   })
   @ApiCreatedResponse(EmailXXX.successSendMail)
   async sendEmail(@Body() userEmail: sendMail) {
@@ -20,7 +19,7 @@ export class EmailController {
   }
   @Post("verifyOTP")
   @ApiOperation({
-    summary: 'Use to send reset password to user '
+    summary: "Use to send reset password to user ",
   })
   @ApiCreatedResponse(EmailXXX.successSendResetPassword)
   async verifyOTP(@Body() bodyOtp: sendOTP) {

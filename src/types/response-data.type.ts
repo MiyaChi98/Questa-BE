@@ -1,11 +1,11 @@
 export type ResponseSuccess<T> = {
-  type: 'success';
+  type: "success";
   statusCode: number;
   data: T;
 };
 
 export type ResponseError = {
-  type: 'error';
+  type: "error";
   statusCode: number;
   detail: string | object;
   method: string;

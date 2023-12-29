@@ -19,7 +19,11 @@ export class ExamService {
   async examIdentify(userID: string, courseId: string) {
     const teacher = await this.userService.findOnebyID(userID);
     const course = await this.courseService.findOnebyID(courseId);
-    if (!teacher || !course || course.teacherId?.toString() != teacher._id?.toString())
+    if (
+      !teacher ||
+      !course ||
+      course.teacherId?.toString() != teacher._id?.toString()
+    )
       throw new BadRequestException("Indentify failed");
     const info = {
       teacher: {
@@ -83,6 +87,6 @@ export class ExamService {
   }
   async delete(id: string) {
     await this.ExamModel.deleteOne({ examId: id });
-    return "Delete exam success"
+    return "Delete exam success";
   }
 }

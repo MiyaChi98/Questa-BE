@@ -9,7 +9,6 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { CreateUserDto } from "src/dto/createUser.dto";
 import { AuthDto } from "src/dto/auth.dto";
 import { Request } from "express";
 import { ATGuard } from "src/guard/accessToken.guards";
@@ -34,7 +33,7 @@ export class AuthController {
   @Post("register")
   @UsePipes(new ValidationPipe())
   @ApiOperation({
-    summary: 'Use to register as student'
+    summary: "Use to register as student",
   })
   @ApiCreatedResponse(AuthXXX.successCreateUser)
   async register(@Body() createUserDTO: Register) {
@@ -46,7 +45,7 @@ export class AuthController {
   @ApiExtraModels(AuthDto)
   @ApiOkResponse(AuthXXX.successAuth)
   @ApiOperation({
-    summary: 'Use to login'
+    summary: "Use to login",
   })
   @UsePipes(new ValidationPipe())
   @Post("login")
@@ -58,7 +57,7 @@ export class AuthController {
   @UseGuards(ATGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Use to logout'
+    summary: "Use to logout",
   })
   @ApiOkResponse(AuthXXX.successLogout)
   @Get("logout")
@@ -69,7 +68,7 @@ export class AuthController {
   @UseGuards(RTGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Use to get new pair of token key '
+    summary: "Use to get new pair of token key ",
   })
   @ApiOkResponse(AuthXXX.succesRegainAcs)
   @Get("acstoken")
