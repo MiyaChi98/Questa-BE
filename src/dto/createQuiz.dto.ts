@@ -1,5 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from "class-validator";
 import { MultiChoise } from "src/constant/multichoise";
 
 export class Content {
@@ -9,7 +15,7 @@ export class Content {
   })
   @IsString()
   @IsOptional()
-  img: string;
+  img?: string;
   @ApiProperty({
     example: "According to me , what smell is the most confort smell?",
   })
@@ -34,8 +40,12 @@ export class Content {
 }
 
 export class CreateQuizDto {
-  @ApiProperty()
+  @ApiProperty({
+    type: Content,
+  })
   @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => Content)
   content: Content;
   @ApiProperty({ example: "6555d99203662be4325a2838" })
   @IsString()
@@ -52,5 +62,8 @@ export class CreateQuizDtoArray {
     isArray: true,
     type: CreateQuizDto,
   })
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateQuizDto)
   arrayOfObjectsDto: CreateQuizDto[];
 }

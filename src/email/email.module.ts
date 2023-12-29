@@ -17,13 +17,6 @@ import { UserModule } from "src/user/user.module";
       defaults: {
         from: '"From Name" <from@example.com>',
       },
-      // template: {
-      //   dir: 'src/email/template',
-      //   adapter: new HandlebarsAdapter(),
-      //   options: {
-      //     strict: true,
-      //   },
-      // },
     }),
     UserModule,
   ],

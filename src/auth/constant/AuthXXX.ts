@@ -41,7 +41,7 @@ export const AuthXXX = {
     },
   },
   successLogout: {
-    status: HttpStatus.CREATED,
+    status: HttpStatus.OK,
     description: "Logout API display the result of action",
     schema: {
       properties: {
@@ -52,6 +52,25 @@ export const AuthXXX = {
               type: "string",
               example: "Logout success",
             },
+          },
+        },
+      },
+    },
+  },
+  succesRegainAcs: {
+    status: HttpStatus.OK,
+    description: "Logout API display the result of action",
+    schema: {
+      properties: {
+        APIresults: {
+          type: "object",
+          example: {
+            userID: "658a5711675fc608b92f6592",
+            name: "admin",
+            email: "admin@gmail.com",
+            phone: "1234567899",
+            accessToken: "",
+            refreshToken: "",
           },
         },
       },

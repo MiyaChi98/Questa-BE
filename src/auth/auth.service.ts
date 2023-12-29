@@ -6,10 +6,10 @@ import {
 import { UserService } from "src/user/user.service";
 import { JwtService } from "@nestjs/jwt";
 import { Variable } from "src/variable";
-import { CreateUserDto } from "src/dto/createUser.dto";
 import * as bcrypt from "bcrypt";
 import { AuthDto } from "src/dto/auth.dto";
 import { Role } from "src/constant/roleEnum";
+import { Register } from "src/dto/register.dto";
 
 @Injectable()
 export class AuthService {
@@ -22,7 +22,7 @@ export class AuthService {
   //SIGN UP
   //Input: User DTO
   //Output: New user
-  async signUp(createUserDTO: CreateUserDto) {
+  async signUp(createUserDTO: Register) {
     //check if there any user was signed with input email
     const userExist = await this.userService.findOne(createUserDTO.email);
     if (userExist) {
@@ -36,6 +36,7 @@ export class AuthService {
     const newUser = await this.userService.create({
       ...createUserDTO,
       password: hash,
+      zone: Role.STUDENT,
     });
     return newUser;
   }
@@ -73,11 +74,13 @@ export class AuthService {
   //Input: userID
   //Output: Delete the refresh token
   async signOut(userId: string) {
-    if (userId) return this.userService.signOut(userId);
+    if (userId) await this.userService.signOut(userId);
+    return "Logout success";
   }
   //Get new access token
   async getnewAccessToken(userId: string, rt: string) {
     const user = await this.userService.findOnebyID(userId);
+    console.log(user, user.refreshToken);
     if (!user || !user.refreshToken)
       throw new ForbiddenException("Access Denied");
     if (user.refreshToken === rt) {

@@ -11,8 +11,13 @@ export class UserService {
   constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
   // find all user
   async findAll(page: number, limit: number) {
-    const allUSer = await this.UserModel.find()
-      .skip(page * limit)
+    const allUSer = await this.UserModel.find(
+      {},
+      {
+        password: 0,
+      },
+    )
+      .skip((page-1) * limit)
       .limit(limit);
     const numberOfUser = await this.UserModel.countDocuments();
     return {
@@ -33,7 +38,8 @@ export class UserService {
         name: 1,
         email: 1,
         phone: 1,
-      }
+        refreshToken: 1,
+      },
     );
   }
   //find all teacher
@@ -51,7 +57,7 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
-      }
+      },
     );
   }
   // create user
@@ -76,6 +82,6 @@ export class UserService {
     });
   }
   async delete(id: string) {
-    return this.UserModel.deleteOne({ _id: id });
+    return this.UserModel.findOneAndDelete({_id: id});
   }
 }

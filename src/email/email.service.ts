@@ -43,7 +43,7 @@ export class EmailService {
 
   async TemporaryPassword(email: string) {
     const temporaryPassword = this.generateRandomString(10);
-    await this.userService.updatePassword(email, "Morminiproject98@");
+    await this.userService.updatePassword(email, temporaryPassword);
     await this.mailerService.sendMail({
       to: email,
       from: "chintt.hrt@gmail.com",

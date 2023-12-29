@@ -19,6 +19,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
 import { Role } from "src/constant/roleEnum";
@@ -36,6 +37,9 @@ import { PaginationDto } from "src/dto/pagination.dto";
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get("/all")
+  @ApiOperation({
+    summary: "Use to get all user with pagination",
+  })
   @ApiOkResponse(UserXXX.successFindAll)
   async getAllUser(@Query() pagination: PaginationDto) {
     const page = parseInt(pagination.page as any) || 0;
@@ -49,6 +53,9 @@ export class UserController {
   //   description: "Get user by id",
   // })
   @Get(":id")
+  @ApiOperation({
+    summary: "Use to find user by id",
+  })
   @ApiOkResponse(UserXXX.successFindbyId)
   async getUserbyId(@Param("id", new IdValidationPipe()) id: string) {
     const user = await this.userService.findOnebyID(id);
@@ -59,6 +66,9 @@ export class UserController {
   }
 
   @Get("/teacher/all")
+  @ApiOperation({
+    summary: "Use to find all teacher",
+  })
   @ApiOkResponse(UserXXX.successFindAll)
   async getAllTeacher() {
     const teacher = await this.userService.findAllTeacher();
@@ -69,6 +79,9 @@ export class UserController {
   }
   //Crete new one
   @Post()
+  @ApiOperation({
+    summary: "Use to create user",
+  })
   @ApiCreatedResponse(UserXXX.successCreatedUser)
   @UsePipes(new ValidationPipe())
   async createStudent(@Body() userDetails: CreateUserDto) {
@@ -76,7 +89,10 @@ export class UserController {
   }
   //Update one by ID
   @Patch(":id")
-  @ApiCreatedResponse(UserXXX.successUpdate)
+  @ApiOperation({
+    summary: "Use to update user",
+  })
+  @ApiOkResponse(UserXXX.successUpdate)
   @UsePipes(new ValidationPipe())
   async updateStudentbyId(
     @Param("id", new IdValidationPipe()) id: string,
@@ -88,10 +104,13 @@ export class UserController {
     );
     return updateUser;
   }
-  //Delete one by ID
+  // Delete one by ID
   @Delete(":id")
+  @ApiOperation({
+    summary: "Use to delete user",
+  })
   @ApiOkResponse(UserXXX.successDelete)
-  async delStudentbyId(@Param("id", new IdValidationPipe()) id: string) {
+  async deleteStudent(@Param("id", new IdValidationPipe()) id: string) {
     const student = await this.userService.delete(id);
     return student;
   }
