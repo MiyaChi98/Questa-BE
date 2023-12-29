@@ -10,7 +10,7 @@ export class CreateCourseDto {
   @IsNotEmpty()
   @IsString()
   courseDescription: string;
-  @ApiProperty({ example: "6555d99203662be4325a2838" })
+  @ApiProperty({ example: "658dd96a47919b0fdcf030b0" })
   @IsNotEmpty()
   @IsString()
   teacherId: string;

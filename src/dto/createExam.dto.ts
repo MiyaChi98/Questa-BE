@@ -14,11 +14,11 @@ export class CreateExamDTO {
   @IsNumber()
   @IsNotEmpty()
   total_time: number;
-  @ApiProperty({ example: "658bda91f75c63cbc69fbc0f" })
+  @ApiProperty({ example: "658a57d4e51fda21d6f34e15" })
   @IsString()
   @IsNotEmpty()
   courseId: string;
-  @ApiProperty({ example: "6555d99203662be4325a2838" })
+  @ApiProperty({ example: "658dd96a47919b0fdcf030b0" })
   @IsString()
   @IsNotEmpty()
   teacherId: string;
