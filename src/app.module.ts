@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
@@ -15,6 +15,7 @@ import { SubmitModule } from "./submit/submit.module";
 import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { LoggerModule } from "nestjs-pino";
+import { LogsModule } from "./logs/logs.module";
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { LoggerModule } from "nestjs-pino";
     ExamModule,
     QuizModule,
     SubmitModule,
+    LogsModule
   ],
   controllers: [AppController],
   providers: [
@@ -48,3 +50,4 @@ import { LoggerModule } from "nestjs-pino";
   ],
 })
 export class AppModule {}
+

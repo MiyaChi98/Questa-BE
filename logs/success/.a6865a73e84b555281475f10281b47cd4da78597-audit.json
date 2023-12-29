@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "C:\\Users\\ntukp\\.vscode\\MMP\\logs\\success\\.a6865a73e84b555281475f10281b47cd4da78597-audit.json",
+    "files": [
+        {
+            "date": 1703785320578,
+            "name": "C:\\Users\\ntukp\\.vscode\\MMP\\logs\\success\\success-2023-12-29.log",
+            "hash": "c4f5e38db1821ee87e6df5fc26b4237a499e974892017a43ec2a7edf4362c8e2"
+        }
+    ],
+    "hashType": "sha256"
+}

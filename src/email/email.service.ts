@@ -21,7 +21,7 @@ export class EmailService {
       await this.mailerService.sendMail({
         to: email,
         from: "chintt.hrt@gmail.com",
-        subject: subject,
+        subject: subject
       });
       await this.cacheManager.del(user.email);
       await this.cacheManager.set(user.email, otp, 60000 * 5);
@@ -43,7 +43,7 @@ export class EmailService {
 
   async TemporaryPassword(email: string) {
     const temporaryPassword = this.generateRandomString(10);
-    await this.userService.updatePassword(email, "Morminiproject98@");
+    await this.userService.updatePassword(email, temporaryPassword);
     await this.mailerService.sendMail({
       to: email,
       from: "chintt.hrt@gmail.com",

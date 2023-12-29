@@ -33,6 +33,7 @@ export class UserService {
         name: 1,
         email: 1,
         phone: 1,
+        refreshToken:1
       }
     );
   }

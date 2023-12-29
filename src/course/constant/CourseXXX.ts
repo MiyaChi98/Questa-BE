@@ -13,12 +13,7 @@ export const CourseXXX = {
         APIresults: {
           type: "object",
           allOf: [{ $ref: getSchemaPath(CreateCourseDto) }],
-          properties: {
-            message: {
-              type: "string",
-              example: "Course created success !!!",
-            },
-          },
+        
         },
       },
     },
@@ -107,13 +102,11 @@ export const CourseXXX = {
     schema: {
       properties: {
         APIresults: {
-          type: "object",
-          properties: {
-            message: {
-              type: "string",
+         
+            
               example: "Delete course success",
-            },
-          },
+           
+    
         },
       },
     },

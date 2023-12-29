@@ -2,6 +2,7 @@ import { HttpStatus } from "@nestjs/common";
 import { getSchemaPath } from "@nestjs/swagger";
 import { CreateExamDTO } from "src/dto/createExam.dto";
 import { UpdateCourseDto } from "src/dto/updateCourse.dto";
+import { UpdateExamDTO } from "src/dto/updateExam.dto";
 
 export const ExamXXX = {
   //Course
@@ -96,13 +97,8 @@ export const ExamXXX = {
       properties: {
         APIresults: {
           type: "object",
-          allOf: [{ $ref: getSchemaPath(UpdateCourseDto) }],
-          properties: {
-            message: {
-              type: "string",
-              example: "Exam updated success !!!",
-            },
-          },
+          allOf: [{ $ref: getSchemaPath(UpdateExamDTO) }],
+         
         },
       },
     },
@@ -113,13 +109,11 @@ export const ExamXXX = {
     schema: {
       properties: {
         APIresults: {
-          type: "object",
-          properties: {
-            message: {
-              type: "string",
+         
+            
               example: "Delete exam success",
-            },
-          },
+            
+          
         },
       },
     },

@@ -19,9 +19,11 @@ import {
   ApiCreatedResponse,
   ApiExtraModels,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
 import { AuthXXX } from "./constant/AuthXXX";
+import { Register } from "src/dto/register.dto";
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
@@ -31,8 +33,11 @@ export class AuthController {
   //Output: A new user
   @Post("register")
   @UsePipes(new ValidationPipe())
+  @ApiOperation({
+    summary: 'Use to register as student'
+  })
   @ApiCreatedResponse(AuthXXX.successCreateUser)
-  async register(@Body() createUserDTO: CreateUserDto) {
+  async register(@Body() createUserDTO: Register) {
     return await this.authService.signUp(createUserDTO);
   }
   //LOGIN
@@ -40,6 +45,9 @@ export class AuthController {
   //Output: tokens
   @ApiExtraModels(AuthDto)
   @ApiOkResponse(AuthXXX.successAuth)
+  @ApiOperation({
+    summary: 'Use to login'
+  })
   @UsePipes(new ValidationPipe())
   @Post("login")
   async login(@Body() authDTO: AuthDto) {
@@ -49,6 +57,9 @@ export class AuthController {
   //Guard to check Access Token
   @UseGuards(ATGuard)
   @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Use to logout'
+  })
   @ApiOkResponse(AuthXXX.successLogout)
   @Get("logout")
   async logout(@Req() req: Request) {
@@ -56,6 +67,11 @@ export class AuthController {
   }
   //Take new access token
   @UseGuards(RTGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Use to get new pair of token key '
+  })
+  @ApiOkResponse(AuthXXX.succesRegainAcs)
   @Get("acstoken")
   async getnewAccessToken(@Req() req: Request) {
     if (req["user"]) {

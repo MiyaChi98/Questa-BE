@@ -17,6 +17,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
 import { Role } from "src/constant/roleEnum";
@@ -34,6 +35,9 @@ export class ExamController {
   constructor(private readonly examService: ExamService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Use to create exam'
+  })
   @ApiCreatedResponse(ExamXXX.successCreatedExam)
   @UsePipes(new ValidationPipe())
   create(@Body() createExamDto: CreateExamDTO) {
@@ -41,16 +45,25 @@ export class ExamController {
   }
 
   @Get(":id")
+  @ApiOperation({
+    summary: 'Use to find one exam'
+  })
   @ApiOkResponse(ExamXXX.successFindbyId)
   findOne(@Param("id", new IdValidationPipe()) id: string) {
     return this.examService.findOne(id);
   }
   @Get("/all/:id")
+  @ApiOperation({
+    summary: 'Use to find all exam'
+  })
   @ApiOkResponse(ExamXXX.successFindAllExamInCourse)
   findAllinCourse(@Param("id", new IdValidationPipe()) id: string) {
     return this.examService.findAllExamInCourse(id);
   }
   @Patch(":id")
+  @ApiOperation({
+    summary: 'Use to update exam'
+  })
   @ApiOkResponse(ExamXXX.successUpdate)
   @UsePipes(new ValidationPipe())
   async update(
@@ -61,6 +74,9 @@ export class ExamController {
   }
 
   @Delete(":id")
+  @ApiOperation({
+    summary: 'Use to delete exam'
+  })
   @ApiOkResponse(ExamXXX.successDelete)
   async remove(@Param("id", new IdValidationPipe()) id: string) {
     return await this.examService.delete(id);
