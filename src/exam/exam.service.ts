@@ -13,7 +13,7 @@ export class ExamService {
     private readonly userService: UserService,
     private readonly courseService: CourseService,
     private readonly quizService: QuizService,
-    @InjectModel(Exam.name) private ExamModel: Model<Exam>,
+    @InjectModel(Exam.name) private ExamModel: Model<Exam>
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: string, courseId: string) {
@@ -38,9 +38,12 @@ export class ExamService {
     };
     return info;
   }
-  async create(createExamDto: CreateExamDTO) {
-    await this.examIdentify(createExamDto.teacherId, createExamDto.courseId);
-    const createdExam = await this.ExamModel.create(createExamDto);
+  async create(createExamDto: CreateExamDTO, teacherId: string) {
+    await this.examIdentify(teacherId, createExamDto.courseId);
+    const createdExam = await this.ExamModel.create({
+      ...createExamDto,
+      teacherId,
+    });
     return createdExam;
   }
 

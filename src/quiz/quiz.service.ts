@@ -12,7 +12,7 @@ import { ConfigService } from "@nestjs/config";
 export class QuizService {
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   create(createQuizDto: CreateQuizDtoArray) {
@@ -22,7 +22,7 @@ export class QuizService {
   async createUsingUploadFile(
     teacherId: number,
     examId: string,
-    file: Express.Multer.File,
+    file: Express.Multer.File
   ) {
     const datas = await this.uploadFile(file);
     const quizzes = [];
@@ -33,7 +33,7 @@ export class QuizService {
           teacherId: teacherId,
           examId: examId,
           content: datas[i],
-        }),
+        })
       );
     return quizzes;
   }
@@ -80,11 +80,7 @@ export class QuizService {
     }
     const result = {
       quizId: obj._id.toString(),
-      question: obj.content.question,
-      A: obj.content.A,
-      B: obj.content.B,
-      C: obj.content.C,
-      D: obj.content.D,
+      question: obj.content,
     };
     return result;
   }

@@ -12,14 +12,14 @@ export class SubmitService {
   constructor(
     @InjectModel(Submit.name) private SubmitModel: Model<Submit>,
     private readonly examService: ExamService,
-    private readonly quizService: QuizService,
+    private readonly quizService: QuizService
   ) {}
   // Create course
   async create(submitDto: SubmitDto, userId: string) {
     const exam = await this.examService.findOne(submitDto.examId);
     if (!exam) throw new BadRequestException("There is no exam like that!");
     const examQuizzes = await this.quizService.findbyExam(
-      exam.examId.toString(),
+      exam.examId.toString()
     );
     const examQuizzesId = [];
     for (const quiz of examQuizzes) {
@@ -30,17 +30,25 @@ export class SubmitService {
       submitQuizzesId.push(submitQuiz.quizId);
     }
     const isSubset = submitQuizzesId.every((val) =>
-      examQuizzesId.includes(val),
+      examQuizzesId.includes(val)
     );
     if (!isSubset)
       throw new BadRequestException(
-        `The quiz you submit doesn't contain in this exam`,
+        `The quiz you submit doesn't contain in this exam`
       );
+    let mark = 0;
+    for (const submitQuiz of submitDto.submitAnswer.array) {
+      const quizzfindOne = await this.quizService.findOne(submitQuiz.quizId);
+      if (quizzfindOne.question.answer == submitQuiz.answer) {
+        mark++;
+      }
+    }
+
     const createdSubmit = await this.SubmitModel.create({
       examId: submitDto.examId,
       studentId: userId,
       submitAnswer: submitDto.submitAnswer,
-      mark: 10,
+      mark: mark,
     });
     return createdSubmit;
   }
@@ -62,6 +70,7 @@ export class SubmitService {
     const result = {
       examId: submit.examId,
       studentId: submit.studentId,
+      mark: submit.mark,
       studentAnswer: allQuiz,
     };
     return result;

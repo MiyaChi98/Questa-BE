@@ -9,6 +9,7 @@ import {
   Delete,
   ValidationPipe,
   UsePipes,
+  Req,
 } from "@nestjs/common";
 import { ExamService } from "./exam.service";
 import { CreateExamDTO } from "src/dto/createExam.dto";
@@ -26,6 +27,7 @@ import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { ExamXXX } from "./constant/ExamXXX";
 import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
+import { Request } from "express";
 @ApiTags("Exam")
 @HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -40,8 +42,8 @@ export class ExamController {
   })
   @ApiCreatedResponse(ExamXXX.successCreatedExam)
   @UsePipes(new ValidationPipe())
-  create(@Body() createExamDto: CreateExamDTO) {
-    return this.examService.create(createExamDto);
+  create(@Body() createExamDto: CreateExamDTO, @Req() req: Request) {
+    return this.examService.create(createExamDto, req["user"].sub);
   }
 
   @Get(":id")
@@ -68,7 +70,7 @@ export class ExamController {
   @UsePipes(new ValidationPipe())
   async update(
     @Param("id", new IdValidationPipe()) id: string,
-    @Body() updateCourseDto: UpdateExamDTO,
+    @Body() updateCourseDto: UpdateExamDTO
   ) {
     return await this.examService.update(id, updateCourseDto);
   }

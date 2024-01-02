@@ -15,7 +15,7 @@ export class UserService {
       {},
       {
         password: 0,
-      },
+      }
     )
       .skip(page * limit)
       .limit(limit);
@@ -35,11 +35,8 @@ export class UserService {
     return this.UserModel.findOne(
       { _id: userID },
       {
-        name: 1,
-        email: 1,
-        phone: 1,
-        refreshToken: 1,
-      },
+        password: 0,
+      }
     );
   }
   //find all teacher
@@ -57,7 +54,7 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
-      },
+      }
     );
   }
   // create user
@@ -82,6 +79,6 @@ export class UserService {
     });
   }
   async delete(id: string) {
-    return this.UserModel.deleteOne({ _id: id });
+    return this.UserModel.findOneAndDelete({ _id: id });
   }
 }
