@@ -104,13 +104,13 @@ export class UserController {
     );
     return updateUser;
   }
-  //Delete one by ID
+  // Delete one by ID
   @Delete(":id")
   @ApiOperation({
     summary: "Use to delete user",
   })
   @ApiOkResponse(UserXXX.successDelete)
-  async delStudent(@Param("id", new IdValidationPipe()) id: string) {
+  async deleteStudent(@Param("id", new IdValidationPipe()) id: string) {
     const student = await this.userService.delete(id);
     return student;
   }

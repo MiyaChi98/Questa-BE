@@ -17,7 +17,7 @@ export class UserService {
         password: 0,
       },
     )
-      .skip(page * limit)
+      .skip((page-1) * limit)
       .limit(limit);
     const numberOfUser = await this.UserModel.countDocuments();
     return {
@@ -79,6 +79,8 @@ export class UserService {
     });
   }
   async delete(id: string) {
+
     return this.UserModel.findOneAndDelete({ _id: id });
+
   }
 }
