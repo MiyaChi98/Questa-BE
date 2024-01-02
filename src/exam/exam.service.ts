@@ -13,7 +13,7 @@ export class ExamService {
     private readonly userService: UserService,
     private readonly courseService: CourseService,
     private readonly quizService: QuizService,
-    @InjectModel(Exam.name) private ExamModel: Model<Exam>
+    @InjectModel(Exam.name) private ExamModel: Model<Exam>,
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: string, courseId: string) {

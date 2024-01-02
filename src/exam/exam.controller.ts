@@ -70,7 +70,7 @@ export class ExamController {
   @UsePipes(new ValidationPipe())
   async update(
     @Param("id", new IdValidationPipe()) id: string,
-    @Body() updateCourseDto: UpdateExamDTO
+    @Body() updateCourseDto: UpdateExamDTO,
   ) {
     return await this.examService.update(id, updateCourseDto);
   }

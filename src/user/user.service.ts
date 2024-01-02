@@ -15,7 +15,7 @@ export class UserService {
       {},
       {
         password: 0,
-      }
+      },
     )
       .skip(page * limit)
       .limit(limit);
@@ -36,7 +36,7 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
-      }
+      },
     );
   }
   //find all teacher
@@ -54,7 +54,7 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
-      }
+      },
     );
   }
   // create user
