@@ -37,12 +37,15 @@ export class SubmitService {
         `The quiz you submit doesn't contain in this exam`,
       );
     let mark = 0;
-    for (const submitQuiz of submitDto.submitAnswer.array) {
-      const quizzfindOne = await this.quizService.findOne(submitQuiz.quizId);
-      if (quizzfindOne.question.answer == submitQuiz.answer) {
-        mark++;
+    const listAnswer = submitDto?.submitAnswer?.array;
+    if (listAnswer?.length > 0)
+      for (const submitQuiz of listAnswer) {
+        const quizzfindOne = await this.quizService.findOne(submitQuiz.quizId);
+        const answer = quizzfindOne?.question?.answer;
+        if (answer == submitQuiz.answer) {
+          mark++;
+        }
       }
-    }
 
     const createdSubmit = await this.SubmitModel.create({
       examId: submitDto.examId,

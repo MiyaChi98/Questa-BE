@@ -78,13 +78,16 @@ export class CourseService {
       courseId: await this.findOne(id),
       allStudentInfo: [],
     };
-    for (const i in course.studentId) {
-      result.allStudentInfo.push(
-        await this.userService.findOnebyID(course.studentId[i]),
-      );
+    if (course && course.studentId?.length > 0) {
+      for (const i in course.studentId) {
+        result.allStudentInfo.push(
+          await this.userService.findOnebyID(course.studentId[i]),
+        );
+      }
     }
     return result;
   }
+
   async delete(id: string) {
     await this.CourseModel.deleteOne({ _id: id });
     return "Delete course success";
