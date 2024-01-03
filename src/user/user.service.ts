@@ -35,10 +35,7 @@ export class UserService {
     return this.UserModel.findOne(
       { _id: userID },
       {
-        name: 1,
-        email: 1,
-        phone: 1,
-        refreshToken: 1,
+        password: 0,
       },
     );
   }
@@ -82,6 +79,8 @@ export class UserService {
     });
   }
   async delete(id: string) {
-    return this.UserModel.findOneAndDelete({_id: id});
+
+    return this.UserModel.findOneAndDelete({ _id: id });
+
   }
 }

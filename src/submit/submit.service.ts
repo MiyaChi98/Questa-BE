@@ -36,11 +36,22 @@ export class SubmitService {
       throw new BadRequestException(
         `The quiz you submit doesn't contain in this exam`,
       );
+    let mark = 0;
+    const listAnswer = submitDto?.submitAnswer?.array;
+    if (listAnswer?.length > 0)
+      for (const submitQuiz of listAnswer) {
+        const quizzfindOne = await this.quizService.findOne(submitQuiz.quizId);
+        const answer = quizzfindOne?.question?.answer;
+        if (answer == submitQuiz.answer) {
+          mark++;
+        }
+      }
+
     const createdSubmit = await this.SubmitModel.create({
       examId: submitDto.examId,
       studentId: userId,
       submitAnswer: submitDto.submitAnswer,
-      mark: 10,
+      mark: mark,
     });
     return createdSubmit;
   }
@@ -62,6 +73,7 @@ export class SubmitService {
     const result = {
       examId: submit.examId,
       studentId: submit.studentId,
+      mark: submit.mark,
       studentAnswer: allQuiz,
     };
     return result;

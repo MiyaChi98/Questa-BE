@@ -17,9 +17,5 @@ export class CreateExamDTO {
   @ApiProperty({ example: "658a57d4e51fda21d6f34e15" })
   @IsString()
   @IsNotEmpty()
-  courseId: string;
-  @ApiProperty({ example: "658dd96a47919b0fdcf030b0" })
-  @IsString()
-  @IsNotEmpty()
-  teacherId: string;
+  courseId: string
 }

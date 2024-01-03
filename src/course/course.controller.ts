@@ -43,7 +43,10 @@ export class CourseController {
   async create(@Body() createCourseDto: CreateCourseDto) {
     return await this.courseService.create(createCourseDto);
   }
-
+  // @Post(":id")
+  // async addStudent(@Param("id", new IdValidationPipe()) id: string) {
+  //   return await this.courseService.addStudent()
+  // }
   @Get()
   @ApiOperation({
     summary: "Use to find all course",
@@ -62,6 +65,13 @@ export class CourseController {
     return await this.courseService.findOne(id);
   }
 
+  @Get("allstudent/:id")
+  @ApiOperation({
+    summary: "Use to find all student info that in the course",
+  })
+  async findAllStudent(@Param("id", new IdValidationPipe()) id: string) {
+    return await this.courseService.findAllStudent(id);
+  }
   @Patch(":id")
   @ApiOperation({
     summary: "Use to update course",

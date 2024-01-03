@@ -69,6 +69,25 @@ export class CourseService {
     });
     return await this.findOne(id);
   }
+
+  async findAllStudent(id: string) {
+    const course = await this.CourseModel.findOne({ _id: id }).select(
+      "studentId",
+    );
+    const result = {
+      courseId: await this.findOne(id),
+      allStudentInfo: [],
+    };
+    if (course && course.studentId?.length > 0) {
+      for (const i in course.studentId) {
+        result.allStudentInfo.push(
+          await this.userService.findOnebyID(course.studentId[i]),
+        );
+      }
+    }
+    return result;
+  }
+
   async delete(id: string) {
     await this.CourseModel.deleteOne({ _id: id });
     return "Delete course success";

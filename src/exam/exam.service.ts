@@ -38,9 +38,12 @@ export class ExamService {
     };
     return info;
   }
-  async create(createExamDto: CreateExamDTO) {
-    await this.examIdentify(createExamDto.teacherId, createExamDto.courseId);
-    const createdExam = await this.ExamModel.create(createExamDto);
+  async create(createExamDto: CreateExamDTO, teacherId: string) {
+    await this.examIdentify(teacherId, createExamDto.courseId);
+    const createdExam = await this.ExamModel.create({
+      ...createExamDto,
+      teacherId,
+    });
     return createdExam;
   }
 
