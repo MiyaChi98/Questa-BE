@@ -13,12 +13,19 @@ import { join } from "path";
 import { ConfigModule } from "@nestjs/config";
 import { SubmitModule } from "./submit/submit.module";
 import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
-import { APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { LoggerModule } from "nestjs-pino";
 import { LogsModule } from "./logs/logs.module";
+import { ThrottlerGuard, ThrottlerModule, minutes } from "@nestjs/throttler";
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: minutes(1),
+        limit: 100,
+      },
+    ]),
     LoggerModule.forRoot(),
     CacheModule.register({
       isGlobal: true,
@@ -46,6 +53,10 @@ import { LogsModule } from "./logs/logs.module";
     {
       provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
