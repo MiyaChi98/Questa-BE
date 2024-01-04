@@ -80,7 +80,7 @@ export class AuthService {
   //Get new access token
   async getnewAccessToken(userId: string, rt: string) {
     const user = await this.userService.findOnebyID(userId);
-    console.log(user, user.refreshToken);
+    // console.log(user, user.refreshToken);
     if (!user || !user.refreshToken)
       throw new ForbiddenException("Access Denied");
     if (user.refreshToken === rt) {

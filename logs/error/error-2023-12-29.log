@@ -142,3 +142,11 @@
 [2023-12-29 09:43:04] "DELETE /v1/course/%20%20%20%20%20nasncjanscans" 400 The input has white space, pls check!
 [2023-12-29 09:45:07] "POST /v1/exam" 400 Indentify failed
 [2023-12-29 09:50:52] "PATCH /v1/exam/658e32d2e1413f7cc0585ac8" 400 Unexpected token } in JSON at position 36
+[2023-12-29 10:01:34] "PATCH /v1/exam/658e32d2e1413f7cc0585ac8" 401 Unauthorized
+[2023-12-29 10:01:58] "GET /v1/exam/658e32d2e1413f7cc0585ac8" 401 Unauthorized
+[2023-12-29 10:42:58] "POST /v1/course" 401 Unauthorized
+[2023-12-29 11:19:14] "POST /v1/auth/register" 400 User already exist by this email!
+[2023-12-29 11:32:10] "DELETE /v1/course/%20%20%20%20658e4b4b93987d4ea6227a38" 400 The input has white space, pls check!
+[2023-12-29 11:32:18] "DELETE /v1/course/658e4b4b93987d4ea6227hnhgcmgj" 400 The input is not a valid ID in Mongo, pls check !
+[2023-12-29 11:41:34] "POST /v1/submit" 400 The quiz you submit doesn't contain in this exam
+[2023-12-29 11:42:28] "POST /v1/submit" 400 The quiz you submit doesn't contain in this exam
