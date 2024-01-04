@@ -17,13 +17,13 @@ export class UserService {
         password: 0,
       },
     )
-      .skip((page-1) * limit)
+      .skip((page - 1) * limit)
       .limit(limit);
     const numberOfUser = await this.UserModel.countDocuments();
     return {
       page: page,
       numberOfUser: numberOfUser,
-      allUSer,
+      allUSer: allUSer,
     };
   }
   // find one user with that email
@@ -32,12 +32,9 @@ export class UserService {
   }
   // find one by id
   async findOnebyID(userID: string) {
-    return this.UserModel.findOne(
-      { _id: userID },
-      {
-        password: 0,
-      },
-    );
+    return this.UserModel.findById(userID, {
+      password: 0,
+    });
   }
   //find all teacher
   async findAllTeacher() {
@@ -79,8 +76,6 @@ export class UserService {
     });
   }
   async delete(id: string) {
-
     return this.UserModel.findOneAndDelete({ _id: id });
-
   }
 }
