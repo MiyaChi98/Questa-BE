@@ -4,6 +4,8 @@ import { getModelToken } from "@nestjs/mongoose";
 import { User } from "src/schema/user.schema";
 import { Model } from "mongoose";
 import { PaginationDto } from "src/dto/pagination.dto";
+import { CreateUserDto } from "src/dto/createUser.dto";
+import { Role } from "src/constant/roleEnum";
 
 describe("UserService", () => {
   let userService: UserService;
@@ -44,6 +46,7 @@ describe("UserService", () => {
     find: jest.fn(),
     findById: jest.fn(),
     countDocuments: jest.fn(),
+    create: jest.fn(),
   };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -67,14 +70,14 @@ describe("UserService", () => {
             skip: () => ({
               limit: jest.fn().mockResolvedValue(mockfindAll),
             }),
-          }) as any,
+          }) as any
       );
       jest
         .spyOn(model, "countDocuments")
         .mockResolvedValue(mockfindAll.allUSer.length);
       const result = await userService.findAll(
         pagination.page,
-        pagination.limit,
+        pagination.limit
       );
       expect(result.page).toBeDefined();
       expect(result.numberOfUser).toBeDefined();
@@ -90,6 +93,26 @@ describe("UserService", () => {
       expect(model.findById).toHaveBeenCalledWith(mockfinbyId._id, {
         password: 0,
       });
+      expect(result).toEqual(mockfinbyId);
+    });
+  });
+
+  describe("create", () => {
+    it("should create and return a book", async () => {
+      const newUser = {
+        name: "Rivalee Hadgraft",
+        email: "rhadgraft5@dot.gov",
+        password: "Morminiproject98@",
+        phone: "1975180624",
+        zone: Role.ADMIN,
+      };
+
+      jest
+        .spyOn(model, "create")
+        .mockImplementationOnce(jest.fn().mockResolvedValue(mockfinbyId));
+
+      const result = await userService.create(newUser as CreateUserDto);
+
       expect(result).toEqual(mockfinbyId);
     });
   });
