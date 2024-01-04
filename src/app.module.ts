@@ -23,7 +23,7 @@ import { ThrottlerGuard, ThrottlerModule, minutes } from "@nestjs/throttler";
     ThrottlerModule.forRoot([
       {
         ttl: minutes(1),
-        limit: 100,
+        limit: 20,
       },
     ]),
     LoggerModule.forRoot(),
