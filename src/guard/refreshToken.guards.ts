@@ -25,6 +25,8 @@ export class RTGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(rtToken, {
         secret: Variable.RT_SECRET,
       });
+      console.log('payload',payload)
+      console.log('rtToken',rtToken)
       //Add payload (userID and name) to the req obj
       request["user"] = payload;
       request["user"].rt = rtToken;

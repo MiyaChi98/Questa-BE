@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User } from "src/schema/user.schema";
@@ -18,10 +18,12 @@ export class UserService {
       },
     )
       .skip((page-1) * limit)
-      .limit(limit);
-    const numberOfUser = await this.UserModel.countDocuments();
+      .limit(limit)
+    const numberOfUser = await this.UserModel.countDocuments()
+    const numberOfPage = Array.from({length: Math.ceil(numberOfUser/limit)}, (_, i) => i + 1)
     return {
       page: page,
+      numberOfPage: numberOfPage,
       numberOfUser: numberOfUser,
       allUSer,
     };
@@ -35,10 +37,8 @@ export class UserService {
     return this.UserModel.findOne(
       { _id: userID },
       {
-        name: 1,
-        email: 1,
-        phone: 1,
-        refreshToken: 1,
+        password:0,
+        refreshToken: 0,
       },
     );
   }
@@ -57,12 +57,22 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
+        refreshToken:0
       },
     );
   }
   // create user
   async create(createUserDto: CreateUserDto) {
+    const userExist = await this.findOne(createUserDto.email);
+    if (userExist) {
+      return new BadRequestException("User already exist by this email!");
+    } else{
+       //Validate the input password using a validate method
+    this.validatePassword(createUserDto.password);
+    //Hash the password
+    createUserDto.password = this.hash(createUserDto.password);
     return this.UserModel.create(createUserDto);
+    }
   }
   //add refresh token to the document in th DB
   async updateRefreshToken(id: string, refreshToken: string) {
@@ -83,5 +93,42 @@ export class UserService {
   }
   async delete(id: string) {
     return this.UserModel.findOneAndDelete({_id: id});
+  }
+
+  validatePassword(password: string) {
+    //Have more than 8 char
+    // >=1 upper case
+    // have a number
+    // have a special char
+    const number = /[0-9]/;
+    const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    const upperCase = /[A-Z]/;
+    // eslint-disable-next-line prefer-const
+    let err = [];
+    if (password.length < 8) {
+      err.push("The password should have at least 8 characters");
+    } else {
+      if (!upperCase.test(password)) {
+        err.push("The password should have at least one uppercase letter");
+      }
+
+      if (!number.test(password)) {
+        err.push("The password should have at least one number");
+      }
+
+      if (!specialChars.test(password)) {
+        err.push("The password should have at least one special character");
+      }
+    }
+    if (err.length != 0) {
+      throw new BadRequestException(err);
+    }
+  }
+
+  // HASH using bycrypt
+  hash(password) {
+    const sOr = 10;
+    const hash = bcrypt.hashSync(password, sOr);
+    return hash;
   }
 }
