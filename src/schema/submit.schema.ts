@@ -24,7 +24,7 @@ export class Submit {
   @Prop({ type: AnswerArray })
   submitAnswer: AnswerArray;
   @Prop()
-  mark:number
+  mark: number;
 }
 
 export const SubmitSchema = SchemaFactory.createForClass(Submit);

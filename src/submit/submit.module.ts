@@ -18,7 +18,7 @@ import { Exam, ExamSchema } from "src/schema/exam.schema";
       {
         name: Exam.name,
         schema: ExamSchema,
-      }
+      },
     ]),
     JwtModule,
     ExamModule,

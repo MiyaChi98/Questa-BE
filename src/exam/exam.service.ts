@@ -88,8 +88,8 @@ export class ExamService {
     return await this.findOne(id);
   }
   async delete(id: string) {
-    const exam = await this.ExamModel.findByIdAndDelete(id);
-    await this.SubmitModel.deleteMany({examId:id})
-    return 'Delete success';
+    await this.ExamModel.findByIdAndDelete(id);
+    await this.SubmitModel.deleteMany({ examId: id });
+    return "Delete success";
   }
 }

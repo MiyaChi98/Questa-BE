@@ -12,9 +12,11 @@ import { User, UserSchema } from "src/schema/user.schema";
       {
         name: User.name,
         schema: UserSchema,
-      }
+      },
     ]),
-    UserModule, JwtModule],
+    UserModule,
+    JwtModule,
+  ],
   controllers: [AuthController],
   providers: [AuthService],
 })

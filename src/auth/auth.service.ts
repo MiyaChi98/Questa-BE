@@ -83,15 +83,15 @@ export class AuthService {
   }
   //Get new access token
   async getnewAccessToken(userId: string, rt: string) {
-    const user = await this.UserModel.findOne({_id: userId},{
-      password:0
-    });
-    console.log('user',user)
-    if (!user || !user.refreshToken){ 
-      console.log('user',user)
-      console.log('it reach here')
+    const user = await this.UserModel.findOne(
+      { _id: userId },
+      {
+        password: 0,
+      },
+    );
+    if (!user || !user.refreshToken) {
       throw new ForbiddenException("Access Denied");
-  }
+    }
     if (user.refreshToken === rt) {
       const tokens: any = await this.getTokens(user._id.toString(), user.zone);
       const userDetail = {

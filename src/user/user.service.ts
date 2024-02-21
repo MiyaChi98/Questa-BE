@@ -14,8 +14,9 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private UserModel: Model<User>,
     @InjectModel(Course.name) private CourseModel: Model<Course>,
-    @InjectModel(StudentList.name) private Student_List_Model: Model<StudentList>,
-    ) {}
+    @InjectModel(StudentList.name)
+    private Student_List_Model: Model<StudentList>,
+  ) {}
   // find all user
   async findAll(page: number, limit: number) {
     const allUSer = await this.UserModel.find(
@@ -24,10 +25,13 @@ export class UserService {
         password: 0,
       },
     )
-      .skip((page-1) * limit)
-      .limit(limit)
-    const numberOfUser = await this.UserModel.countDocuments()
-    const numberOfPage = Array.from({length: Math.ceil(numberOfUser/limit)}, (_, i) => i + 1)
+      .skip((page - 1) * limit)
+      .limit(limit);
+    const numberOfUser = await this.UserModel.countDocuments();
+    const numberOfPage = Array.from(
+      { length: Math.ceil(numberOfUser / limit) },
+      (_, i) => i + 1,
+    );
     return {
       page: page,
       numberOfPage: numberOfPage,
@@ -44,39 +48,48 @@ export class UserService {
     const userInfo = await this.UserModel.findById(
       { _id: userID },
       {
-        password:0,
+        password: 0,
         refreshToken: 0,
       },
     );
-    let course
-    if(userInfo.zone[0] === Role.TEACHER){
-      course = await this.CourseModel.find({teacherId: userID},{
-        teacherId: 0
-      })
-    }else{
-      course = await this.Student_List_Model.find({studentId: userID},{
-        studentId: 0,
-        _id: 0
-      })
+    let course;
+    if (userInfo.zone[0] === Role.TEACHER) {
+      course = await this.CourseModel.find(
+        { teacherId: userID },
+        {
+          teacherId: 0,
+        },
+      );
+    } else {
+      course = await this.Student_List_Model.find(
+        { studentId: userID },
+        {
+          studentId: 0,
+          _id: 0,
+        },
+      );
     }
-    const userInfotoJson = userInfo.toJSON()
+    const userInfotoJson = userInfo.toJSON();
     const result = {
       ...userInfotoJson,
-      course
-    }
-    return result
+      course,
+    };
+    return result;
   }
   //find all teacher
   async findAllTeacher() {
     return this.UserModel.find({ zone: "teacher" });
   }
   // find all student in one course
-  async findStudent(id: string){
-    const student = await this.UserModel.findOne({_id: id},{
-      password:0,
-      refreshToken:0
-    })
-    return student
+  async findStudent(id: string) {
+    const student = await this.UserModel.findOne(
+      { _id: id },
+      {
+        password: 0,
+        refreshToken: 0,
+      },
+    );
+    return student;
   }
   async changeStudentDetails(userID: string, updateuserDTO: UpdateUserDto) {
     await this.UserModel.findOne({ _id: userID }).updateOne({
@@ -86,7 +99,7 @@ export class UserService {
       { _id: userID },
       {
         password: 0,
-        refreshToken:0
+        refreshToken: 0,
       },
     );
   }
@@ -95,12 +108,12 @@ export class UserService {
     const userExist = await this.findOne(createUserDto.email);
     if (userExist) {
       return new BadRequestException("User already exist by this email!");
-    } else{
-       //Validate the input password using a validate method
-    this.validatePassword(createUserDto.password);
-    //Hash the password
-    createUserDto.password = this.hash(createUserDto.password);
-    return this.UserModel.create(createUserDto);
+    } else {
+      //Validate the input password using a validate method
+      this.validatePassword(createUserDto.password);
+      //Hash the password
+      createUserDto.password = this.hash(createUserDto.password);
+      return this.UserModel.create(createUserDto);
     }
   }
   //add refresh token to the document in th DB
@@ -121,17 +134,19 @@ export class UserService {
     });
   }
   async delete(id: string) {
-    const user = await this.UserModel.findOneAndDelete({_id: id});
-    let userRelated
-    if(user.value.zone[0] === Role.STUDENT){
-      const userRelated = await this.Student_List_Model.findOneAndDelete({studentId: user.value._id})
-    }  
-    const usertoJson = user.value.toJSON()
+    const user = await this.UserModel.findOneAndDelete({ _id: id });
+    let userRelated;
+    if (user.value.zone[0] === Role.STUDENT) {
+      userRelated = await this.Student_List_Model.findOneAndDelete({
+        studentId: user.value._id,
+      });
+    }
+    const usertoJson = user.value.toJSON();
     const result = {
       ...usertoJson,
-      related : userRelated
-    }
-    return result
+      related: userRelated,
+    };
+    return result;
   }
 
   validatePassword(password: string) {

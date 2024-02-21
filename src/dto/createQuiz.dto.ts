@@ -51,7 +51,7 @@ export class CreateQuizDto {
   @IsString()
   @IsNotEmpty()
   teacherId: string;
-  @ApiProperty({example: "658c5327442021afa622b1e7"})
+  @ApiProperty({ example: "658c5327442021afa622b1e7" })
   @IsString()
   @IsNotEmpty()
   examId: string;

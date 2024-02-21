@@ -80,7 +80,7 @@ export class QuizService {
     }
     const result = {
       quizId: obj._id.toString(),
-      question: obj.content
+      question: obj.content,
     };
     return result;
   }
