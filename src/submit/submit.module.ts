@@ -6,6 +6,7 @@ import { ExamModule } from "src/exam/exam.module";
 import { QuizModule } from "src/quiz/quiz.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Submit, SubmitSchema } from "src/schema/submit.schema";
+import { Exam, ExamSchema } from "src/schema/exam.schema";
 
 @Module({
   imports: [
@@ -14,6 +15,10 @@ import { Submit, SubmitSchema } from "src/schema/submit.schema";
         name: Submit.name,
         schema: SubmitSchema,
       },
+      {
+        name: Exam.name,
+        schema: ExamSchema,
+      }
     ]),
     JwtModule,
     ExamModule,

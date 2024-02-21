@@ -13,7 +13,7 @@ export class User {
   phone: string;
   @Prop()
   zone: Role[];
-  @Prop({ select: false })
+  @Prop()
   refreshToken: string;
 }
 

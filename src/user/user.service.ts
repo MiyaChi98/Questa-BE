@@ -5,10 +5,17 @@ import { User } from "src/schema/user.schema";
 import { CreateUserDto } from "src/dto/createUser.dto";
 import { UpdateUserDto } from "src/dto/updateUser.dto";
 import * as bcrypt from "bcrypt";
+import { Role } from "src/constant/roleEnum";
+import { Course } from "src/schema/course.schema";
+import { StudentList } from "src/schema/studentlist.schema";
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private UserModel: Model<User>,
+    @InjectModel(Course.name) private CourseModel: Model<Course>,
+    @InjectModel(StudentList.name) private Student_List_Model: Model<StudentList>,
+    ) {}
   // find all user
   async findAll(page: number, limit: number) {
     const allUSer = await this.UserModel.find(
@@ -34,21 +41,43 @@ export class UserService {
   }
   // find one by id
   async findOnebyID(userID: string) {
-    return this.UserModel.findOne(
+    const userInfo = await this.UserModel.findById(
       { _id: userID },
       {
         password:0,
         refreshToken: 0,
       },
     );
+    let course
+    if(userInfo.zone[0] === Role.TEACHER){
+      course = await this.CourseModel.find({teacherId: userID},{
+        teacherId: 0
+      })
+    }else{
+      course = await this.Student_List_Model.find({studentId: userID},{
+        studentId: 0,
+        _id: 0
+      })
+    }
+    const userInfotoJson = userInfo.toJSON()
+    const result = {
+      ...userInfotoJson,
+      course
+    }
+    return result
   }
   //find all teacher
   async findAllTeacher() {
     return this.UserModel.find({ zone: "teacher" });
   }
-  // async findAllStudent(courseId: number){
-  //   return this.UserModel.find({})
-  // }
+  // find all student in one course
+  async findStudent(id: string){
+    const student = await this.UserModel.findOne({_id: id},{
+      password:0,
+      refreshToken:0
+    })
+    return student
+  }
   async changeStudentDetails(userID: string, updateuserDTO: UpdateUserDto) {
     await this.UserModel.findOne({ _id: userID }).updateOne({
       ...updateuserDTO,
@@ -92,7 +121,17 @@ export class UserService {
     });
   }
   async delete(id: string) {
-    return this.UserModel.findOneAndDelete({_id: id});
+    const user = await this.UserModel.findOneAndDelete({_id: id});
+    let userRelated
+    if(user.value.zone[0] === Role.STUDENT){
+      const userRelated = await this.Student_List_Model.findOneAndDelete({studentId: user.value._id})
+    }  
+    const usertoJson = user.value.toJSON()
+    const result = {
+      ...usertoJson,
+      related : userRelated
+    }
+    return result
   }
 
   validatePassword(password: string) {
