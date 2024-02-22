@@ -2,11 +2,11 @@ import { ApiProperty } from "@nestjs/swagger";
 import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString } from "class-validator";
 import { MultiChoise } from "src/constant/multichoise";
 export class Answer {
-  @ApiProperty({ example: "" })
+  @ApiProperty({ example: "658d358a302279bd49c73b33" })
   @IsNotEmpty()
   @IsString()
   quizId: string;
-  @ApiProperty({ example: "A" })
+  @ApiProperty({ example: "D" })
   @IsNotEmpty()
   @IsString()
   answer: MultiChoise;

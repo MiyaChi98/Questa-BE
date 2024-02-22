@@ -36,7 +36,7 @@ export class UserService {
       page: page,
       numberOfPage: numberOfPage,
       numberOfUser: numberOfUser,
-      allUSer,
+      allUSer: allUSer,
     };
   }
   // find one user with that email

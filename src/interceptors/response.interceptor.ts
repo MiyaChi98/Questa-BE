@@ -24,7 +24,6 @@ export class ResponseInterceptor<T> implements NestInterceptor<T> {
             `"${request.method} ${request.url}" ${statusCode}`,
           );
         }
-
         return {
           type: "success",
           statusCode,
