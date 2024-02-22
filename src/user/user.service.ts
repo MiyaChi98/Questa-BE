@@ -36,7 +36,7 @@ export class UserService {
       page: page,
       numberOfPage: numberOfPage,
       numberOfUser: numberOfUser,
-      allUSer,
+      allUSer: allUSer,
     };
   }
   // find one user with that email
@@ -45,6 +45,7 @@ export class UserService {
   }
   // find one by id
   async findOnebyID(userID: string) {
+
     const userInfo = await this.UserModel.findById(
       { _id: userID },
       {
@@ -134,6 +135,7 @@ export class UserService {
     });
   }
   async delete(id: string) {
+
     const user = await this.UserModel.findOneAndDelete({ _id: id });
     let userRelated;
     if (user.value.zone[0] === Role.STUDENT) {
@@ -184,5 +186,6 @@ export class UserService {
     const sOr = 10;
     const hash = bcrypt.hashSync(password, sOr);
     return hash;
+
   }
 }

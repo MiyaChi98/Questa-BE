@@ -8,6 +8,8 @@ export class Course {
   courseDescription: string;
   @Prop()
   teacherId: string;
+  @Prop()
+  studentId: string[];
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);
