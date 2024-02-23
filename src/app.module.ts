@@ -17,9 +17,11 @@ import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { LoggerModule } from "nestjs-pino";
 import { LogsModule } from "./logs/logs.module";
 import { ThrottlerGuard, ThrottlerModule, minutes } from "@nestjs/throttler";
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       {
         ttl: minutes(1),

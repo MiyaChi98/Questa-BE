@@ -58,7 +58,7 @@ export class UserController {
   })
   @ApiOkResponse(UserXXX.successFindbyId)
   async getUserbyId(@Param("id", new IdValidationPipe()) id: string) {
-    const user = await this.userService.findOnebyID(id);
+    const user = await this.userService.findWithAllInfo(id);
     if (!user) {
       throw new NotFoundException("Cant find user by the id: " + id);
     }

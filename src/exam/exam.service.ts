@@ -26,7 +26,9 @@ export class ExamService {
       !course ||
       course.teacherId?.toString() != teacher._id?.toString()
     )
-      throw new BadRequestException("Indentify failed");
+      throw new BadRequestException(
+        "Indentify failed! You not this course teacher",
+      );
     const info = {
       teacher: {
         teacherName: teacher.name,
@@ -91,8 +93,11 @@ export class ExamService {
     return await this.findOne(id);
   }
   async delete(id: string) {
-    await this.ExamModel.findByIdAndDelete(id);
-    await this.SubmitModel.deleteMany({ examId: id });
-    return "Delete success";
+    const exam = await this.ExamModel.findByIdAndDelete(id);
+    const allSubmit = await this.SubmitModel.findOneAndDelete({ examId: id });
+    return {
+      exam,
+      allSubmit,
+    };
   }
 }

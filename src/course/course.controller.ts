@@ -10,6 +10,7 @@ import {
   UsePipes,
   ValidationPipe,
   Query,
+  Req,
 } from "@nestjs/common";
 import { CourseService } from "./course.service";
 import { CreateCourseDto } from "../dto/createCourse.dto";
@@ -28,8 +29,11 @@ import { ATGuard } from "src/guard/accessToken.guards";
 import { CourseXXX } from "./constant/CourseXXX";
 import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
 import { PaginationDto } from "src/dto/pagination.dto";
+import { Request } from "express";
+import { addStudentDTO } from "src/dto/addStudent.dto";
+
 @ApiTags("Course")
-@HasRoles(Role.TEACHER, Role.ADMIN)
+@HasRoles(Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller("course")
@@ -45,10 +49,16 @@ export class CourseController {
   async create(@Body() createCourseDto: CreateCourseDto) {
     return await this.courseService.create(createCourseDto);
   }
-  // @Post(":id")
-  // async addStudent(@Param("id", new IdValidationPipe()) id: string) {
-  //   return await this.courseService.addStudent()
-  // }
+
+  @Post("addStudent")
+  // @ApiCreatedResponse(CourseXXX.successCreatedCourse)
+  @ApiOperation({
+    summary: "Use to add student to course",
+  })
+  async addStudent(@Body() addStudent: addStudentDTO) {
+    return await this.courseService.addStudent(addStudent);
+  }
+
   @Get()
   @ApiOperation({
     summary: "Use to find all course",
@@ -60,22 +70,32 @@ export class CourseController {
     return await this.courseService.findAll(page, limit);
   }
 
+  @HasRoles(Role.TEACHER, Role.ADMIN, Role.STUDENT)
   @Get(":id")
   @ApiOperation({
     summary: "Use to find one course with teacher info",
   })
   @ApiOkResponse(CourseXXX.successFindbyId)
-  async findOne(@Param("id", new IdValidationPipe()) id: string) {
-    return await this.courseService.findOne(id);
+  async findOne(
+    @Param("id", new IdValidationPipe()) id: string,
+    @Req() req: Request,
+  ) {
+    return await this.courseService.findOne(id, req["user"].sub);
   }
 
+  @HasRoles(Role.TEACHER, Role.ADMIN)
   @Get("allstudent/:id")
   @ApiOperation({
     summary: "Use to find all student info that in the course",
   })
-  async findAllStudent(@Param("id", new IdValidationPipe()) id: string) {
-    return await this.courseService.findAllStudent(id);
+  async findAllStudent(
+    @Param("id", new IdValidationPipe()) id: string,
+    @Req() req: Request,
+  ) {
+    return await this.courseService.findAllStudent(id, req["user"].sub);
   }
+
+  @HasRoles(Role.TEACHER, Role.ADMIN)
   @Patch(":id")
   @ApiOperation({
     summary: "Use to update course",
@@ -85,8 +105,13 @@ export class CourseController {
   async update(
     @Param("id", new IdValidationPipe()) id: string,
     @Body() updateCourseDto: UpdateCourseDto,
+    @Req() req: Request,
   ) {
-    return await this.courseService.update(id, updateCourseDto);
+    return await this.courseService.update(
+      id,
+      updateCourseDto,
+      req["user"].sub,
+    );
   }
 
   @Delete(":id")

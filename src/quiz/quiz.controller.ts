@@ -12,8 +12,11 @@ import {
   Req,
   ValidationPipe,
   UsePipes,
+  HttpException,
+  HttpStatus,
+  Res,
 } from "@nestjs/common";
-import { Request } from "express";
+import { Request, Response } from "express";
 import { QuizService } from "./quiz.service";
 import { CreateQuizDtoArray } from "src/dto/createQuiz.dto";
 import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
@@ -36,6 +39,8 @@ import { RolesGuard } from "src/guard/role.guard";
 import { ATGuard } from "src/guard/accessToken.guards";
 import { QuizXXX } from "./constant/QuizXXX";
 import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
+import { extname } from "path";
+
 @ApiTags("Quiz")
 @HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -50,8 +55,8 @@ export class QuizController {
     summary: "create quiz manualy",
   })
   @ApiCreatedResponse(QuizXXX.successCreatedQuiz)
-  create(@Body() createQuizDto: CreateQuizDtoArray) {
-    return this.quizService.create(createQuizDto);
+  create(@Body() createQuizDto: CreateQuizDtoArray, @Req() req: Request) {
+    return this.quizService.create(createQuizDto, req["user"].sub);
   }
   @ApiCreatedResponse(QuizXXX.successUploadFile)
   @ApiConsumes("multipart/form-data")
@@ -59,6 +64,23 @@ export class QuizController {
   @Post("upload/many/:id")
   @UseInterceptors(
     FileInterceptor("file", {
+      fileFilter: (_req: any, file: any, callback: any) => {
+        if (
+          file.mimetype.match(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          )
+        ) {
+          callback(null, true);
+        } else {
+          callback(
+            new HttpException(
+              `Unsupported file type ${extname(file.originalname)}`,
+              HttpStatus.BAD_REQUEST,
+            ),
+            false,
+          );
+        }
+      },
       storage: diskStorage({
         destination: "./uploads",
       }),
@@ -75,6 +97,32 @@ export class QuizController {
       file,
     );
   }
+
+  @HasRoles(Role.TEACHER, Role.ADMIN, Role.STUDENT)
+  @Get("exam/:id")
+  @ApiOperation({
+    summary: "Use to export excel data",
+  })
+  async exportExcel(
+    @Param("id", new IdValidationPipe()) id: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const data = await this.quizService.exportFile(id, req["user"].sub);
+
+    res.attachment();
+    res.contentType(
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    res.setHeader(
+      "Content-disposition",
+      `attachment; filename=${data.SheetNames}`,
+    );
+    res.send(data);
+  }
+  // async findOne(@Param("id", new IdValidationPipe()) id: string, @Req() req: Request) {
+  //   return await this.quizService.exportFile(id, req["user"].sub);
+  // }
 
   @Post("upload/image")
   @ApiOkResponse(QuizXXX.successUploadImage)
@@ -96,6 +144,7 @@ export class QuizController {
   async uploadQuizImage(@UploadedFile() file: Express.Multer.File) {
     return this.quizService.uploadImage(file.filename);
   }
+
   @ApiOkResponse(QuizXXX.successFindOne)
   @Get("/:id")
   async findOneQuizContent(@Param("id", new IdValidationPipe()) id: string) {

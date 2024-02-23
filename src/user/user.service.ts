@@ -52,6 +52,16 @@ export class UserService {
         refreshToken: 0,
       },
     );
+    return userInfo;
+  }
+  async findWithAllInfo(userID: string) {
+    const userInfo = await this.UserModel.findById(
+      { _id: userID },
+      {
+        password: 0,
+        refreshToken: 0,
+      },
+    );
     let course;
     if (userInfo.zone[0] === Role.TEACHER) {
       course = await this.CourseModel.find(

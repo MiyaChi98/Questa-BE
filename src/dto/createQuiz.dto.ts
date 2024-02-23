@@ -47,10 +47,10 @@ export class CreateQuizDto {
   @ValidateNested({ each: true })
   @Type(() => Content)
   content: Content;
-  @ApiProperty({ example: "6555d99203662be4325a2838" })
-  @IsString()
-  @IsNotEmpty()
-  teacherId: string;
+  // @ApiProperty({ example: "6555d99203662be4325a2838" })
+  // @IsString()
+  // @IsNotEmpty()
+  // teacherId: string;
   @ApiProperty({ example: "658c5327442021afa622b1e7" })
   @IsString()
   @IsNotEmpty()

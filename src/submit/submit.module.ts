@@ -7,6 +7,9 @@ import { QuizModule } from "src/quiz/quiz.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Submit, SubmitSchema } from "src/schema/submit.schema";
 import { Exam, ExamSchema } from "src/schema/exam.schema";
+import { UserModule } from "src/user/user.module";
+import { Course, CourseSchema } from "src/schema/course.schema";
+import { StudentList, StudentListSchema } from "src/schema/studentlist.schema";
 
 @Module({
   imports: [
@@ -19,9 +22,18 @@ import { Exam, ExamSchema } from "src/schema/exam.schema";
         name: Exam.name,
         schema: ExamSchema,
       },
+      {
+        name: Course.name,
+        schema: CourseSchema,
+      },
+      {
+        name: StudentList.name,
+        schema: StudentListSchema,
+      },
     ]),
     JwtModule,
     ExamModule,
+    UserModule,
     QuizModule,
   ],
   controllers: [SubmitController],
