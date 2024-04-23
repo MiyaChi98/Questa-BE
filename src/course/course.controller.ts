@@ -70,6 +70,17 @@ export class CourseController {
     return await this.courseService.findAll(page, limit);
   }
 
+  @HasRoles(Role.TEACHER, Role.ADMIN)
+  @Get("allcourse")
+  @ApiOperation({
+    summary: "Use to find all course that belong to a teacher",
+  })
+  async findAllCoursewithTeacherID(
+    @Req() req: Request,
+  ) {
+    return await this.courseService.findCourses(req["user"].sub);
+  }
+
   @HasRoles(Role.TEACHER, Role.ADMIN, Role.STUDENT)
   @Get(":id")
   @ApiOperation({
@@ -82,6 +93,7 @@ export class CourseController {
   ) {
     return await this.courseService.findOne(id, req["user"].sub);
   }
+
 
   @HasRoles(Role.TEACHER, Role.ADMIN)
   @Get("allstudent/:id")

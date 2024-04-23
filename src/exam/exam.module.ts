@@ -8,6 +8,7 @@ import { CourseModule } from "src/course/course.module";
 import { QuizModule } from "src/quiz/quiz.module";
 import { JwtModule } from "@nestjs/jwt";
 import { Submit, SubmitSchema } from "src/schema/submit.schema";
+import { Quiz, QuizSchema } from "src/schema/quiz.schema";
 
 @Module({
   imports: [
@@ -20,6 +21,10 @@ import { Submit, SubmitSchema } from "src/schema/submit.schema";
         name: Submit.name,
         schema: SubmitSchema,
       },
+      {
+        name: Quiz.name,
+        schema: QuizSchema,
+      }
     ]),
     CourseModule,
     UserModule,

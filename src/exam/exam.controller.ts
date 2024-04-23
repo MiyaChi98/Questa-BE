@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   UsePipes,
   Req,
+  Query,
 } from "@nestjs/common";
 import { ExamService } from "./exam.service";
 import { CreateExamDTO } from "src/dto/createExam.dto";
@@ -28,6 +29,7 @@ import { ATGuard } from "src/guard/accessToken.guards";
 import { ExamXXX } from "./constant/ExamXXX";
 import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
 import { Request } from "express";
+import { PaginationDto } from "src/dto/pagination.dto";
 @ApiTags("Exam")
 @HasRoles(Role.TEACHER, Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -35,7 +37,6 @@ import { Request } from "express";
 @Controller("exam")
 export class ExamController {
   constructor(private readonly examService: ExamService) {}
-
   @Post()
   @ApiOperation({
     summary: "Use to create exam",
@@ -54,7 +55,18 @@ export class ExamController {
   findOne(@Param("id", new IdValidationPipe()) id: string) {
     return this.examService.findOne(id);
   }
-  @Get("/all/:id")
+
+  @Get("/teacher/all")
+  @ApiOperation({
+    summary: "Use to find all exam by Teacher",
+  })
+  findAllbyTeacherID(@Req() req: Request,@Query() pagination: PaginationDto) {
+    const page = parseInt(pagination.page as any) || 1;
+    const limit = parseInt(pagination.limit as any) || 5;
+    return this.examService.findAllExambyTeacherID(req["user"].sub,page, limit);
+  }
+  
+  @Get("/allCourse/:id")
   @ApiOperation({
     summary: "Use to find all exam",
   })
@@ -62,6 +74,8 @@ export class ExamController {
   findAllinCourse(@Param("id", new IdValidationPipe()) id: string) {
     return this.examService.findAllExamInCourse(id);
   }
+
+
   @Patch(":id")
   @ApiOperation({
     summary: "Use to update exam",

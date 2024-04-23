@@ -15,6 +15,7 @@ import {
   HttpException,
   HttpStatus,
   Res,
+  BadRequestException,
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { QuizService } from "./quiz.service";
@@ -58,6 +59,9 @@ export class QuizController {
   create(@Body() createQuizDto: CreateQuizDtoArray, @Req() req: Request) {
     return this.quizService.create(createQuizDto, req["user"].sub);
   }
+
+
+  //upload excel sheet of an Exam
   @ApiCreatedResponse(QuizXXX.successUploadFile)
   @ApiConsumes("multipart/form-data")
   @ApiBody({ type: UploadFileDto })
@@ -98,6 +102,8 @@ export class QuizController {
     );
   }
 
+
+  //export excel sheet of an Exam
   @HasRoles(Role.TEACHER, Role.ADMIN, Role.STUDENT)
   @Get("exam/:id")
   @ApiOperation({
@@ -120,29 +126,21 @@ export class QuizController {
     );
     res.send(data);
   }
-  // async findOne(@Param("id", new IdValidationPipe()) id: string, @Req() req: Request) {
-  //   return await this.quizService.exportFile(id, req["user"].sub);
-  // }
 
-  @Post("upload/image")
+  //upload file img or audio for a quiz
+  @Post("upload/file")
   @ApiOkResponse(QuizXXX.successUploadImage)
   @ApiConsumes("multipart/form-data")
   @ApiBody({ type: UploadFileDto })
   @UseInterceptors(
-    FileInterceptor("file", {
-      storage: diskStorage({
-        destination: "./uploads/image",
-        filename: (req, file, cb) => {
-          const filename: string =
-            path.parse(file.originalname).name.replace(/\s/g, "") + uuidv4();
-          const extension: string = path.parse(file.originalname).ext;
-          cb(null, `${filename}${extension}`);
-        },
-      }),
-    }),
+    FileInterceptor("file"
+     ),
   )
-  async uploadQuizImage(@UploadedFile() file: Express.Multer.File) {
-    return this.quizService.uploadImage(file.filename);
+  async uploadQuizFile(
+    @Req() req: Request,
+    @UploadedFile() file: Express.Multer.File
+    ) {
+    return this.quizService.uploadImg_Audio(file);
   }
 
   @ApiOkResponse(QuizXXX.successFindOne)

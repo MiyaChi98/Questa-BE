@@ -1,11 +1,25 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, ValidateNested } from "class-validator";
+import { Content, CreateQuizDto, CreateQuizDtoArray } from "./createQuiz.dto";
+import { Type } from "class-transformer";
 
 export class CreateExamDTO {
   @ApiProperty({ example: "New exam tilte" })
   @IsString()
   @IsNotEmpty()
-  tilte: string;
+  title: string;
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  subject: string;
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  start: Date;
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  end: Date;
   @ApiProperty({ example: 10 })
   @IsNumber()
   @IsNotEmpty()
@@ -14,8 +28,19 @@ export class CreateExamDTO {
   @IsNumber()
   @IsNotEmpty()
   total_time: number;
+  @ApiProperty()
+  @IsString()
+  description: Date;
   @ApiProperty({ example: "658a57d4e51fda21d6f34e15" })
   @IsString()
   @IsNotEmpty()
   courseId: string;
+  @ApiProperty({
+    isArray: true,
+    type: Content,
+  })
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => Content)
+  quizArray: Content[]
 }

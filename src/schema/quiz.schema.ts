@@ -8,6 +8,8 @@ export class Content {
   @Prop()
   img: string;
   @Prop()
+  audio: string;
+  @Prop()
   A: string;
   @Prop()
   B: string;
@@ -23,8 +25,6 @@ export class Content {
 export class Quiz {
   @Prop({ type: Content })
   content: Content;
-  @Prop()
-  teacherId: string;
   @Prop()
   examId: string;
 }

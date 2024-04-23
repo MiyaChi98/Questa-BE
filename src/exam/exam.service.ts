@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { CourseService } from "src/course/course.service";
 import { CreateExamDTO } from "src/dto/createExam.dto";
 import { Exam } from "src/schema/exam.schema";
@@ -8,6 +8,8 @@ import { UserService } from "src/user/user.service";
 import { QuizService } from "src/quiz/quiz.service";
 import { UpdateExamDTO } from "src/dto/updateExam.dto";
 import { Submit } from "src/schema/submit.schema";
+import { Quiz } from "src/schema/quiz.schema";
+import { error } from "console";
 @Injectable()
 export class ExamService {
   constructor(
@@ -16,6 +18,7 @@ export class ExamService {
     private readonly quizService: QuizService,
     @InjectModel(Exam.name) private ExamModel: Model<Exam>,
     @InjectModel(Submit.name) private SubmitModel: Model<Submit>,
+    @InjectModel(Quiz.name) private QuizModel: Model<Quiz>
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: string, courseId: string) {
@@ -27,7 +30,7 @@ export class ExamService {
       course.teacherId?.toString() != teacher._id?.toString()
     )
       throw new BadRequestException(
-        "Indentify failed! You not this course teacher",
+        "Indentify failed! You not this course teacher"
       );
     const info = {
       teacher: {
@@ -44,11 +47,37 @@ export class ExamService {
   }
   async create(createExamDto: CreateExamDTO, teacherId: string) {
     await this.examIdentify(teacherId, createExamDto.courseId);
-    const createdExam = await this.ExamModel.create({
-      ...createExamDto,
-      teacherId,
-    });
-    return createdExam;
+    let session = null;
+    return this.ExamModel.createCollection()
+      .then(() => this.ExamModel.startSession())
+      .then((_session) => {
+        session = _session;
+        return session.withTransaction(async () => {
+          return await this.ExamModel.create(
+          {
+            ...createExamDto,
+            teacherId,
+          },
+        );
+        });
+      })
+      .then(
+        async (exam) => {
+          console.log(exam)
+          const arrayOfObjectsDto = [];
+          createExamDto.quizArray.map((quiz, index) => {
+            arrayOfObjectsDto.push({
+              content: {
+                ...quiz,
+              },
+              examId: exam._id,
+            });
+          });
+          return await this.QuizModel.create(
+            arrayOfObjectsDto
+        )}
+      )
+      .then(() => session.endSession());
   }
 
   async findAllExamInCourse(courseId: string) {
@@ -60,10 +89,45 @@ export class ExamService {
     const result = [];
     for (const exam of allExam) {
       result.push({
-        tilte: exam.tilte,
+        tilte: exam.title,
         total_mark: exam.total_mark,
         total_time: exam.total_time,
         // ...info,
+      });
+    }
+    return result;
+  }
+
+  //findAllExambyTeacherID
+  async findAllExambyTeacherID(teacherId: string, page: number, limit: number) {
+    const allExam = await this.ExamModel.find({ teacherId: teacherId })
+      .skip((page - 1) * limit)
+      .limit(limit);
+    const numberOfExam = await this.ExamModel.countDocuments({
+      teacherId: teacherId,
+    });
+    const numberOfPage = Array.from(
+      { length: Math.ceil(numberOfExam / limit) },
+      (_, i) => i + 1
+    );
+    const result = {
+      page: page,
+      numberOfPage: numberOfPage,
+      numberOfExam: numberOfExam,
+      allExam: [],
+    };
+    for (const exam of allExam) {
+      console.log(exam);
+      const allSubmit = await this.SubmitModel.countDocuments({
+        examId: exam._id,
+      });
+      const course = await this.courseService.findOnebyID(exam.courseId);
+      result.allExam.push({
+        _id: exam._id,
+        name: exam.title,
+        submition: allSubmit,
+        course: course.courseName,
+        last_update: exam.updatedAt.toLocaleString(),
       });
     }
     return result;
@@ -76,7 +140,7 @@ export class ExamService {
     const examInfo = {
       examId: exam._id,
       ...info,
-      tilte: exam.tilte,
+      tilte: exam.title,
       time: exam.total_time,
       quiz: allQuiz,
     };

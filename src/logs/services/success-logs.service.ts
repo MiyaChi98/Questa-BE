@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { BaseLogsService } from "./base-logs.service";
 import { createLogger, format } from "winston";
 import { join } from "path";
-import * as DailyRotateFile from "winston-daily-rotate-file";
+import DailyRotateFile from "winston-daily-rotate-file";
 import { format as formatDate } from "date-fns";
 
 @Injectable()

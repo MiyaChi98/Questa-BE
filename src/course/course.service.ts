@@ -168,7 +168,10 @@ export class CourseService {
     }
     return result;
   }
-
+  async findCourses(teacherID: string) {
+    const course = await this.CourseModel.find({ teacherId: teacherID })
+    return course;
+  }
   async delete(id: string) {
     const course = await this.CourseModel.findOneAndDelete({ _id: id });
     const allExam = await this.ExamModel.find({ courseId: id });
