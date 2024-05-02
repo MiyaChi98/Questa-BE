@@ -33,7 +33,7 @@ import { Request } from "express";
 import { addStudentDTO } from "src/dto/addStudent.dto";
 
 @ApiTags("Course")
-@HasRoles(Role.ADMIN)
+@HasRoles(Role.TEACHER)
 @UseGuards(ATGuard, RolesGuard)
 @ApiBearerAuth()
 @Controller("course")
@@ -46,12 +46,13 @@ export class CourseController {
     summary: "Use to create course",
   })
   @UsePipes(new ValidationPipe())
-  async create(@Body() createCourseDto: CreateCourseDto) {
-    return await this.courseService.create(createCourseDto);
+  async create(
+    @Req() req: Request,
+    @Body() createCourseDto: CreateCourseDto) {
+    return await this.courseService.create(createCourseDto,req["user"].sub);
   }
 
   @Post("addStudent")
-  // @ApiCreatedResponse(CourseXXX.successCreatedCourse)
   @ApiOperation({
     summary: "Use to add student to course",
   })
@@ -69,7 +70,7 @@ export class CourseController {
     const limit = parseInt(pagination.limit as any) || 5;
     return await this.courseService.findAll(page, limit);
   }
-
+  
   @HasRoles(Role.TEACHER, Role.ADMIN)
   @Get("allcourse")
   @ApiOperation({
@@ -96,15 +97,15 @@ export class CourseController {
 
 
   @HasRoles(Role.TEACHER, Role.ADMIN)
-  @Get("allstudent/:id")
+  @Get(":id/allStudent")
   @ApiOperation({
     summary: "Use to find all student info that in the course",
   })
   async findAllStudent(
     @Param("id", new IdValidationPipe()) id: string,
-    @Req() req: Request,
+    // @Req() req: Request,
   ) {
-    return await this.courseService.findAllStudent(id, req["user"].sub);
+    return await this.courseService.findAllStudent(id);
   }
 
   @HasRoles(Role.TEACHER, Role.ADMIN)

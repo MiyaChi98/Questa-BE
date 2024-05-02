@@ -144,6 +144,13 @@ export class QuizController {
   }
 
   @ApiOkResponse(QuizXXX.successFindOne)
+  @Get("/file/:id")
+  async getFileUrl(@Param("id") id: string) {
+    const file = await this.quizService.getImg_Audio(id);
+    return file;
+  }
+
+  @ApiOkResponse(QuizXXX.successFindOne)
   @Get("/:id")
   async findOneQuizContent(@Param("id", new IdValidationPipe()) id: string) {
     const quiz = await this.quizService.findOne(id);

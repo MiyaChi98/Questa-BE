@@ -9,7 +9,7 @@ export class Course {
   @Prop()
   teacherId: string;
   @Prop()
-  studentId: string[];
+  grade: number;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

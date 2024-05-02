@@ -54,15 +54,16 @@ export class CourseService {
     } else teacher = user;
     const info = {
       teacher: {
-        id: teacher._id,
+        _id: teacher._id,
         teacherName: teacher.name,
         teacherEmail: teacher.email,
         teacherPhone: teacher.phone,
       },
       course: {
-        id: course._id,
+        _id: course._id,
         courseName: course.courseName,
         courseDescription: course.courseDescription,
+        grade: course.grade
       },
     };
     return info;
@@ -88,14 +89,12 @@ export class CourseService {
     }
   }
   // Create course
-  async create(createCourseDto: CreateCourseDto) {
-    const courseTeacher = await this.userService.findOnebyID(
-      createCourseDto.teacherId,
-    );
-    if (!courseTeacher)
-      throw new BadRequestException("There is no teacher like that!");
-    const createdUser = await this.CourseModel.create(createCourseDto);
-    return createdUser;
+  async create(createCourseDto: CreateCourseDto, teacherId: string) {
+    const createdCourse = await this.CourseModel.create({
+      ...createCourseDto,
+      teacherId: teacherId
+    });
+    return createdCourse;
   }
   async findOnebyID(courseId: string) {
     return this.CourseModel.findOne({ _id: courseId });
@@ -121,14 +120,14 @@ export class CourseService {
   async findOne(id: string, userID: string) {
     const info = await this.courseIdentify(userID, id);
     const allStudent_List = await this.Student_List_Model.find({
-      courseId: info.course.id,
+      courseId: info.course._id,
     });
     const allStudent = [];
     allStudent_List.map(async (x) => {
       const student = await this.userService.findStudent(x.studentId);
       allStudent.push(student);
     });
-    const allExam = await this.ExamModel.find({ courseId: info.course.id });
+    const allExam = await this.ExamModel.find({ courseId: info.course._id });
     const result = {
       ...info,
       student: allStudent,
@@ -151,22 +150,11 @@ export class CourseService {
     return await this.findOne(id, userID);
   }
 
-  async findAllStudent(id: string, userID: string) {
-    const course = await this.CourseModel.findOne({ _id: id }).select(
-      "studentId",
-    );
-    const result = {
-      courseId: await this.findOne(id, userID),
-      allStudentInfo: [],
-    };
-    if (course && course.studentId?.length > 0) {
-      for (const i in course.studentId) {
-        result.allStudentInfo.push(
-          await this.userService.findOnebyID(course.studentId[i]),
-        );
-      }
-    }
-    return result;
+  async findAllStudent(id: string) {
+    const allStudent = await this.Student_List_Model.find({
+      courseId: id,
+    });
+    return allStudent
   }
   async findCourses(teacherID: string) {
     const course = await this.CourseModel.find({ teacherId: teacherID })

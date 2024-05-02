@@ -160,14 +160,33 @@ export class QuizService {
       Key: fileName,
     }
     const command = new GetObjectCommand(getParams);
-    const imgUrl = await getSignedUrl(
+    const fileUrl = await getSignedUrl(
       S3,
       command
       ,
       { expiresIn: 3600 }
     )
     return {
-      imgUrl: imgUrl,
+      fileUrl: fileUrl,
+      s3Name: fileName
+    }
+  }
+
+  async getImg_Audio(fileName) {
+    const {bucketName,S3} = await this.createS3()
+    const getParams = {
+      Bucket: bucketName,
+      Key: fileName,
+    }
+    const command = new GetObjectCommand(getParams);
+    const fileUrl = await getSignedUrl(
+      S3,
+      command
+      ,
+      { expiresIn: 3600 }
+    )
+    return {
+      fileUrl: fileUrl,
       s3Name: fileName
     }
   }
@@ -182,10 +201,13 @@ export class QuizService {
       result.push({
         quizId: obj._id.toString(),
         question: obj.content.question,
+        img: obj.content.img,
+        audio: obj.content.audio,
         A: obj.content.A,
         B: obj.content.B,
         C: obj.content.C,
         D: obj.content.D,
+        answer: ''
       });
     });
     return result;

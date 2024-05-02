@@ -138,10 +138,10 @@ export class ExamService {
     const info = await this.examIdentify(exam.teacherId, exam.courseId);
     const allQuiz = await this.quizService.findbyExam(id);
     const examInfo = {
-      examId: exam._id,
+      examId: exam,
       ...info,
-      tilte: exam.title,
-      time: exam.total_time,
+      // tilte: exam.title,
+      // time: exam.total_time,
       quiz: allQuiz,
     };
     return examInfo;
