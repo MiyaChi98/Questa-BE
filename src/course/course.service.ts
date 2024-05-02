@@ -63,7 +63,7 @@ export class CourseService {
         _id: course._id,
         courseName: course.courseName,
         courseDescription: course.courseDescription,
-        grade: course.grade
+        grade: course.grade,
       },
     };
     return info;
@@ -92,7 +92,7 @@ export class CourseService {
   async create(createCourseDto: CreateCourseDto, teacherId: string) {
     const createdCourse = await this.CourseModel.create({
       ...createCourseDto,
-      teacherId: teacherId
+      teacherId: teacherId,
     });
     return createdCourse;
   }
@@ -154,10 +154,10 @@ export class CourseService {
     const allStudent = await this.Student_List_Model.find({
       courseId: id,
     });
-    return allStudent
+    return allStudent;
   }
   async findCourses(teacherID: string) {
-    const course = await this.CourseModel.find({ teacherId: teacherID })
+    const course = await this.CourseModel.find({ teacherId: teacherID });
     return course;
   }
   async delete(id: string) {

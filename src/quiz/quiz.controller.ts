@@ -15,7 +15,6 @@ import {
   HttpException,
   HttpStatus,
   Res,
-  BadRequestException,
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { QuizService } from "./quiz.service";
@@ -23,8 +22,6 @@ import { CreateQuizDtoArray } from "src/dto/createQuiz.dto";
 import { UpdateQuizContentDto } from "src/dto/updateQuiz.dto";
 import { diskStorage } from "multer";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { v4 as uuidv4 } from "uuid";
-import path = require("path");
 import {
   ApiBody,
   ApiConsumes,
@@ -59,7 +56,6 @@ export class QuizController {
   create(@Body() createQuizDto: CreateQuizDtoArray, @Req() req: Request) {
     return this.quizService.create(createQuizDto, req["user"].sub);
   }
-
 
   //upload excel sheet of an Exam
   @ApiCreatedResponse(QuizXXX.successUploadFile)
@@ -102,7 +98,6 @@ export class QuizController {
     );
   }
 
-
   //export excel sheet of an Exam
   @HasRoles(Role.TEACHER, Role.ADMIN, Role.STUDENT)
   @Get("exam/:id")
@@ -132,14 +127,11 @@ export class QuizController {
   @ApiOkResponse(QuizXXX.successUploadImage)
   @ApiConsumes("multipart/form-data")
   @ApiBody({ type: UploadFileDto })
-  @UseInterceptors(
-    FileInterceptor("file"
-     ),
-  )
+  @UseInterceptors(FileInterceptor("file"))
   async uploadQuizFile(
     @Req() req: Request,
-    @UploadedFile() file: Express.Multer.File
-    ) {
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     return this.quizService.uploadImg_Audio(file);
   }
 

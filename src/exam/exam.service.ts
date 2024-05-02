@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import mongoose, { Model } from "mongoose";
+import { Model } from "mongoose";
 import { CourseService } from "src/course/course.service";
 import { CreateExamDTO } from "src/dto/createExam.dto";
 import { Exam } from "src/schema/exam.schema";
@@ -9,7 +9,6 @@ import { QuizService } from "src/quiz/quiz.service";
 import { UpdateExamDTO } from "src/dto/updateExam.dto";
 import { Submit } from "src/schema/submit.schema";
 import { Quiz } from "src/schema/quiz.schema";
-import { error } from "console";
 @Injectable()
 export class ExamService {
   constructor(
@@ -18,7 +17,7 @@ export class ExamService {
     private readonly quizService: QuizService,
     @InjectModel(Exam.name) private ExamModel: Model<Exam>,
     @InjectModel(Submit.name) private SubmitModel: Model<Submit>,
-    @InjectModel(Quiz.name) private QuizModel: Model<Quiz>
+    @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: string, courseId: string) {
@@ -30,7 +29,7 @@ export class ExamService {
       course.teacherId?.toString() != teacher._id?.toString()
     )
       throw new BadRequestException(
-        "Indentify failed! You not this course teacher"
+        "Indentify failed! You not this course teacher",
       );
     const info = {
       teacher: {
@@ -53,30 +52,25 @@ export class ExamService {
       .then((_session) => {
         session = _session;
         return session.withTransaction(async () => {
-          return await this.ExamModel.create(
-          {
+          return await this.ExamModel.create({
             ...createExamDto,
             teacherId,
-          },
-        );
+          });
         });
       })
-      .then(
-        async (exam) => {
-          console.log(exam)
-          const arrayOfObjectsDto = [];
-          createExamDto.quizArray.map((quiz, index) => {
-            arrayOfObjectsDto.push({
-              content: {
-                ...quiz,
-              },
-              examId: exam._id,
-            });
+      .then(async (exam) => {
+        console.log(exam);
+        const arrayOfObjectsDto = [];
+        createExamDto.quizArray.map((quiz) => {
+          arrayOfObjectsDto.push({
+            content: {
+              ...quiz,
+            },
+            examId: exam._id,
           });
-          return await this.QuizModel.create(
-            arrayOfObjectsDto
-        )}
-      )
+        });
+        return await this.QuizModel.create(arrayOfObjectsDto);
+      })
       .then(() => session.endSession());
   }
 
@@ -108,7 +102,7 @@ export class ExamService {
     });
     const numberOfPage = Array.from(
       { length: Math.ceil(numberOfExam / limit) },
-      (_, i) => i + 1
+      (_, i) => i + 1,
     );
     const result = {
       page: page,

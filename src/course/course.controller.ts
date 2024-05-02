@@ -46,10 +46,8 @@ export class CourseController {
     summary: "Use to create course",
   })
   @UsePipes(new ValidationPipe())
-  async create(
-    @Req() req: Request,
-    @Body() createCourseDto: CreateCourseDto) {
-    return await this.courseService.create(createCourseDto,req["user"].sub);
+  async create(@Req() req: Request, @Body() createCourseDto: CreateCourseDto) {
+    return await this.courseService.create(createCourseDto, req["user"].sub);
   }
 
   @Post("addStudent")
@@ -70,15 +68,13 @@ export class CourseController {
     const limit = parseInt(pagination.limit as any) || 5;
     return await this.courseService.findAll(page, limit);
   }
-  
+
   @HasRoles(Role.TEACHER, Role.ADMIN)
   @Get("allcourse")
   @ApiOperation({
     summary: "Use to find all course that belong to a teacher",
   })
-  async findAllCoursewithTeacherID(
-    @Req() req: Request,
-  ) {
+  async findAllCoursewithTeacherID(@Req() req: Request) {
     return await this.courseService.findCourses(req["user"].sub);
   }
 
@@ -94,7 +90,6 @@ export class CourseController {
   ) {
     return await this.courseService.findOne(id, req["user"].sub);
   }
-
 
   @HasRoles(Role.TEACHER, Role.ADMIN)
   @Get(":id/allStudent")

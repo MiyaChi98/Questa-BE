@@ -60,12 +60,16 @@ export class ExamController {
   @ApiOperation({
     summary: "Use to find all exam by Teacher",
   })
-  findAllbyTeacherID(@Req() req: Request,@Query() pagination: PaginationDto) {
+  findAllbyTeacherID(@Req() req: Request, @Query() pagination: PaginationDto) {
     const page = parseInt(pagination.page as any) || 1;
     const limit = parseInt(pagination.limit as any) || 5;
-    return this.examService.findAllExambyTeacherID(req["user"].sub,page, limit);
+    return this.examService.findAllExambyTeacherID(
+      req["user"].sub,
+      page,
+      limit,
+    );
   }
-  
+
   @Get("/allCourse/:id")
   @ApiOperation({
     summary: "Use to find all exam",
@@ -74,7 +78,6 @@ export class ExamController {
   findAllinCourse(@Param("id", new IdValidationPipe()) id: string) {
     return this.examService.findAllExamInCourse(id);
   }
-
 
   @Patch(":id")
   @ApiOperation({

@@ -24,7 +24,7 @@ import { Quiz, QuizSchema } from "src/schema/quiz.schema";
       {
         name: Quiz.name,
         schema: QuizSchema,
-      }
+      },
     ]),
     CourseModule,
     UserModule,

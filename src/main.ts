@@ -6,7 +6,7 @@ import { AllExceptionsFilter } from "./filters/all-exceptions.filter";
 import { SuccessLogsService } from "./logs/services/success-logs.service";
 import { ErrorLogsService } from "./logs/services/error-logs.service";
 import { VersioningType } from "@nestjs/common";
-import { urlencoded, json } from 'express';
+import { urlencoded, json } from "express";
 
 async function bootstrap() {
   const app = await NestFactory.create(
@@ -34,8 +34,8 @@ async function bootstrap() {
     allowedHeaders: "*",
     origin: "*",
   });
-  app.use(json({ limit: '50mb' }));
-  app.use(urlencoded({ extended: true, limit: '50mb' }));
+  app.use(json({ limit: "50mb" }));
+  app.use(urlencoded({ extended: true, limit: "50mb" }));
   // app.useStaticAssets(join(__dirname, "..", "uploads"), {
   //   prefix: "/uploads/",
   // });

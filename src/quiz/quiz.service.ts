@@ -11,14 +11,13 @@ import { UserService } from "src/user/user.service";
 import { CourseService } from "src/course/course.service";
 import { Exam } from "src/schema/exam.schema";
 import reader = require("xlsx");
-import sharp from 'sharp'
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
-import crypto from 'crypto'
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
-
-
-
-
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import crypto from "crypto";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 @Injectable()
 export class QuizService {
@@ -51,30 +50,28 @@ export class QuizService {
     };
     return info;
   }
-  async createS3(){
-   const bucketName = process.env.BUCKET_NAME
-   const region = process.env.BUCKET_REGION
-   const accessKeyId = process.env.ACCESS_KEY
-   const secretAccessKey = process.env.SECRET_ACCESS_KEY
-   const s3Client = new S3Client({
+  async createS3() {
+    const bucketName = process.env.BUCKET_NAME;
+    const region = process.env.BUCKET_REGION;
+    const accessKeyId = process.env.ACCESS_KEY;
+    const secretAccessKey = process.env.SECRET_ACCESS_KEY;
+    const s3Client = new S3Client({
       region,
       credentials: {
         accessKeyId,
-        secretAccessKey
-      }
-    })
+        secretAccessKey,
+      },
+    });
     return {
       bucketName,
-      S3: s3Client
-    }
+      S3: s3Client,
+    };
   }
-  
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   create(createQuizDto: CreateQuizDtoArray, userID: string) {
     // this.quizIdentify(userID,CreateQuizDtoArray)
-    return this.QuizModel.create(
-      createQuizDto.arrayOfObjectsDto,
-    );
+    return this.QuizModel.create(createQuizDto.arrayOfObjectsDto);
   }
 
   async createUsingUploadFile(
@@ -142,53 +139,44 @@ export class QuizService {
   }
 
   async uploadImg_Audio(file: Express.Multer.File) {
-    const {bucketName,S3} = await this.createS3()
-    const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
+    const { bucketName, S3 } = await this.createS3();
+    const generateFileName = (bytes = 32) =>
+      crypto.randomBytes(bytes).toString("hex");
     // const fileBuffer = await sharp(file.buffer)
     // .resize({ height: 1920, width: 1080, fit: "contain" })
     // .toBuffer()
-    const fileName = generateFileName()
+    const fileName = generateFileName();
     const uploadParams = {
       Bucket: bucketName,
       Body: file.buffer,
       Key: fileName,
-      ContentType: file.mimetype
-    }
-    await S3.send(new PutObjectCommand(uploadParams))
+      ContentType: file.mimetype,
+    };
+    await S3.send(new PutObjectCommand(uploadParams));
     const getParams = {
       Bucket: bucketName,
       Key: fileName,
-    }
+    };
     const command = new GetObjectCommand(getParams);
-    const fileUrl = await getSignedUrl(
-      S3,
-      command
-      ,
-      { expiresIn: 3600 }
-    )
+    const fileUrl = await getSignedUrl(S3, command, { expiresIn: 3600 });
     return {
       fileUrl: fileUrl,
-      s3Name: fileName
-    }
+      s3Name: fileName,
+    };
   }
 
   async getImg_Audio(fileName) {
-    const {bucketName,S3} = await this.createS3()
+    const { bucketName, S3 } = await this.createS3();
     const getParams = {
       Bucket: bucketName,
       Key: fileName,
-    }
+    };
     const command = new GetObjectCommand(getParams);
-    const fileUrl = await getSignedUrl(
-      S3,
-      command
-      ,
-      { expiresIn: 3600 }
-    )
+    const fileUrl = await getSignedUrl(S3, command, { expiresIn: 3600 });
     return {
       fileUrl: fileUrl,
-      s3Name: fileName
-    }
+      s3Name: fileName,
+    };
   }
 
   async findbyExam(id: string) {
@@ -207,7 +195,7 @@ export class QuizService {
         B: obj.content.B,
         C: obj.content.C,
         D: obj.content.D,
-        answer: ''
+        answer: "",
       });
     });
     return result;
