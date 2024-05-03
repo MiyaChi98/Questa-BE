@@ -10,6 +10,7 @@ import { Exam } from "src/schema/exam.schema";
 import { Role } from "src/constant/roleEnum";
 import { addStudentDTO } from "src/dto/addStudent.dto";
 import { User } from "src/schema/user.schema";
+import { Submit } from "src/schema/submit.schema";
 
 @Injectable()
 export class CourseService {
@@ -17,6 +18,7 @@ export class CourseService {
     @InjectModel(Course.name) private CourseModel: Model<Course>,
     @InjectModel(Exam.name) private ExamModel: Model<Exam>,
     @InjectModel(User.name) private UserModel: Model<User>,
+    @InjectModel(Submit.name) private SubmitModel: Model<Submit>,
     @InjectModel(StudentList.name)
     private Student_List_Model: Model<StudentList>,
     private readonly userService: UserService,
@@ -139,7 +141,14 @@ export class CourseService {
   findName(name: string) {
     return this.CourseModel.findOne({ courseName: name });
   }
+  calculateAverage(array) {
+    if (array.length === 0) {
+        return 0; // Return 0 if array is empty to avoid division by zero
+    }
 
+    const sum = array.reduce((acc, curr) => acc + curr, 0);
+    return sum / array.length;
+}
   async update(id: string, updateCourseDto: UpdateCourseDto, userID: string) {
     const updateCourse = await this.CourseModel.findOne({ _id: id });
     if (!updateCourse)
@@ -154,7 +163,44 @@ export class CourseService {
     const allStudent = await this.Student_List_Model.find({
       courseId: id,
     });
-    return allStudent;
+    const list = []
+    const allExam = await this.ExamModel.find({courseId: id})
+    for(const link of allStudent){
+      const student = await this.UserModel.findOne(
+        {_id: link.studentId},
+        {
+          password: 0,
+          refreshToken:0
+        }
+      )
+      let studentSubmition = 0
+      let mark= []
+      for(const exam of allExam){
+        const submition = await this.SubmitModel.findOne({
+          examId: exam._id,
+          studentId: student._id
+        })
+        if(submition){
+          studentSubmition++
+          mark.push(submition.mark)
+        } else studentSubmition
+      }
+      const nowAvg = this.calculateAverage(mark)
+      mark.pop()
+      const beforeAvg = this.calculateAverage(mark)
+      list.push({
+        _id: student._id,
+        name: student.name,
+        email: student.email,
+        submition : `${studentSubmition}/${allExam.length}`,
+        status:{
+          now: nowAvg,
+          before: beforeAvg,
+          status: nowAvg >= beforeAvg
+        }
+      })
+    }
+    return list;
   }
   async findCourses(teacherID: string) {
     const course = await this.CourseModel.find({ teacherId: teacherID });

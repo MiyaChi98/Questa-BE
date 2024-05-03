@@ -97,7 +97,7 @@ export class CourseController {
     summary: "Use to find all student info that in the course",
   })
   async findAllStudent(
-    @Param("id", new IdValidationPipe()) id: string,
+    @Param("id") id: string,
     // @Req() req: Request,
   ) {
     return await this.courseService.findAllStudent(id);
