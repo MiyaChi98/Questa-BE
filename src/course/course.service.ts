@@ -66,9 +66,18 @@ export class CourseService {
         courseName: course.courseName,
         courseDescription: course.courseDescription,
         grade: course.grade,
+        code: course.code
       },
     };
     return info;
+  }
+  codegenarator(): string {
+    const input = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZjo0123456789@#$%&";
+    let code = "";
+    for (let i = 1; i < 8; i++) {
+      code += input[Math.floor(Math.random() * 10)];
+    }
+    return code;
   }
   //add student
   async addStudent(addStudent: addStudentDTO) {
@@ -95,6 +104,7 @@ export class CourseService {
     const createdCourse = await this.CourseModel.create({
       ...createCourseDto,
       teacherId: teacherId,
+      code: this.codegenarator()
     });
     return createdCourse;
   }
@@ -202,6 +212,7 @@ export class CourseService {
     }
     return list;
   }
+
   async findCourses(teacherID: string) {
     const course = await this.CourseModel.find({ teacherId: teacherID });
     return course;

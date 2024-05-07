@@ -10,6 +10,8 @@ export class Course {
   teacherId: string;
   @Prop()
   grade: number;
+  @Prop()
+  code: string;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

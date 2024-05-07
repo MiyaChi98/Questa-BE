@@ -74,22 +74,62 @@ export class ExamService {
       .then(() => session.endSession());
   }
 
+  async getAllInfo(examId: string){
+    const avgScore = await this.SubmitModel.aggregate([
+      {
+        $match: {
+            examId: examId // Replace specificExamId with the examId you want to filter by
+        }
+      },
+      {
+        $group: {
+            _id: "$examId", // Group by examId field
+            avgValue: { $avg: "$mark" } // Calculate average of mark field
+        }
+        
+    }
+  ])
+    const numberofSubmit = await this.SubmitModel.countDocuments({
+      examId: examId
+    })
+  return {
+    avgScore: avgScore,
+    numberofSubmit: numberofSubmit
+  }
+  }
+
   async findAllExamInCourse(courseId: string) {
     // const info = await this.examIdentify(userID, courseId);
-    const allExam = await this.ExamModel.find({ courseId: courseId });
-    if (allExam.length == 0) {
-      return "Course doesn't has any exam !";
-    }
+    // const allExam = await this.ExamModel.find({ courseId: courseId });
+    // if (allExam.length == 0) {
+    //   return "Course doesn't has any exam !";
+    // }
+    const allDate = await this.ExamModel.aggregate([
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },
+          documents: { $push: "$$ROOT" }
+        }
+      },
+      {
+        $sort: { "_id": -1 } // Sort by date ascending
+      }
+    ])
     const result = [];
-    for (const exam of allExam) {
-      result.push({
-        tilte: exam.title,
-        total_mark: exam.total_mark,
-        total_time: exam.total_time,
-        // ...info,
-      });
+    for (const date of allDate ){
+      for (let exam of date.documents) {
+      const extraInfo = await this.getAllInfo(exam._id.toString())
+      // result.push({
+      //   exam: exam,
+      //   ...extraInfo
+      // });
+      exam['avgScore'] = extraInfo.avgScore
+      exam['numberofSubmit']= extraInfo.numberofSubmit
     }
-    return result;
+  }
+    return allDate;
   }
 
   //findAllExambyTeacherID

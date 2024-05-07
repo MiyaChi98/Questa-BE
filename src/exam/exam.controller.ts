@@ -70,7 +70,7 @@ export class ExamController {
     );
   }
 
-  @Get("/allCourse/:id")
+  @Get("/course/:id")
   @ApiOperation({
     summary: "Use to find all exam",
   })
