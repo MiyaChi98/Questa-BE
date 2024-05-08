@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsMobilePhone, IsNotEmpty, IsString } from "class-validator";
+import { Role } from "src/constant/roleEnum";
 
 export class Register {
   @ApiProperty({ example: "Mona Genshin" })
@@ -18,4 +19,8 @@ export class Register {
   @IsMobilePhone()
   @IsNotEmpty()
   phone: string;
+  @ApiProperty()
+  @ApiProperty({ example: "student" })
+  @IsNotEmpty()
+  zone: Role;
 }

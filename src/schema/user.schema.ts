@@ -14,8 +14,6 @@ export class User {
   @Prop()
   zone: Role[];
   @Prop()
-  gender: "female" | "male";
-  @Prop()
   refreshToken: string;
 }
 
