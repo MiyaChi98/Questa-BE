@@ -28,4 +28,21 @@ export class EmailController {
     }
     return "Verify failed";
   }
+
+  @Post("register/sendOTP")
+  @ApiOperation({
+    summary: "Use to send OTP to user email (Forget Password)",
+  })
+  @ApiCreatedResponse(EmailXXX.successSendMail)
+  async sendRegisterEmail(@Body() userEmail: sendMail) {
+    return await this.emailService.RegisterOTPEmail(userEmail.email);
+  }
+  @Post("register/verifyOTP")
+  @ApiOperation({
+    summary: "Use to send reset password to user ",
+  })
+  @ApiCreatedResponse(EmailXXX.successSendResetPassword)
+  async verifyRegisterOTP(@Body() bodyOtp: sendOTP) {
+    return await this.emailService.RegisterVerifyOTP(bodyOtp)
+  }
 }

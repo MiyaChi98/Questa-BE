@@ -11,7 +11,28 @@ export class EmailService {
     private readonly userService: UserService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
-
+  async RegisterOTPEmail(userEmail: string) {
+      const email: string = userEmail;
+      const otp: number = this.otpgenarator();
+      const subject = `Your otp is ${otp}`;
+      await this.mailerService.sendMail({
+        to: email,
+        from: "chintt.hrt@gmail.com",
+        subject: subject,
+      });
+      await this.cacheManager.del(email);
+      await this.cacheManager.set(email, otp, 60*2);
+      return {
+        OTP: otp,
+        email:email,
+      };
+  }
+  async RegisterVerifyOTP(bodyOtp: sendOTP) {
+    if (parseInt(bodyOtp.OTP) == (await this.cacheManager.get(bodyOtp.email))) {
+      return true;
+    }
+    return false;
+  }
   async OTPEmail(userEmail: string) {
     const user = await this.userService.findOne(userEmail);
     if (user) {
@@ -24,7 +45,7 @@ export class EmailService {
         subject: subject,
       });
       await this.cacheManager.del(user.email);
-      await this.cacheManager.set(user.email, otp, 60000 * 5);
+      await this.cacheManager.set(user.email, otp, 60000*2);
       return {
         OTP: otp,
         email: user.email,
@@ -34,7 +55,11 @@ export class EmailService {
   }
 
   async VerifyOTP(bodyOtp: sendOTP) {
-    if (bodyOtp.OTP === (await this.cacheManager.get(bodyOtp.email))) {
+    console.log(bodyOtp.OTP)
+    console.log(await this.cacheManager.get(bodyOtp.email))
+    console.log(typeof bodyOtp.OTP)
+    console.log(typeof (await this.cacheManager.get(bodyOtp.email)))
+    if (parseInt(bodyOtp.OTP) == (await this.cacheManager.get(bodyOtp.email))) {
       await this.TemporaryPassword(bodyOtp.email);
       return true;
     }
@@ -42,7 +67,7 @@ export class EmailService {
   }
 
   async TemporaryPassword(email: string) {
-    const temporaryPassword = this.generateRandomString(10);
+    const temporaryPassword = this.generateString();
     await this.userService.updatePassword(email, temporaryPassword);
     await this.mailerService.sendMail({
       to: email,
@@ -53,7 +78,7 @@ export class EmailService {
     return temporaryPassword;
   }
 
-  otpgenarator(): number {
+  otpgenarator() {
     const digits = "0123456789";
     let OTP = "";
     for (let i = 1; i < 7; i++) {
@@ -61,14 +86,30 @@ export class EmailService {
     }
     return +OTP;
   }
-  generateRandomString(length: number): string {
-    let result = "";
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+
+  generateString = () => {
+    const specialChars = '!@#$%^&*()-_=+';
+    const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+
+    let generatedString = '';
+    
+    // Add one special character
+    generatedString += specialChars[Math.floor(Math.random() * specialChars.length)];
+    
+    // Add one uppercase letter
+    generatedString += uppercaseChars[Math.floor(Math.random() * uppercaseChars.length)];
+    
+    // Add one number
+    generatedString += numbers[Math.floor(Math.random() * numbers.length)];
+    
+    // Add remaining characters
+    while (generatedString.length < 10) {
+        const chars = specialChars + uppercaseChars + numbers;
+        generatedString += chars[Math.floor(Math.random() * chars.length)];
     }
-    return result;
-  }
+
+    return generatedString;
+};
+
 }
