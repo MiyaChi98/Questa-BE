@@ -123,6 +123,7 @@ export class QuizController {
   }
 
   //upload file img or audio for a quiz
+  @HasRoles(Role.TEACHER, Role.STUDENT)
   @Post("upload/file")
   @ApiOkResponse(QuizXXX.successUploadImage)
   @ApiConsumes("multipart/form-data")
@@ -134,7 +135,8 @@ export class QuizController {
   ) {
     return this.quizService.uploadImg_Audio(file);
   }
-
+  
+  @HasRoles(Role.TEACHER, Role.STUDENT)
   @ApiOkResponse(QuizXXX.successFindOne)
   @Get("/file/:id")
   async getFileUrl(@Param("id") id: string) {
