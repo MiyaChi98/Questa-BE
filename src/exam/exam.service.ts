@@ -9,6 +9,7 @@ import { QuizService } from "src/quiz/quiz.service";
 import { UpdateExamDTO } from "src/dto/updateExam.dto";
 import { Submit } from "src/schema/submit.schema";
 import { Quiz } from "src/schema/quiz.schema";
+import { Subject } from "rxjs";
 @Injectable()
 export class ExamService {
   constructor(
@@ -18,7 +19,7 @@ export class ExamService {
     @InjectModel(Exam.name) private ExamModel: Model<Exam>,
     @InjectModel(Submit.name) private SubmitModel: Model<Submit>,
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
-  ) {}
+  ) { }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: string, courseId: string) {
     const teacher = await this.userService.findOnebyID(userID);
@@ -74,28 +75,28 @@ export class ExamService {
       .then(() => session.endSession());
   }
 
-  async getAllInfo(examId: string){
+  async getAllInfo(examId: string) {
     const avgScore = await this.SubmitModel.aggregate([
       {
         $match: {
-            examId: examId // Replace specificExamId with the examId you want to filter by
+          examId: examId // Replace specificExamId with the examId you want to filter by
         }
       },
       {
         $group: {
-            _id: "$examId", // Group by examId field
-            avgValue: { $avg: "$mark" } // Calculate average of mark field
+          _id: "$examId", // Group by examId field
+          avgValue: { $avg: "$mark" } // Calculate average of mark field
         }
-        
-    }
-  ])
+
+      }
+    ])
     const numberofSubmit = await this.SubmitModel.countDocuments({
       examId: examId
     })
-  return {
-    avgScore: avgScore,
-    numberofSubmit: numberofSubmit
-  }
+    return {
+      avgScore: avgScore,
+      numberofSubmit: numberofSubmit
+    }
   }
 
   async findAllExamInCourse(courseId: string) {
@@ -105,6 +106,11 @@ export class ExamService {
     //   return "Course doesn't has any exam !";
     // }
     const allDate = await this.ExamModel.aggregate([
+      {
+        $match: {
+          'courseId': courseId
+        }
+      },
       {
         $group: {
           _id: {
@@ -118,17 +124,17 @@ export class ExamService {
       }
     ])
     const result = [];
-    for (const date of allDate ){
+    for (const date of allDate) {
       for (let exam of date.documents) {
-      const extraInfo = await this.getAllInfo(exam._id.toString())
-      // result.push({
-      //   exam: exam,
-      //   ...extraInfo
-      // });
-      exam['avgScore'] = extraInfo.avgScore
-      exam['numberofSubmit']= extraInfo.numberofSubmit
+        const extraInfo = await this.getAllInfo(exam._id.toString())
+        // result.push({
+        //   exam: exam,
+        //   ...extraInfo
+        // });
+        exam['avgScore'] = extraInfo.avgScore
+        exam['numberofSubmit'] = extraInfo.numberofSubmit
+      }
     }
-  }
     return allDate;
   }
 
@@ -136,7 +142,8 @@ export class ExamService {
   async findAllExambyTeacherID(teacherId: string, page: number, limit: number) {
     const allExam = await this.ExamModel.find({ teacherId: teacherId })
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(limit)
+      .sort({ createdAt: -1 });
     const numberOfExam = await this.ExamModel.countDocuments({
       teacherId: teacherId,
     });
@@ -152,14 +159,16 @@ export class ExamService {
     };
     for (const exam of allExam) {
       console.log(exam);
-      const allSubmit = await this.SubmitModel.countDocuments({
-        examId: exam._id,
-      });
+      const extraInfo = await this.getAllInfo(exam._id.toString())
+      // exam['avgScore'] = extraInfo.avgScore
+      // exam['numberofSubmit']= extraInfo.numberofSubmit
       const course = await this.courseService.findOnebyID(exam.courseId);
       result.allExam.push({
         _id: exam._id,
         name: exam.title,
-        submition: allSubmit,
+        subject: exam.subject,
+        submition: extraInfo.numberofSubmit,
+        avgScore: extraInfo.avgScore.length ? extraInfo.avgScore[0]['avgValue'].toFixed(2) : 'Không có dữ liệu',
         course: course.courseName,
         last_update: exam.updatedAt.toLocaleString(),
       });

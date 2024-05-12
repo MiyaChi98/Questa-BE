@@ -139,6 +139,7 @@ export class QuizService {
   }
 
   async uploadImg_Audio(file: Express.Multer.File) {
+    console.log('its reach here')
     const { bucketName, S3 } = await this.createS3();
     const generateFileName = (bytes = 32) =>
       crypto.randomBytes(bytes).toString("hex");

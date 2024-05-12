@@ -8,6 +8,8 @@ import * as bcrypt from "bcrypt";
 import { Role } from "src/constant/roleEnum";
 import { Course } from "src/schema/course.schema";
 import { StudentList } from "src/schema/studentlist.schema";
+import { ResetPasswordDto } from "src/dto/resetPassword.dto";
+import { Connection } from "src/dto/deleteConnection";
 
 @Injectable()
 export class UserService {
@@ -143,6 +145,28 @@ export class UserService {
       password: bcrypt.hashSync(temporaryPassword, 10),
     });
   }
+  async resetPassword(id: string, newPassword: ResetPasswordDto){
+    const user = await this.UserModel.findOne({ _id: id })
+    const passwordMatches = bcrypt.compareSync(newPassword.password, user.password);
+    if(passwordMatches){
+      return this.UserModel.findOne({ _id: id }).updateOne({
+        password: bcrypt.hashSync(newPassword.reset_password, 10),
+      });
+    }else throw new BadRequestException('Mật khẩu cũ của bạn không khớp')
+  }
+
+  async deleteConnection(connection: Connection){
+    // const user = await this.UserModel.findOneAndDelete({ _id: connection.studentID });
+    const userRelated = await this.Student_List_Model.findOneAndDelete({
+        studentId: connection.studentID,
+        courseId: connection.courseID
+      });
+      return {
+        // student: user,
+        connection: userRelated
+      };
+  }
+  
   async delete(id: string) {
     const user = await this.UserModel.findOneAndDelete({ _id: id });
     let userRelated;

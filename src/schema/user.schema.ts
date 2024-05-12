@@ -12,6 +12,10 @@ export class User {
   @Prop()
   phone: string;
   @Prop()
+  school: string;
+  @Prop()
+  img: string;
+  @Prop()
   zone: Role[];
   @Prop()
   refreshToken: string;

@@ -25,7 +25,7 @@ import { ScheduleModule } from "@nestjs/schedule";
     ThrottlerModule.forRoot([
       {
         ttl: minutes(1),
-        limit: 20,
+        limit: 40,
       },
     ]),
     LoggerModule.forRoot(),

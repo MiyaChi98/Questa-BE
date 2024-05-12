@@ -67,7 +67,7 @@ export class AuthService {
     //Genarate new at and rt
     const tokens = await this.getTokens(user._id.toString(), user.zone);
     const userDetail = {
-      userID: user._id,
+      _id: user._id,
       name: user.name,
       email: user.email,
       zone: user.zone,

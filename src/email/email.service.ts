@@ -21,14 +21,18 @@ export class EmailService {
         subject: subject,
       });
       await this.cacheManager.del(email);
-      await this.cacheManager.set(email, otp, 60*2);
+      await this.cacheManager.set(email, otp, 60000*2);
+      console.log(await this.cacheManager.get(email))
       return {
         OTP: otp,
         email:email,
       };
   }
   async RegisterVerifyOTP(bodyOtp: sendOTP) {
-    if (parseInt(bodyOtp.OTP) == (await this.cacheManager.get(bodyOtp.email))) {
+    console.log(bodyOtp)
+    console.log(bodyOtp.OTP)
+    console.log(await this.cacheManager.get(bodyOtp.email))
+    if (parseInt(bodyOtp.OTP) === (await this.cacheManager.get(bodyOtp.email))) {
       return true;
     }
     return false;

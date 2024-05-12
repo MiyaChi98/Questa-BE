@@ -29,6 +29,8 @@ import { ATGuard } from "src/guard/accessToken.guards";
 import { UserXXX } from "./constant/UserXXX";
 import { IdValidationPipe } from "src/pipes/IDvalidation.pipe";
 import { PaginationDto } from "src/dto/pagination.dto";
+import { ResetPasswordDto } from "src/dto/resetPassword.dto";
+import { Connection } from "src/dto/deleteConnection";
 @ApiTags("User")
 @HasRoles(Role.ADMIN)
 @UseGuards(ATGuard, RolesGuard)
@@ -52,6 +54,7 @@ export class UserController {
   //   summary: "Get user",
   //   description: "Get user by id",
   // })
+  @HasRoles(Role.TEACHER,Role.STUDENT)
   @Get(":id")
   @ApiOperation({
     summary: "Use to find user by id",
@@ -60,7 +63,7 @@ export class UserController {
   async getUserbyId(@Param("id", new IdValidationPipe()) id: string) {
     const user = await this.userService.findWithAllInfo(id);
     if (!user) {
-      throw new NotFoundException("Cant find user by the id: " + id);
+      return ("Cant find user by the id: " + id);
     }
     return user;
   }
@@ -88,6 +91,7 @@ export class UserController {
     return await this.userService.create(userDetails);
   }
   //Update one by ID
+  @HasRoles(Role.TEACHER,Role.STUDENT)
   @Patch(":id")
   @ApiOperation({
     summary: "Use to update user",
@@ -104,7 +108,35 @@ export class UserController {
     );
     return updateUser;
   }
-  // Delete one by ID
+
+  @HasRoles(Role.TEACHER,Role.STUDENT)
+  @Post("resetPassword/:id")
+  @ApiOperation({
+    summary: "Use to update user",
+  })
+  @ApiOkResponse(UserXXX.successUpdate)
+  @UsePipes(new ValidationPipe())
+  async resetPassword(
+    @Param("id", new IdValidationPipe()) id: string,
+    @Body() newPassword: ResetPasswordDto,
+  ) {
+    const updateUser = await this.userService.resetPassword(id,newPassword);
+    return updateUser;
+  }
+
+  @HasRoles(Role.TEACHER)
+  @Post("course/:id")
+  @ApiOperation({
+    summary: "Use to delete user and course connection",
+  })
+  @ApiOkResponse(UserXXX.successDelete)
+  async deleteConnection(@Body() connection: Connection) {
+    const student = await this.userService.deleteConnection(connection);
+    return student;
+  }
+
+
+  @HasRoles(Role.TEACHER)
   @Delete(":id")
   @ApiOperation({
     summary: "Use to delete user",
