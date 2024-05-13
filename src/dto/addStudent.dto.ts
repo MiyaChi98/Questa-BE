@@ -5,7 +5,7 @@ export class addStudentDTO {
   @ApiProperty({ example: "courseID" })
   @IsNotEmpty()
   @IsString()
-  courseID: string;
+  courseCode: string;
   @ApiProperty({ example: "studentID" })
   @IsNotEmpty()
   @IsString()

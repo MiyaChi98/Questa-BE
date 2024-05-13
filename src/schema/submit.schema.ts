@@ -24,6 +24,8 @@ export class Submit {
   @Prop({ type: AnswerArray })
   submitAnswer: AnswerArray;
   @Prop()
+  violations: number;
+  @Prop()
   mark: number;
 }
 

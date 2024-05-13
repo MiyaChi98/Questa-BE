@@ -13,8 +13,6 @@ export class IdValidationPipe implements PipeTransform {
         "The input is null or undefine, pls check!",
       );
     }
-    console.log("value");
-    console.log(value);
     if (ObjectId.isValid(value)) {
       if (String(new ObjectId(value)) === value) return value;
       throw new BadRequestException(

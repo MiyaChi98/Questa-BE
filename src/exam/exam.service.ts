@@ -10,6 +10,7 @@ import { UpdateExamDTO } from "src/dto/updateExam.dto";
 import { Submit } from "src/schema/submit.schema";
 import { Quiz } from "src/schema/quiz.schema";
 import { Subject } from "rxjs";
+import { StudentList } from "src/schema/studentlist.schema";
 @Injectable()
 export class ExamService {
   constructor(
@@ -19,6 +20,8 @@ export class ExamService {
     @InjectModel(Exam.name) private ExamModel: Model<Exam>,
     @InjectModel(Submit.name) private SubmitModel: Model<Submit>,
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
+    @InjectModel(StudentList.name)
+    private Student_List_Model: Model<StudentList>,
   ) { }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: string, courseId: string) {
@@ -28,10 +31,7 @@ export class ExamService {
       !teacher ||
       !course ||
       course.teacherId?.toString() != teacher._id?.toString()
-    )
-      throw new BadRequestException(
-        "Indentify failed! You not this course teacher",
-      );
+    ) return false
     const info = {
       teacher: {
         teacherName: teacher.name,
@@ -60,7 +60,6 @@ export class ExamService {
         });
       })
       .then(async (exam) => {
-        console.log(exam);
         const arrayOfObjectsDto = [];
         createExamDto.quizArray.map((quiz) => {
           arrayOfObjectsDto.push({
@@ -99,12 +98,15 @@ export class ExamService {
     }
   }
 
-  async findAllExamInCourse(courseId: string) {
-    // const info = await this.examIdentify(userID, courseId);
-    // const allExam = await this.ExamModel.find({ courseId: courseId });
-    // if (allExam.length == 0) {
-    //   return "Course doesn't has any exam !";
-    // }
+  async findAllExamInCourse(userID,courseId: string) {
+    const info = await this.examIdentify(userID, courseId);
+    if(!info){
+      const conection = await this.Student_List_Model.findOne({
+        courseId:courseId,
+        studentId:userID
+      })
+      conection? null : new BadRequestException('Bạn chưa gia nhập khóa học này')
+    }
     const allDate = await this.ExamModel.aggregate([
       {
         $match: {
@@ -127,10 +129,11 @@ export class ExamService {
     for (const date of allDate) {
       for (let exam of date.documents) {
         const extraInfo = await this.getAllInfo(exam._id.toString())
-        // result.push({
-        //   exam: exam,
-        //   ...extraInfo
-        // });
+        const studentSubmition = await this.SubmitModel.findOne({
+          examId: exam._id,
+          studentId:userID
+        })
+        exam['studentSubmit'] = studentSubmition? studentSubmition.mark:''
         exam['avgScore'] = extraInfo.avgScore
         exam['numberofSubmit'] = extraInfo.numberofSubmit
       }
@@ -158,7 +161,6 @@ export class ExamService {
       allExam: [],
     };
     for (const exam of allExam) {
-      console.log(exam);
       const extraInfo = await this.getAllInfo(exam._id.toString())
       // exam['avgScore'] = extraInfo.avgScore
       // exam['numberofSubmit']= extraInfo.numberofSubmit
@@ -178,13 +180,10 @@ export class ExamService {
   // Find one Exam with all exam's quizzes
   async findOne(id: string) {
     const exam = await this.ExamModel.findOne({ _id: id });
-    const info = await this.examIdentify(exam.teacherId, exam.courseId);
+    // const info = await this.examIdentify(exam.teacherId, exam.courseId);
     const allQuiz = await this.quizService.findbyExam(id);
     const examInfo = {
-      examId: exam,
-      ...info,
-      // tilte: exam.title,
-      // time: exam.total_time,
+      exam,
       quiz: allQuiz,
     };
     return examInfo;

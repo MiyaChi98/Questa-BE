@@ -36,18 +36,12 @@ export class AuthService {
     this.validatePassword(createUserDTO.password);
     //Hash the password
     const hash = this.hash(createUserDTO.password);
-    console.log(hash)
     //Create new user then return it
-    console.log('new user', {
-      ...createUserDTO,
-      password: hash,
-    })
     const newUser = new this.UserModel({
       ...createUserDTO,
       password: hash,
     });
     newUser.save();
-    console.log('after save on the db', newUser)
     return newUser;
   }
 
@@ -59,8 +53,6 @@ export class AuthService {
     const user = await this.userService.findOne(authDTO.email);
     if (!user) throw new BadRequestException("User does not exist");
     //Check if password is match or not
-    console.log(authDTO.password)
-    console.log(user.password)
     const passwordMatches = bcrypt.compareSync(authDTO.password, user.password);
     if (!passwordMatches)
       throw new BadRequestException("Password is incorrect");

@@ -22,16 +22,12 @@ export class EmailService {
       });
       await this.cacheManager.del(email);
       await this.cacheManager.set(email, otp, 60000*2);
-      console.log(await this.cacheManager.get(email))
       return {
         OTP: otp,
         email:email,
       };
   }
   async RegisterVerifyOTP(bodyOtp: sendOTP) {
-    console.log(bodyOtp)
-    console.log(bodyOtp.OTP)
-    console.log(await this.cacheManager.get(bodyOtp.email))
     if (parseInt(bodyOtp.OTP) === (await this.cacheManager.get(bodyOtp.email))) {
       return true;
     }
@@ -59,10 +55,6 @@ export class EmailService {
   }
 
   async VerifyOTP(bodyOtp: sendOTP) {
-    console.log(bodyOtp.OTP)
-    console.log(await this.cacheManager.get(bodyOtp.email))
-    console.log(typeof bodyOtp.OTP)
-    console.log(typeof (await this.cacheManager.get(bodyOtp.email)))
     if (parseInt(bodyOtp.OTP) == (await this.cacheManager.get(bodyOtp.email))) {
       await this.TemporaryPassword(bodyOtp.email);
       return true;

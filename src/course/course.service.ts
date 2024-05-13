@@ -11,6 +11,8 @@ import { Role } from "src/constant/roleEnum";
 import { addStudentDTO } from "src/dto/addStudent.dto";
 import { User } from "src/schema/user.schema";
 import { Submit } from "src/schema/submit.schema";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 @Injectable()
 export class CourseService {
@@ -23,7 +25,36 @@ export class CourseService {
     private Student_List_Model: Model<StudentList>,
     private readonly userService: UserService,
   ) {}
-
+  async createS3() {
+    const bucketName = process.env.BUCKET_NAME;
+    const region = process.env.BUCKET_REGION;
+    const accessKeyId = process.env.ACCESS_KEY;
+    const secretAccessKey = process.env.SECRET_ACCESS_KEY;
+    const s3Client = new S3Client({
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    });
+    return {
+      bucketName,
+      S3: s3Client,
+    };
+  }
+  async getImg_Audio(fileName) {
+    const { bucketName, S3 } = await this.createS3();
+    const getParams = {
+      Bucket: bucketName,
+      Key: fileName,
+    };
+    const command = new GetObjectCommand(getParams);
+    const fileUrl = await getSignedUrl(S3, command, { expiresIn: 3600 });
+    return {
+      fileUrl: fileUrl,
+      s3Name: fileName,
+    };
+  }
   async courseIdentify(userID: string, courseId: string) {
     const user = await this.userService.findOnebyID(userID);
     const course = await this.CourseModel.findById(courseId);
@@ -60,6 +91,7 @@ export class CourseService {
         teacherName: teacher.name,
         teacherEmail: teacher.email,
         teacherPhone: teacher.phone,
+        teacherImg: await this.getImg_Audio(teacher.img)
       },
       course: {
         _id: course._id,
@@ -81,22 +113,20 @@ export class CourseService {
   }
   //add student
   async addStudent(addStudent: addStudentDTO) {
+    const course = await this.CourseModel.findOne({code: addStudent.courseCode})
+    if(course){
     const Link = await this.Student_List_Model.findOne({
       studentId: addStudent.studentID,
-      courseId: addStudent.courseID,
+      courseId: course._id,
     });
-    if (Link)
-      throw new BadRequestException("The student already in the course");
-    const user = await this.UserModel.find({ _id: addStudent.studentID });
-    const course = await this.CourseModel.find({ _id: addStudent.courseID });
-    if (user.length != 0 && course.length != 0) {
+    if (Link) throw new BadRequestException("The student already in the course");
       const newLink = await this.Student_List_Model.create({
         studentId: addStudent.studentID,
-        courseId: addStudent.courseID,
+        courseId: course._id,
       });
-      return newLink;
-    } else {
-      throw new BadRequestException("not resolve");
+      return newLink
+    }else{
+      throw new BadRequestException('Không có lớp học với mã này')
     }
   }
   // Create course
@@ -134,16 +164,28 @@ export class CourseService {
     const allStudent_List = await this.Student_List_Model.find({
       courseId: info.course._id,
     });
-    const allStudent = [];
-    allStudent_List.map(async (x) => {
-      const student = await this.userService.findStudent(x.studentId);
-      allStudent.push(student);
-    });
-    const allExam = await this.ExamModel.find({ courseId: info.course._id });
+    // const allStudent = [];
+    // allStudent_List.map(async (x) => {
+    //   const student = await this.userService.findStudent(x.studentId);
+    //   allStudent.push(student);
+    // });
+    let allExam = await this.ExamModel.find({ courseId: info.course._id }).sort({ createdAt: -1 });
+    let exams = []
+    for(let exam of allExam){
+      const studentSubmition = await this.SubmitModel.findOne({
+        examId: exam._id,
+        studentId: userID
+      })
+      exams.push({
+        exam,
+        studentSubmition: studentSubmition
+      }
+      )
+    }
     const result = {
       ...info,
-      student: allStudent,
-      exams: allExam,
+      // student: allStudent,
+      exams: exams,
     };
     return result;
   }
@@ -158,7 +200,7 @@ export class CourseService {
 
     const sum = array.reduce((acc, curr) => acc + curr, 0);
     return sum / array.length;
-}
+  }
   async update(id: string, updateCourseDto: UpdateCourseDto, userID: string) {
     const updateCourse = await this.CourseModel.findOne({ _id: id });
     if (!updateCourse)
@@ -168,7 +210,6 @@ export class CourseService {
     });
     return await this.findOne(id, userID);
   }
-
   async findAllStudent(id: string) {
     const allStudent = await this.Student_List_Model.find({
       courseId: id,
@@ -212,10 +253,20 @@ export class CourseService {
     }
     return list;
   }
-
   async findCourses(teacherID: string) {
     const course = await this.CourseModel.find({ teacherId: teacherID });
     return course;
+  }
+  async findAllStudentCourse(studentID: string) {
+    const allLink = await this.Student_List_Model.find({
+      studentId: studentID,
+    });
+    const courses = []
+    for(const link of allLink){
+      const course = await this.findOne(link.courseId,studentID)
+      courses.push(course)
+    }
+    return courses;
   }
   async delete(id: string) {
     const course = await this.CourseModel.findOneAndDelete({ _id: id });

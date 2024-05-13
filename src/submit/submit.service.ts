@@ -107,6 +107,7 @@ export class SubmitService {
       examId: submitDto.examId,
       studentId: userId,
       submitAnswer: submitDto.submitAnswer,
+      violations: submitDto.violations,
       mark: (mark / examQuizzes.length) * exam.total_mark,
     });
     return createdSubmit;
@@ -130,6 +131,7 @@ export class SubmitService {
       examId: submit.examId,
       studentId: submit.studentId,
       mark: submit.mark,
+      violations: submit.violations,
       studentAnswer: allQuiz,
     };
     return result;

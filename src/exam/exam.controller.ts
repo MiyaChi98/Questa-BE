@@ -46,13 +46,13 @@ export class ExamController {
   create(@Body() createExamDto: CreateExamDTO, @Req() req: Request) {
     return this.examService.create(createExamDto, req["user"].sub);
   }
-
+  @HasRoles(Role.TEACHER,Role.STUDENT)
   @Get(":id")
   @ApiOperation({
     summary: "Use to find one exam",
   })
   @ApiOkResponse(ExamXXX.successFindbyId)
-  findOne(@Param("id", new IdValidationPipe()) id: string) {
+  findOne(@Param("id", new IdValidationPipe()) id: string, @Req() req: Request) {
     return this.examService.findOne(id);
   }
 
@@ -69,14 +69,17 @@ export class ExamController {
       limit,
     );
   }
-
+  @HasRoles(Role.TEACHER,Role.STUDENT)
   @Get("/course/:id")
   @ApiOperation({
     summary: "Use to find all exam",
   })
   @ApiOkResponse(ExamXXX.successFindAllExamInCourse)
-  findAllinCourse(@Param("id", new IdValidationPipe()) id: string) {
-    return this.examService.findAllExamInCourse(id);
+  findAllinCourse(
+    @Req() req: Request,
+    @Param("id", new IdValidationPipe()) id: string
+  ) {
+    return this.examService.findAllExamInCourse(req["user"].sub,id);
   }
 
   @Patch(":id")

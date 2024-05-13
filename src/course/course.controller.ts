@@ -50,6 +50,7 @@ export class CourseController {
     return await this.courseService.create(createCourseDto, req["user"].sub);
   }
 
+  @HasRoles(Role.STUDENT,Role.TEACHER)
   @Post("addStudent")
   @ApiOperation({
     summary: "Use to add student to course",
@@ -76,6 +77,15 @@ export class CourseController {
   })
   async findAllCoursewithTeacherID(@Req() req: Request) {
     return await this.courseService.findCourses(req["user"].sub);
+  }
+
+  @HasRoles(Role.STUDENT)
+  @Get("student/allcourse")
+  @ApiOperation({
+    summary: "Use to find all student course ",
+  })
+  async findAllStudentCourse(@Req() req: Request) {
+    return await this.courseService.findAllStudentCourse(req["user"].sub);
   }
 
   @HasRoles(Role.TEACHER, Role.ADMIN, Role.STUDENT)
