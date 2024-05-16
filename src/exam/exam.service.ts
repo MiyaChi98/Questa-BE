@@ -9,8 +9,9 @@ import { QuizService } from "src/quiz/quiz.service";
 import { UpdateExamDTO } from "src/dto/updateExam.dto";
 import { Submit } from "src/schema/submit.schema";
 import { Quiz } from "src/schema/quiz.schema";
-import { Subject } from "rxjs";
 import { StudentList } from "src/schema/studentlist.schema";
+import { ElasticsearchService } from "src/elasticsearch/elasticsearch.service";
+ 
 @Injectable()
 export class ExamService {
   constructor(
@@ -22,6 +23,8 @@ export class ExamService {
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
     @InjectModel(StudentList.name)
     private Student_List_Model: Model<StudentList>,
+    private readonly elasticsearchService: ElasticsearchService
+
   ) { }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async examIdentify(userID: string, courseId: string) {
@@ -46,32 +49,51 @@ export class ExamService {
     return info;
   }
   async create(createExamDto: CreateExamDTO, teacherId: string) {
-    await this.examIdentify(teacherId, createExamDto.courseId);
+    const examData = await this.examIdentify(teacherId, createExamDto.courseId);
     let session = null;
     return this.ExamModel.createCollection()
-      .then(() => this.ExamModel.startSession())
-      .then((_session) => {
-        session = _session;
-        return session.withTransaction(async () => {
-          return await this.ExamModel.create({
-            ...createExamDto,
-            teacherId,
-          });
-        });
+    .then(() => this.ExamModel.startSession())
+    .then((_session) => {
+    session = _session;
+    return session.withTransaction(async () => {
+      const exam = await this.ExamModel.create({
+        ...createExamDto,
+        teacherId,
+      });
+      const arrayOfObjectsDto = createExamDto.quizArray.map((quiz) => ({
+        content: { ...quiz },
+        examId: exam._id,
+      }));
+
+      console.log(createExamDto.quizArray); // Check if quizArray is populated
+      console.log(arrayOfObjectsDto); // Check if arrayOfObjectsDto is populated
+
+      await this.QuizModel.create(arrayOfObjectsDto);
+
+      return exam
+    });
+  })
+  .then((exam) => {
+    if(exam && examData){
+      const elasticsearchRes = this.elasticsearchService.pushDataToIndex({
+        examId: exam._id,
+        title: exam.title,
+        courseName: examData.course.courseName,
+        teacherId: teacherId
       })
-      .then(async (exam) => {
-        const arrayOfObjectsDto = [];
-        createExamDto.quizArray.map((quiz) => {
-          arrayOfObjectsDto.push({
-            content: {
-              ...quiz,
-            },
-            examId: exam._id,
-          });
-        });
-        return await this.QuizModel.create(arrayOfObjectsDto);
-      })
-      .then(() => session.endSession());
+      console.log(elasticsearchRes)
+    }
+    return session.endSession();
+  })
+  .catch((error) => {
+    // Handle any errors that occur during the transaction
+    console.error("Transaction failed:", error);
+    if (session) {
+      session.endSession();
+    }
+    throw error; // Re-throw the error to propagate it further
+  });
+
   }
 
   async getAllInfo(examId: string) {
@@ -200,6 +222,10 @@ export class ExamService {
   }
   async delete(id: string) {
     const exam = await this.ExamModel.findByIdAndDelete(id);
+    if(exam){
+      const elasticsearchDeleteRes = await this.elasticsearchService.deleteDocumentByCourseID(id)
+      console.log(elasticsearchDeleteRes)
+    }
     const allSubmit = await this.SubmitModel.findOneAndDelete({ examId: id });
     return {
       exam,

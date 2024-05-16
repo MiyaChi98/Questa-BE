@@ -17,6 +17,13 @@ export class Content {
   @IsOptional()
   img?: string;
   @ApiProperty({
+    example:
+      "http://localhost:8000/image/standingcat8e7ed211-7133-483c-8f42-a5a406e155c4.jpg",
+  })
+  @IsString()
+  @IsOptional()
+  audio?: string;
+  @ApiProperty({
     example: "According to me , what smell is the most confort smell?",
   })
   @IsString()
@@ -37,6 +44,9 @@ export class Content {
   @ApiProperty({ example: "B" })
   @IsNotEmpty()
   answer: MultiChoise;
+  @ApiProperty({ example: "" })
+  @IsNotEmpty()
+  explain?: string;
 }
 
 export class CreateQuizDto {

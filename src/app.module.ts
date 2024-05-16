@@ -18,6 +18,7 @@ import { LoggerModule } from "nestjs-pino";
 import { LogsModule } from "./logs/logs.module";
 import { ThrottlerGuard, ThrottlerModule, minutes } from "@nestjs/throttler";
 import { ScheduleModule } from "@nestjs/schedule";
+import { ElasticsearchModule } from './elasticsearch/elasticsearch.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ScheduleModule } from "@nestjs/schedule";
     QuizModule,
     SubmitModule,
     LogsModule,
+    ElasticsearchModule,
   ],
   controllers: [AppController],
   providers: [

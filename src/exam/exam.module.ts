@@ -10,6 +10,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { Submit, SubmitSchema } from "src/schema/submit.schema";
 import { Quiz, QuizSchema } from "src/schema/quiz.schema";
 import { StudentList, StudentListSchema } from "src/schema/studentlist.schema";
+import { ElasticsearchModule } from "src/elasticsearch/elasticsearch.module";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { StudentList, StudentListSchema } from "src/schema/studentlist.schema";
     UserModule,
     QuizModule,
     JwtModule,
+    ElasticsearchModule
   ],
   controllers: [ExamController],
   providers: [ExamService],

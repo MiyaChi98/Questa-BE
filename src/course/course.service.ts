@@ -13,6 +13,7 @@ import { User } from "src/schema/user.schema";
 import { Submit } from "src/schema/submit.schema";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { ElasticsearchService } from "src/elasticsearch/elasticsearch.service";
 
 @Injectable()
 export class CourseService {
@@ -24,6 +25,7 @@ export class CourseService {
     @InjectModel(StudentList.name)
     private Student_List_Model: Model<StudentList>,
     private readonly userService: UserService,
+    private readonly elasticsearchService: ElasticsearchService
   ) {}
   async createS3() {
     const bucketName = process.env.BUCKET_NAME;
@@ -136,6 +138,14 @@ export class CourseService {
       teacherId: teacherId,
       code: this.codegenarator()
     });
+    if(createdCourse){
+      const elasticsearchRes = this.elasticsearchService.pushDataToIndex({
+        courseId: createdCourse._id,
+        courseName: createCourseDto.courseName,
+        teacherId: teacherId
+      })
+      console.log(elasticsearchRes)
+    }
     return createdCourse;
   }
   async findOnebyID(courseId: string) {
@@ -205,6 +215,9 @@ export class CourseService {
     const updateCourse = await this.CourseModel.findOne({ _id: id });
     if (!updateCourse)
       throw new BadRequestException("There is no course like that!");
+    const elasticsearchCourseRes = await this.elasticsearchService.getCourse(id)
+    const elasticsearchCourse = elasticsearchCourseRes.hits.hits[0]
+    await this.elasticsearchService.update(elasticsearchCourse._id,updateCourseDto)
     await updateCourse.updateOne({
       ...updateCourseDto,
     });
@@ -270,6 +283,11 @@ export class CourseService {
   }
   async delete(id: string) {
     const course = await this.CourseModel.findOneAndDelete({ _id: id });
+    console.log('course',course)
+    if(course){
+      const elasticsearchDeleteRes = await this.elasticsearchService.deleteDocumentByCourseID(id)
+      console.log(elasticsearchDeleteRes)
+    }
     const allExam = await this.ExamModel.find({ courseId: id });
     await this.ExamModel.deleteMany({ courseId: id });
     return {

@@ -131,7 +131,7 @@ export class AuthService {
         },
         {
           secret: Variable.RT_SECRET,
-          expiresIn: "1d",
+          expiresIn: "3d",
         },
       ),
     ]);

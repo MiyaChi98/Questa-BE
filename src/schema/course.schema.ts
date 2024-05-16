@@ -9,7 +9,7 @@ export class Course {
   @Prop()
   teacherId: string;
   @Prop()
-  grade: number;
+  grade: string;
   @Prop()
   code: string;
 }

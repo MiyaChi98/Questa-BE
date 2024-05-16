@@ -9,6 +9,7 @@ import { StudentList, StudentListSchema } from "src/schema/studentlist.schema";
 import { Exam, ExamSchema } from "src/schema/exam.schema";
 import { User, UserSchema } from "src/schema/user.schema";
 import { Submit, SubmitSchema } from "src/schema/submit.schema";
+import { ElasticsearchModule } from "src/elasticsearch/elasticsearch.module";
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -35,6 +36,7 @@ import { Submit, SubmitSchema } from "src/schema/submit.schema";
     ]),
     UserModule,
     JwtModule,
+    ElasticsearchModule
   ],
   controllers: [CourseController],
   providers: [CourseService],

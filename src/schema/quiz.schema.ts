@@ -19,6 +19,8 @@ export class Content {
   D: string;
   @Prop()
   answer: MultiChoise;
+  @Prop()
+  explain: string;
 }
 
 @Schema({ timestamps: true })
