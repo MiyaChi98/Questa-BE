@@ -46,7 +46,6 @@ export class ElasticsearchController {
     return this.elasticsearchService.get(id)
   }
 
-
   @Delete(':id')
   async delete(
     @Param("id", new IdValidationPipe()) id: string,
