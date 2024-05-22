@@ -56,6 +56,16 @@ export class ExamController {
     return this.examService.findOne(id);
   }
 
+  @HasRoles(Role.TEACHER,Role.STUDENT)
+  @Get("displayExamData/:id")
+  @ApiOperation({
+    summary: "Use to find one exam",
+  })
+  @ApiOkResponse(ExamXXX.successFindbyId)
+  findExamQuiz(@Param("id", new IdValidationPipe()) id: string, @Req() req: Request) {
+    return this.examService.findExamQuiz(id);
+  }
+
   @Get("/teacher/all")
   @ApiOperation({
     summary: "Use to find all exam by Teacher",

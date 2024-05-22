@@ -20,11 +20,11 @@ export class CreateExamDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  start: Date;
+  start?: Date;
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  end: Date;
+  end?: Date;
   @ApiProperty({ example: 10 })
   @IsNumber()
   @IsNotEmpty()
@@ -32,10 +32,10 @@ export class CreateExamDTO {
   @ApiProperty({ example: 10 })
   @IsNumber()
   @IsNotEmpty()
-  total_time: number;
+  total_time?: number;
   @ApiProperty()
   @IsString()
-  description: Date;
+  description?: string;
   @ApiProperty({ example: "658a57d4e51fda21d6f34e15" })
   @IsString()
   @IsNotEmpty()

@@ -21,7 +21,12 @@ export class ElasticsearchController {
 ) {
     return this.elasticsearchService.index()
   }
-
+  
+  @Get()
+  async getAllContent(
+) {
+    return this.elasticsearchService.getAllContent()
+  }
 
   @Get('searchBycourseName')
   async searchByCourseName(

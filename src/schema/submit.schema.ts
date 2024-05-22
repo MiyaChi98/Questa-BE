@@ -7,6 +7,8 @@ export class Answer {
   quizId: string;
   @Prop()
   answer: MultiChoise;
+  // @Prop()
+  // correctAnswer: MultiChoise;
 }
 
 @Schema({ timestamps: true })

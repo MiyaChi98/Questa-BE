@@ -113,7 +113,10 @@ export class SubmitService {
     return createdSubmit;
   }
   async getOne(id: string, userId: string, userZone: Role) {
-    const submit = await this.SubmitModel.findOne({ _id: id });
+    const submit = await this.SubmitModel.findOne({
+       examId: id,
+       studentId: userId
+       });
     if (userZone.includes("student")) {
       if (submit.studentId != userId) {
         throw new BadRequestException(`You can't see this test`);

@@ -267,8 +267,21 @@ export class CourseService {
     return list;
   }
   async findCourses(teacherID: string) {
-    const course = await this.CourseModel.find({ teacherId: teacherID });
-    return course;
+    const courses = await this.CourseModel.find({ teacherId: teacherID });
+    const result = []
+    for(const course of courses){
+      const countStudent = await this.Student_List_Model.countDocuments({
+        courseId: course._id
+      })
+      console.log(countStudent)
+      course['numberofStudents'] = countStudent
+      result.push({
+        ...course['_doc'],
+        numberofStudents: countStudent
+      })
+    }
+    console.log(result)
+    return result;
   }
   async findAllStudentCourse(studentID: string) {
     const allLink = await this.Student_List_Model.find({

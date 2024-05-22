@@ -56,6 +56,37 @@ export class ElasticsearchService {
       })
   }
 
+  async getAllContent(){
+    try {
+      const response = await this.client.search({
+        index: process.env.ELASTIC_SEARCH_CLOUD_INDEX,
+        body: {
+          query: {
+            bool: {
+              must: [
+                {
+                  exists: {
+                    field: "fileUrl"
+                  }
+                },
+                {
+                  exists: {
+                    field: "fileId"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      });
+      return response;
+    } catch (error) {
+      // Handle error
+      console.error('Error deleting document:', error);
+      throw error;
+    }
+  }
+
   async pushDataToIndex(document: any): Promise<any> {
     try {
       const uniqueId = uuidv4(); // Generate a unique ID for each document

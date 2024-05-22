@@ -201,6 +201,31 @@ export class QuizService {
     return result;
   }
 
+  async findebyExamtoExtactChartData(id: string) {
+    const allQuiz = await this.QuizModel.find({ examId: id })
+      // .select("quizId")
+      // .select("content")
+      // .sort("quizId");
+    const result = {};
+    allQuiz.forEach(function (obj) {
+      if(!result[obj._id.toString()]){
+        result[obj._id.toString()] = 
+        {
+          question: obj.content.question,
+          img: obj.content.img,
+          audio: obj.content.audio,
+          A: obj.content.A,
+          B: obj.content.B,
+          C: obj.content.C,
+          D: obj.content.D,
+          answer: obj.content.answer,
+          countCorrectTimes: 0
+        }
+      }
+    });
+    return result;
+  }
+
   async findOne(id: string) {
     const obj = await this.QuizModel.findOne({ _id: id })
       .select("quizId")
